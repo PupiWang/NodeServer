@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>上传</title>
+	</head>
+	<body>
+		<form id="uploadform" method="post" action="http://up.qiniu.com/" enctype="multipart/form-data">
+			<input name="token" type="hidden" value="...">
+			<input name="file" type="file" />
+		</form>
+		<button id="upload">确定</button>
+	</body>
+	<script src="\javascripts\jquery-1.10.2.min.js"></script>
+	<script>
+		var a;
+		$('#upload').click(function(){
+			var file = $('[name="file"]')[0].value;
+			if(!file) return;
+			$.get('/upToken',null,function(upToken){
+				a=upToken;
+				console.log(upToken);
+				$('[name="token"]')[0].value = upToken;
+				$('#uploadform').submit();
+			})
+		})
+	</script>
+</html>

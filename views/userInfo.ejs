@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Pupi</title>
+	<style type="text/css">
+		.main{
+			position: absolute;
+			margin:auto;
+			width: 700px;
+			height: 600px;
+			left: 0px;
+			right: 0px;
+			top: 50px;
+			box-shadow:2px 5px 12px #555,-1px -1px 3px #292929;
+			background-color: #eee;
+		}
+		.left,.right{
+			float: left;
+			position: relative;
+			height: 100%;
+			background-color: #ccc;
+			width: 240px;
+			padding-left: 10px; 
+			overflow: auto;
+		}
+		.right{
+			background-color: #aaa;
+			width: 440px;
+		}
+		li{
+			margin-top: 10px;
+			margin-left: 0px; 
+			font-size: 20px;
+		}
+		li:hover{
+			opacity: 0.6;
+			color: #5b5b5b;
+		}
+		ul{
+			list-style: none;
+			padding-left: 20px;
+		}
+		form{
+			padding-left: 30px;
+		}
+	</style>
+</head>
+<body>
+	<div class="main">
+		<div class="left">
+			<h1>我的设备</h1>
+			<ul id="my_device"></ul>
+		</div>
+		<div class="right">
+			<h1>添加设备</h1>
+			<lable>设备ID：</lable><input id="device_id" placeholder="位于设备底部的18位编码"/><button id="submit">添加</button>
+		</div>
+	</div>
+	<script src="\javascripts\jquery-1.10.2.min.js"></script>
+	<script type="text/javascript">
+		$('#submit').click(function(){
+			var device_id=document.getElementById('device_id').value;
+			if(device_id.length!=18){
+				return;
+			}
+			$.post('/addDevice',{'device_id':device_id},function(data){
+				console.log(data);
+				var new_device=document.createElement('li');
+				$(new_device).text(device_id);
+				document.getElementById('my_device').appendChild(new_device);
+			})
+		})
+
+		$.get('/devices',function(data){
+			for(var i=0;i<data.length;i++){
+				var li = document.createElement('li');
+				li.innerHTML=data[i].device_id;
+				document.getElementById('my_device').appendChild(li);
+			}
+		})
+	</script>
+</body>
+</html>
