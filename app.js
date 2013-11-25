@@ -16,8 +16,8 @@ var app = express();
 var server = require('http').createServer(app);
 var io= require('socket.io').listen(server);
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+// var mongoose = require('mongoose');
+// mongoose.connect('mongodb://localhost/test');
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -56,20 +56,20 @@ app.post('/adddevice',device.addDevice);
 
 server.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
-	// var mysql      = require('mysql');
-	// var connection = mysql.createConnection({
-	//   host     : 'localhost',
-	//   user     : 'root',
-	//   password : 'root',
-	// });
+	var mysql      = require('mysql');
+	var connection = mysql.createConnection({
+	  host     : '10.161.179.56',
+	  user     : 'pupi',
+	  password : 'PUPI_1',
+	});
 
-	// connection.connect();
-	// connection.query('SELECT * FROM qcloud.user', function(err, rows, fields) {
-	// 	if (err) throw err;
+	connection.connect();
+	connection.query('SELECT * FROM qcloud.user', function(err, rows, fields) {
+		if (err) throw err;
 
-	//     console.log('The solution is: ', rows);
-	// });
-	// connection.end();
+	    console.log('The solution is: ', rows);
+	});
+	connection.end();
 
 	io.sockets.on('connection', function (socket) {
 		server_socket.client_sockets.push(socket);
