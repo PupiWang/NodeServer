@@ -34,8 +34,6 @@ console.log(payload);
 exports.serv_sockets=[];
 exports.client_sockets=[];
 
-var io= require('socket.io');
-
 var server = net.createServer(function(socket){
     // 我们获得一个连接 - 该连接自动关联一个socket对象
     console.log('connect: ' + socket.remoteAddress + ':' + socket.remotePort);

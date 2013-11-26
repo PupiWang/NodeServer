@@ -1,25 +1,22 @@
 
-/**
- * Module dependencies.
- */
+// Modules
+var express = require('express'),
+	http = require('http'),
+	path = require('path');
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var device = require('./routes/device');
-var server_socket = require('./routes/socket');
-var http = require('http');
-var path = require('path');
-var qn = require('./routes/qiniu');
+// Files
+var routes = require('./routes'),
+	user = require('./routes/user'),
+	device = require('./routes/device'),
+	server_socket = require('./routes/socket'),
+	qn = require('./routes/qiniu');
 
-var app = express();
-var server = require('http').createServer(app);
-var io= require('socket.io').listen(server);
+// Server initing...
+var app = express(),
+	server = require('http').createServer(app),
+	io= require('socket.io').listen(server);
 
-// var mongoose = require('mongoose');
-// mongoose.connect('mongodb://localhost/test');
-
-// all environments
+// All environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -37,7 +34,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-//get
+// Get
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/userinfo', user.userinfo);
@@ -49,29 +46,13 @@ app.get('/upToken',qn.getUploadToken);
 app.get('/downloadToken',qn.getDownloadUrl);
 app.get('/upLoadFile',routes.upLoadFile);
 
-//post
+// Post
 app.post('/login', user.login);
 app.post('/signup', user.signup);
 app.post('/adddevice',device.addDevice);
 
 server.listen(app.get('port'), function(){
-	console.log('Express server listening on port ' + app.get('port'));
-	var mysql      = require('mysql');
-	var connection = mysql.createConnection({
-	  host     : 'onoveinmysql.mysql.rds.aliyuncs.com',
-	  user     : 'pupi',
-	  database : 'onevo',
-	  password : 'PUPI_1'
-	});
-
-	connection.connect();
-	connection.query('SELECT * FROM user', function(err, rows, fields) {
-		if (err) throw err;
-
-	    console.log('The solution is: ', rows);
-	});
-	connection.end();
-
+	
 	io.sockets.on('connection', function (socket) {
 		server_socket.client_sockets.push(socket);
 		socket.on('my other event', function (data) {
