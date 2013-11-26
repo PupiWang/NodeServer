@@ -58,13 +58,14 @@ server.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
 	var mysql      = require('mysql');
 	var connection = mysql.createConnection({
-	  host     : '10.161.179.56',
+	  host     : 'onoveinmysql.mysql.rds.aliyuncs.com',
 	  user     : 'pupi',
-	  password : 'PUPI_1',
+	  database : 'onevo',
+	  password : 'PUPI_1'
 	});
 
 	connection.connect();
-	connection.query('SELECT * FROM qcloud.user', function(err, rows, fields) {
+	connection.query('SELECT * FROM user', function(err, rows, fields) {
 		if (err) throw err;
 
 	    console.log('The solution is: ', rows);
