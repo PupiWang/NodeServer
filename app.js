@@ -17,7 +17,7 @@ var app = express(),
 	io= require('socket.io').listen(server);
 
 // All environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
@@ -26,6 +26,16 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
+
+app.use(function(req, res, next){
+	var url = req.originalUrl;
+	if (url != '/' && url != '/javascripts/jquery-1.10.2.min.js' && url != '/login' && !req.session.role ) {
+		return res.redirect("/");
+	}
+
+	next();
+});
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 

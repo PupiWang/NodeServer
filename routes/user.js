@@ -30,6 +30,7 @@ exports.signup = function(req, res){
             if(err){
                 console.log(err);
             }else {
+                req.session.role = username;
                 res.redirect('/users');
             }
         });

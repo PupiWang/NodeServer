@@ -1,92 +1,111 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-	<meta charset="utf-8">
-	<title>登陆</title>
-	<style type="text/css">
-		.login{
-			position: absolute;
-			margin:auto;
-			width: 604px;
-			height: 300px;
-			left: 0px;
-			right: 0px;
-			top: 0px;
-			bottom: 0px;
-			box-shadow:2px 5px 12px #555,-1px -1px 3px #292929;
-		}
-		input{
-			margin: 10px;
-		}
-		#login,#signup{
-			float: left;
-			position: relative;
-			height: 260px;
-			left: 0px;
-			right: 0px;
-			top: 0px;
-			bottom: 0px;
-			padding: 20px 30px 20px 30px;
-		}
-		#login{
-			border-right: 2px #CCCCCC dashed;
-		}
-		input[type="submit"]{
-			width: 100px;
-			font-size: 20px;
-			margin: 10px 0px;
-			background-color: #0099FF;
-			color:#FFFFFF;
-			border-color: #66CCCC; 
-		}
-	</style>
-</head>
-<body>
-	<div class="login">
-		<div id="login">
-			<form action="login" method="post">
-				<h1>登陆</h1>
-				用户名：<input placeholder="example@somemail.com" name="username"><br>
-				密 码 ：<input placeholder="" name="password" type="password"><br>
-				<input style="visibility: hidden;"><br>
-				<input type="submit" value="登陆">
-			</form>
+	<head>
+		<meta charset="utf-8">
+		<title>登陆</title>
+		<style type="text/css">
+			.login{
+				position: absolute;
+				margin:auto;
+				width: 604px;
+				height: 300px;
+				left: 0px;
+				right: 0px;
+				top: 0px;
+				bottom: 0px;
+				box-shadow:2px 5px 12px #555,-1px -1px 3px #292929;
+			}
+			input{
+				margin: 10px;
+			}
+			#login,#signup{
+				float: left;
+				position: relative;
+				height: 260px;
+				left: 0px;
+				right: 0px;
+				top: 0px;
+				bottom: 0px;
+				padding: 20px 30px 20px 30px;
+			}
+			#login{
+				border-right: 2px #CCCCCC dashed;
+			}
+			input[type="submit"]{
+				width: 100px;
+				font-size: 20px;
+				margin: 10px 0px;
+				background-color: #0099FF;
+				color:#FFFFFF;
+				border-color: #66CCCC; 
+			}
+		</style>
+	</head>
+	<body>
+		<div class="login">
+			<div id="login">
+				<form action="login" method="post">
+					<h1>登陆</h1>
+					用户名：<input placeholder="example@somemail.com" name="username"><br>
+					密 码 ：<input placeholder="" name="password" type="password"><br>
+					<input style="visibility: hidden;"><br>
+					<input type="submit" value="登陆">
+				</form>
+			</div>
+			<div id="signup">
+				<form action="signup" method="post">
+					<h1>注册</h1>
+					用户名：<input placeholder="example@somemail.com" name="username_signup"><br>
+					密 码 ：<input placeholder="" name="password_signup" type="password"><br>
+					确 认 ：<input placeholder="" name="password_signup_confirm" type="password"><br>
+					<input type="submit" value="注册">
+				</form>
+			</div>
 		</div>
-		<div id="signup">
-			<form action="signup" method="post">
-				<h1>注册</h1>
-				用户名：<input placeholder="example@somemail.com" name="username_signup"><br>
-				密 码 ：<input placeholder="" name="password_signup" type="password"><br>
-				确 认 ：<input placeholder="" name="password_signup_confirm" type="password"><br>
-				<input type="submit" value="注册">
-			</form>
-		</div>
-	</div>
-	<script src="\javascripts\jquery-1.10.2.min.js"></script>
-	<script type="text/javascript">
-		$('[action="login"]').submit(function(event){
-			var username=$('[name="username"]')[0].value,
-				password=$('[name="password"]')[0].value;
-			if(username&&password){
+		<script src="\javascripts\jquery-1.10.2.min.js"></script>
+		<script type="text/javascript">
+			$('[action="login"]').submit(function(event){
+				var username=$('[name="username"]')[0].value,
+					password=$('[name="password"]')[0].value;
+				if(username&&password){
 
-			}else{
-				alert('用户名或密码为空！');
-				event.preventDefault();
-			}
-		})
-		$('[action="signup"]').submit(function(event){
-			var username=$('[name="username_signup"]')[0].value,
-				password=$('[name="password_signup"]')[0].value,
-				password_confirm=$('[name="password_signup_confirm"]')[0].value;
-			if(username&&password&&password_confirm){
-				if(password!=password_confirm){
-					alert('两次输入的密码不一致！');
+				}else{
+					alert('用户名或密码为空！');
+					event.preventDefault();
 				}
-			}else{
-				alert('用户名或密码为空！');
-				event.preventDefault();
-			}
-		})
-	</script>
-</body>
+			})
+			$('[action="signup"]').submit(function(event){
+				var username=$('[name="username_signup"]')[0].value,
+					password=$('[name="password_signup"]')[0].value,
+					password_confirm=$('[name="password_signup_confirm"]')[0].value;
+
+				var emailreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
+					pwdreg = /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/;
+
+				if(!emailreg.test(username)) {
+					alert('用户名格式不正确');
+					event.preventDefault();
+					return;
+				}
+
+				if(!pwdreg.test(password)) {
+					alert('密码格式不正确');
+					event.preventDefault();
+					return;
+				}
+
+				if(username && password && password_confirm){
+					if(password!=password_confirm){
+						alert('两次输入的密码不一致！');
+						event.preventDefault();
+						return;
+					}
+				}else{
+					alert('用户名或密码为空！');
+					event.preventDefault();
+					return;
+				}
+			})
+		</script>
+	</body>
 </html>

@@ -75,7 +75,7 @@
 		$.get('/devices',function(data){
 			for(var i=0;i<data.length;i++){
 				var li = document.createElement('li');
-				li.innerHTML=data[i].device_id;
+				li.innerHTML=data[i].id_device;
 				document.getElementById('my_device').appendChild(li);
 			}
 		})

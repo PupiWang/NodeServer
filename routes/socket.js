@@ -19,13 +19,13 @@ var schema = new Schema(fs.readFileSync('buftest.desc'));
 // The "BufTest" message.
 var BufTest = schema['com.chrisdew.buftest.BufTest'];
 
-var ob = { num: 42 };
-ob.payload = new Buffer("Hello World");
+var ob = { num: 42 ,payload:'Hello World'};
 
 var proto = BufTest.serialize(ob);
-console.log('proto.length:', proto.length);
+console.log(proto);
 
 var outOb = BufTest.parse(proto);
+console.log(outOb);
 console.log('unserialised:', JSON.stringify(outOb));
 
 var payload = new Buffer(outOb.payload);
@@ -40,7 +40,7 @@ var server = net.createServer(function(socket){
     socket.setEncoding('binary');
     exports.serv_sockets.push(socket);
 
-    socket.write(payload);
+    socket.write(proto);
 
     //超时事件
 	// socket.setTimeout(timeout,function(){
@@ -50,7 +50,11 @@ var server = net.createServer(function(socket){
 
     //接收到数据
     socket.on('data',function(data){
+
         console.log('recv:' + data);
+
+        console.log(BufTest.parse(new Buffer(data)));
+        
         for (var i = exports.client_sockets.length - 1; i >= 0; i--) {
             exports.client_sockets[i].emit('data',data)
         };
