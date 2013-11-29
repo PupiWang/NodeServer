@@ -29,7 +29,8 @@ app.use(express.session());
 
 app.use(function(req, res, next){
 	var url = req.originalUrl;
-	if (url != '/upToken' && url != '/signup' && url != '/' && url != '/javascripts/jquery-1.10.2.min.js' && url != '/login' && !req.session.role ) {
+	if (url != '/upToken' && url != '/signup' && url != '/' && url != '/javascripts/jquery-1.10.2.min.js' 
+		&& url != '/login' && !req.session.role && url != '/uploadCallback') {
 		return res.redirect("/");
 	}
 
@@ -60,6 +61,7 @@ app.get('/upLoadFile',routes.upLoadFile);
 app.post('/login', user.login);
 app.post('/signup', user.signup);
 app.post('/adddevice',device.addDevice);
+app.post('/uploadCallback',qn.uploadCallback)
 
 server.listen(app.get('port'), function(){
 	
