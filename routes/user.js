@@ -7,7 +7,7 @@ exports.list = function(req, res){
 	sql.execute(s,function(err, rows, fields) {
         if (err) {
             throw err;
-        }else {
+        } else {
             res.send(rows);
         }
     });
@@ -16,47 +16,61 @@ exports.list = function(req, res){
 
 exports.signup = function(req, res){
 
-    var username = req.body.username_signup,
-        password = req.body.password_signup,
-        password_confirm = req.body.password_signup_confirm;
+    var email = req.body.email,
+        password = req.body.password,
+        password_confirm = req.body.password_confirm;
 
     var MD5 = require('MD5');
 
-    console.log('signup');
+
 
     if(password == password_confirm){
-        var s = 'insert into user (username,password) VALUES ("' + username + '","' + MD5(password) + '")';
-        sql.execute(s,function(err, rows, fields){
-            if(err){
-                console.log(err);
+
+        var s = 'select * from user where email = "' + email + '"';
+
+        sql.execute(s,function(err,rows,fields){
+            
+            if(rows.length >= 1){
+                res.send('email already exist');
+                return;
             }else {
-                req.session.role = username;
-                res.redirect('/users');
+                s = 'insert into user (email,password) VALUES ("' + email + '","' + MD5(password) + '")';
+
+                sql.execute(s,function(err, rows, fields){
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        req.session.role = email;
+                        res.send('/users');
+                    }
+                });
+
             }
-        });
-    }else{
-        res.send('Error');
+        })
+
+    } else {
+        res.send('the confirm one is not the same as password');
     }
 
 };
 
 exports.login = function(req, res){
 
-	var username = req.body.username,
+	var email = req.body.email,
   	  	password = req.body.password;
 
     var MD5 = require('MD5');
 
-  	if(username && password){
-        var s = 'select password from user where username="' + username + '"';
+  	if(email && password){
+        var s = 'select password from user where email="' + email + '"';
         sql.execute(s,function(err, rows, fields){
-            if (err){
+            if (err) {
                 console.log(err);
-            }else {
+            } else {
                 if (rows.length == 1 && rows[0].password == MD5(password)) {
-                    req.session.role = username;
-                    res.redirect('/userinfo');
-                }else {
+                    req.session.role = email;
+                    res.send('/userinfo');
+                } else {
                     res.send('password error');
                 }
             }

@@ -31,7 +31,7 @@
 			#login{
 				border-right: 2px #CCCCCC dashed;
 			}
-			input[type="submit"]{
+			input[type="button"]{
 				width: 100px;
 				font-size: 20px;
 				margin: 10px 0px;
@@ -46,64 +46,83 @@
 			<div id="login">
 				<form action="login" method="post">
 					<h1>登陆</h1>
-					用户名：<input placeholder="example@somemail.com" name="username"><br>
+					用户名：<input placeholder="example@somemail.com" name="email"><br>
 					密 码 ：<input placeholder="" name="password" type="password"><br>
 					<input style="visibility: hidden;"><br>
-					<input type="submit" value="登陆">
+					<input type="button" id="btn_login" value="登陆">
 				</form>
 			</div>
 			<div id="signup">
 				<form action="signup" method="post">
 					<h1>注册</h1>
-					用户名：<input placeholder="example@somemail.com" name="username_signup"><br>
+					用户名：<input placeholder="example@somemail.com" name="email_signup"><br>
 					密 码 ：<input placeholder="" name="password_signup" type="password"><br>
 					确 认 ：<input placeholder="" name="password_signup_confirm" type="password"><br>
-					<input type="submit" value="注册">
+					<input type="button" id="btn_signup" value="注册">
 				</form>
 			</div>
 		</div>
 		<script src="\javascripts\jquery-1.10.2.min.js"></script>
 		<script type="text/javascript">
-			$('[action="login"]').submit(function(event){
-				var username=$('[name="username"]')[0].value,
-					password=$('[name="password"]')[0].value;
-				if(username&&password){
+			$('#btn_login').click(function(event){
 
+				var email = $('[name="email"]')[0].value,
+					password = $('[name="password"]')[0].value;
+
+				if(email && password){
+					$.post('/login',{'email':email,'password':password},function(data){
+						if(data == '/userinfo') {
+							location.href = data;
+						}else {
+							alert(data);
+						}
+					})
 				}else{
 					alert('用户名或密码为空！');
 					event.preventDefault();
 				}
 			})
-			$('[action="signup"]').submit(function(event){
-				var username=$('[name="username_signup"]')[0].value,
-					password=$('[name="password_signup"]')[0].value,
+
+			$('#btn_signup').click(function(event){
+
+				var email = $('[name="email_signup"]')[0].value,
+					password = $('[name="password_signup"]')[0].value,
 					password_confirm=$('[name="password_signup_confirm"]')[0].value;
 
-				var emailreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
-					pwdreg = /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/;
+				if(email && password && password_confirm){
 
-				if(!emailreg.test(username)) {
-					alert('用户名格式不正确');
-					event.preventDefault();
-					return;
-				}
-
-				if(!pwdreg.test(password)) {
-					alert('密码格式不正确');
-					event.preventDefault();
-					return;
-				}
-
-				if(username && password && password_confirm){
-					if(password!=password_confirm){
+					if(password != password_confirm){
 						alert('两次输入的密码不一致！');
-						event.preventDefault();
 						return;
 					}
+
+					var emailreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
+					pwdreg = /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/;
+
+					if(!emailreg.test(email)) {
+						alert('用户名格式不正确');
+						return;
+					}
+
+					if(!pwdreg.test(password)) {
+						alert('密码格式不正确');
+						return;
+					}
+
+					$.post('/signup',{'email':email,'password':password,'password_confirm':password_confirm},function(data){
+						
+						if(data == '/users') {
+							location.href = data;
+						}else {
+							alert(data);
+						}
+						
+					})
+
 				}else{
+
 					alert('用户名或密码为空！');
-					event.preventDefault();
-					return;
+
 				}
 			})
 		</script>

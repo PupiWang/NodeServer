@@ -66,6 +66,10 @@
 			}
 			$.post('/addDevice',{'device_id':device_id},function(data){
 				console.log(data);
+				if(data != 'ok') {
+					alert(data);
+					return;
+				}
 				var new_device=document.createElement('li');
 				$(new_device).text(device_id);
 				document.getElementById('my_device').appendChild(new_device);

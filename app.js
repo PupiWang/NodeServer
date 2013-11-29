@@ -29,7 +29,7 @@ app.use(express.session());
 
 app.use(function(req, res, next){
 	var url = req.originalUrl;
-	if (url != '/' && url != '/javascripts/jquery-1.10.2.min.js' && url != '/login' && !req.session.role ) {
+	if (url != '/upToken' && url != '/signup' && url != '/' && url != '/javascripts/jquery-1.10.2.min.js' && url != '/login' && !req.session.role ) {
 		return res.redirect("/");
 	}
 
@@ -67,7 +67,6 @@ server.listen(app.get('port'), function(){
 		server_socket.client_sockets.push(socket);
 		socket.on('my other event', function (data) {
 			console.log(data);
-			// console.log(server_socket.sockets.length);
 			for(var i=0;i<server_socket.serv_sockets.length;i++){
 				server_socket.serv_sockets[i].write(data);
 			}
