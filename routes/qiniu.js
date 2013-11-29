@@ -5,7 +5,7 @@ exports.getUploadToken = function(req,res){
 	qiniu.conf.SECRET_KEY = 'up-RiROP73u2M8hf94ysPRFf9OlDGr07Xr426r9R';
 
 	var putPolicy = new qiniu.rs.PutPolicy('ov-orange-private');
-		putPolicy.callbackUrl = '192.168.10.232';
+		putPolicy.callbackUrl = 'http://115.29.179.7/';
 		putPolicy.callbackBody = 'bucket=$(bucket)&etag=$(etag)&fname=$(fname)&fsize=$(fsize)' + 
 								 '&mimeType=$(mimeType)&imageInfo=$(imageInfo)' + 
 								 '&width=$(imageInfo.width)&height=$(imageInfo.height)' + 
