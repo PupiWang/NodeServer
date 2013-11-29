@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Pupi</title>
+	<title><%= user %></title>
 	<style type="text/css">
 		.main{
 			position: absolute;
@@ -44,12 +44,37 @@
 		form{
 			padding-left: 30px;
 		}
+		#title1{
+			padding-bottom: 0px;
+			margin-bottom: 0px;
+		}
+		.small{
+			padding-top: 0px;
+			margin-top: 0px;
+			text-align: right;
+			font-size: 8px;
+			color: #888;
+			display: inline;
+		}
+		.link{
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.link:hover{
+			color: blue;
+		}
+		.smalltitle{
+			text-align: right;
+		}
 	</style>
 </head>
 <body>
 	<div class="main">
 		<div class="left">
-			<h1>我的设备</h1>
+			<h1 id="title1">我的设备</h1>
+			<div class="smalltitle">
+				<p class="small">当前用户:</p><p class="small"><%= user %></p><a class="small link" href="/logout">&nbsp&nbsp退出&nbsp&nbsp</a>
+			</div>
 			<ul id="my_device"></ul>
 		</div>
 		<div class="right">

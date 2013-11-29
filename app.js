@@ -48,6 +48,7 @@ if ('development' == app.get('env')) {
 // Get
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/logout', user.logout);
 app.get('/userinfo', user.userinfo);
 app.get('/websocket', function(req, res){
     res.render('socket');

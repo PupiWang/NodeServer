@@ -27,4 +27,5 @@ exports.getDownloadUrl = function(req,res){
 
 exports.uploadCallback = function(req,res){
 	console.log(req.body);
+	res.end();
 }

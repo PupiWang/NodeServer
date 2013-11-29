@@ -29,7 +29,7 @@ exports.signup = function(req, res){
         var s = 'select * from user where email = "' + email + '"';
 
         sql.execute(s,function(err,rows,fields){
-            
+
             if(rows.length >= 1){
                 res.send('email already exist');
                 return;
@@ -79,8 +79,13 @@ exports.login = function(req, res){
 
 };
 
+exports.logout = function(req,res){
+    req.session.role = '';
+    res.redirect('/');
+}
+
 exports.userinfo = function(req, res){
 
-	res.render('userInfo',{title:req.session.role});
+	res.render('userInfo',{user:req.session.role});
 
 }
