@@ -82,7 +82,7 @@
 			<lable>设备ID：</lable><input id="device_id" placeholder="位于设备底部的18位编码"/>
 			<button id="add">添加</button>
 			<br><button id="pic">拍照</button><button id="rec">录像</button><br>
-			<img src="">
+			<img id="img" src="">
 		</div>
 	</div>
 	<script src="\javascripts\jquery-1.10.2.min.js"></script>
@@ -100,6 +100,7 @@
 
 		socket.on('data',function(data){
 			console.log(data);
+			$('#img')[0].src = data;
 		})
 
 		$('#pic').click(function(){
