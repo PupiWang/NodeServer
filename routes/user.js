@@ -29,10 +29,16 @@ exports.signup = function(req, res){
         sql.execute(s,function(err,rows,fields){
 
             if(rows.length >= 1){
+
                 res.send('email already exist');
                 return;
+
             }else {
-                s = 'insert into user (email,password) VALUES ("' + email + '","' + MD5(password) + '")';
+
+                var time = new Date().getTime();
+
+                s = 'insert into user (email,password,datetime_signup,datetime_lastlogin) VALUES ("'
+                     + email + '","' + MD5(password) + '",' + time + ',' + time + ')';
 
                 sql.execute(s,function(err, rows, fields){
                     if (err) {
@@ -47,7 +53,9 @@ exports.signup = function(req, res){
         })
 
     } else {
+
         res.send('the confirm one is not the same as password');
+
     }
 
 };
@@ -66,8 +74,21 @@ exports.login = function(req, res){
                 console.log(err);
             } else {
                 if (rows.length == 1 && rows[0].password == MD5(password)) {
-                    req.session.role = email;
-                    res.send('/userinfo');
+
+                    var time = new Date().getTime();
+
+                    s = 'UPDATE user SET datetime_lastlogin = ' + time +' WHERE email = "' + email + '"';
+
+                    sql.execute(s,function(err, rows, fields){
+                        if (err) {
+                            console.log(err);
+                            res.send('error');
+                        } else {
+                            req.session.role = email;
+                            res.send('/userinfo');
+                        }
+                    })
+
                 } else {
                     res.send('password error');
                 }

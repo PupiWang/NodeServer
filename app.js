@@ -14,7 +14,7 @@ var routes = require('./routes'),
 // Server initing...
 var app = express(),
 	server = require('http').createServer(app),
-	io= require('socket.io').listen(server);
+	io= require('socket.io').listen(server , { log : false });
 
 // All environments
 app.set('port', process.env.PORT || 80);

@@ -1,6 +1,3 @@
-package com.chrisdew.buftest;
-
 message BufTest {
-  required float num  = 1;
-  required string payload = 2;
+  optional int32 num  = 1;
 }

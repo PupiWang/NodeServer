@@ -35,16 +35,6 @@ var server = net.createServer(function(socket){
     socket.setEncoding('binary');
     exports.serv_sockets.push(socket);
 
-    // var fs = require('fs');
-    // var Schema = require('protobuf').Schema;
-    // var schema = new Schema(fs.readFileSync('buftest.desc'));
-
-    // var BufTest = schema['BufTest'];
-
-    // console.log(BufTest);
-
-    // socket.write(BufTest.serialize({num:0x01}));
-
     //超时事件
 	// socket.setTimeout(timeout,function(){
 	// 	console.log('连接超时');
