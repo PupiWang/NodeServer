@@ -33,8 +33,6 @@ var server = net.createServer(function(socket){
     socket.setEncoding('binary');
     exports.serv_sockets.push(socket);
 
-    socket.write(proto);
-
     //超时事件
 	// socket.setTimeout(timeout,function(){
 	// 	console.log('连接超时');
