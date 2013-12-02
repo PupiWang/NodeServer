@@ -39,7 +39,7 @@ exports.uploadCallback = function(req,res){
 	var baseUrl = qiniu.rs.makeBaseUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
 	var policy = new qiniu.rs.GetPolicy();
 
-	var url = policy.makeRequest(baseUrl) + '?imageView/1/w/320/h/240';
+	var url = policy.makeRequest(baseUrl);
 
 	for (var i = client_sockets.length - 1; i >= 0; i--) {
         client_sockets[i].emit('data',url);
