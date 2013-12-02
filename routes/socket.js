@@ -13,15 +13,17 @@ var listenPort = 7003;//监听端口
 exports.serv_sockets=[];
 exports.client_sockets=[];
 
-exports.protbufConvertor = function(obj) {
+exports.protbufConvertor = function(soc,obj) {
 
     var fs = require('fs');
     var Schema = require('protobuf').Schema;
-    var schema = new Schema(fs.readFileSync('amessage.desc'));
+    var schema = new Schema(fs.readFileSync('buftest.desc'));
 
-    var AMessage = schema['AMessage'];
+    var BufTest = schema['BufTest'];
 
-    return AMessage.serialize(obj);
+    console.log(BufTest.serialize(obj));
+
+    soc.write(BufTest.serialize(obj));
 
     // var outOb = BufTest.parse(proto);
 
@@ -32,6 +34,16 @@ var server = net.createServer(function(socket){
     console.log('connect: ' + socket.remoteAddress + ':' + socket.remotePort);
     socket.setEncoding('binary');
     exports.serv_sockets.push(socket);
+
+    // var fs = require('fs');
+    // var Schema = require('protobuf').Schema;
+    // var schema = new Schema(fs.readFileSync('buftest.desc'));
+
+    // var BufTest = schema['BufTest'];
+
+    // console.log(BufTest);
+
+    // socket.write(BufTest.serialize({num:0x01}));
 
     //超时事件
 	// socket.setTimeout(timeout,function(){

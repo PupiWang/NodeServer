@@ -91,11 +91,11 @@
 		var socket = io.connect('http://localhost');
 
 		$('#pic').click(function(){
-			socket.emit('oparation', {message_info:0x01});
+			socket.emit('oparation', {num:0x01});
 		})
 
 		$('#rec').click(function(){
-			socket.emit('oparation', {message_info:0x10});
+			socket.emit('oparation', {num:0x10});
 		})
 
 		$('#add').click(function(){

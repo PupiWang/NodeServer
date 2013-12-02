@@ -71,7 +71,16 @@ server.listen(app.get('port'), function(){
 		socket.on('oparation', function (data) {
 			console.log(data);
 			for(var i=0;i<server_socket.serv_sockets.length;i++){
-				server_socket.serv_sockets[i].write(server_socket.protbufConvertor(data));
+
+				var target = server_socket.serv_sockets[i];
+
+				console.log(target.remoteAddress + ':' + target.remotePort);
+
+				server_socket.protbufConvertor(target,data)
+
+				// target.write('socket');
+
+				// target.write(server_socket.protbufConvertor(data));
 			}
 		});
 	});
