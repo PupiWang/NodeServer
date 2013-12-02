@@ -1,0 +1,4 @@
+message AMessage
+{
+   optional int32 message_info=1;
+}

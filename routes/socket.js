@@ -10,29 +10,22 @@ var net = require('net');
 var timeout = 20000;//超时
 var listenPort = 7003;//监听端口
 
-var fs = require('fs');
-var Schema = require('protobuf').Schema;
-
-// "schema" contains all message types defined in buftest.proto|desc.
-var schema = new Schema(fs.readFileSync('buftest.desc'));
-
-// The "BufTest" message.
-var BufTest = schema['com.chrisdew.buftest.BufTest'];
-
-var ob = { num: 42 ,payload:'Hello World'};
-
-var proto = BufTest.serialize(ob);
-console.log(proto);
-
-var outOb = BufTest.parse(proto);
-console.log(outOb);
-console.log('unserialised:', JSON.stringify(outOb));
-
-var payload = new Buffer(outOb.payload);
-console.log(payload);
-
 exports.serv_sockets=[];
 exports.client_sockets=[];
+
+exports.protbufConvertor = function(obj) {
+
+    var fs = require('fs');
+    var Schema = require('protobuf').Schema;
+    var schema = new Schema(fs.readFileSync('amessage.desc'));
+
+    var AMessage = schema['AMessage'];
+
+    return AMessage.serialize(obj);
+
+    // var outOb = BufTest.parse(proto);
+
+}
 
 var server = net.createServer(function(socket){
     // 我们获得一个连接 - 该连接自动关联一个socket对象

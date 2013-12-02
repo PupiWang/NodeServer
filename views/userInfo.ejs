@@ -79,12 +79,26 @@
 		</div>
 		<div class="right">
 			<h1>添加设备</h1>
-			<lable>设备ID：</lable><input id="device_id" placeholder="位于设备底部的18位编码"/><button id="submit">添加</button>
+			<lable>设备ID：</lable><input id="device_id" placeholder="位于设备底部的18位编码"/>
+			<button id="add">添加</button>
+			<br><button id="pic">拍照</button><button id="rec">录像</button>
 		</div>
 	</div>
 	<script src="\javascripts\jquery-1.10.2.min.js"></script>
+	<script src="\socket.io\socket.io.js"></script>
 	<script type="text/javascript">
-		$('#submit').click(function(){
+
+		var socket = io.connect('http://localhost');
+
+		$('#pic').click(function(){
+			socket.emit('oparation', {message_info:0x01});
+		})
+
+		$('#rec').click(function(){
+			socket.emit('oparation', {message_info:0x10});
+		})
+
+		$('#add').click(function(){
 			var device_id=document.getElementById('device_id').value;
 			if(device_id.length!=18){
 				return;

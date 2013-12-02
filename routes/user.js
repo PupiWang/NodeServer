@@ -22,8 +22,6 @@ exports.signup = function(req, res){
 
     var MD5 = require('MD5');
 
-
-
     if(password == password_confirm){
 
         var s = 'select * from user where email = "' + email + '"';
