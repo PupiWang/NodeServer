@@ -128,8 +128,10 @@
 
 			if(data.state == 'on') {
 				$('#' + data.device_id).css('color','blue');
+				$('#' + data.device_id).html(data.device_id + '(在线)');
 			} else if(data.state == 'off') {
 				$('#' + data.device_id).css('color','black');
+				$('#' + data.device_id).html(data.device_id + '(离线)');
 			}
 
 		})
@@ -143,18 +145,18 @@
 		})
 
 		$('#pic').click(function(){
-			// if(!$('.active')[0]){
-			// 	alert('请选择设备！');
-			// 	return;
-			// }
+			if(!$('.active')[0]){
+				alert('请选择设备！');
+				return;
+			}
 
-			// if($('.active')[0].style.color !== 'blue'){
-			// 	alert('当前设备为离线状态！');
-			// 	return;
-			// }
+			if($('.active')[0].style.color !== 'blue'){
+				alert('当前设备为离线状态！');
+				return;
+			}
 			$('#img').hide();
 			$('#img_loading').show();
-			socket.emit('oparation', {from:user,to:$('.active')[0].innerHTML,cmd:0x01});
+			socket.emit('oparation', {from:user,to:$('.active')[0].id,cmd:0x01});
 		})
 
 		$('#rec').click(function(){
@@ -167,7 +169,9 @@
 				alert('当前设备为离线状态！');
 				return;
 			}
-			socket.emit('oparation', {from:user,to:$('.active')[0].innerHTML,cmd:0x10});
+			$('#img').hide();
+			$('#img_loading').show();
+			socket.emit('oparation', {from:user,to:$('.active')[0].id,cmd:0x10});
 		})
 
 		$('#add').click(function(){
@@ -189,7 +193,7 @@
 			for(var i=0;i<data.length;i++){
 				var li = document.createElement('li');
 				li.id = data[i].id_device;
-				li.innerHTML = data[i].id_device;
+				li.innerHTML = data[i].id_device + '(离线)';
 				document.getElementById('my_device').appendChild(li);
 			}
 			$($('#my_device')[0].children[0]).click();
