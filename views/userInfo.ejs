@@ -71,6 +71,9 @@
 			width:320px;
 			margin: 50px;
 		}
+		.active{
+			background-color: #aaa;
+		}
 	</style>
 </head>
 <body>
@@ -86,6 +89,8 @@
 			<h1>添加设备</h1>
 			<lable>设备ID：</lable><input id="device_id" placeholder=""/>
 			<button id="add">添加</button>
+			<br>
+			<p id="current_device">当前设备：</p>
 			<br><button id="pic">拍照</button><button id="rec">录像</button><br>
 			<img id="img" src="">
 		</div>
@@ -97,11 +102,15 @@
 		var reg = /:\/\/[^\/]+\//g,
 			url = location.href;
 
+		var user = $('title')[0].innerHTML;
+
 		url = url.indexOf('http://') == -1 ? 'http://' + url : url;
 		url = url.match(reg)[0].replace('://','').replace('/','');
 
 		var socket = io.connect(url);
 		// var socket = io.connect('http://115.29.179.7');
+
+		socket.emit('init', { user_id:user});
 
 		socket.on('data',function(data){
 			console.log(data);
@@ -118,12 +127,38 @@
 
 		})
 
+		$('#my_device').click(function(e){
+			if(e.target.tagName === 'LI'){
+				if($('.active')[0])	$('.active')[0].classList.remove('active');
+				e.target.classList.add('active');
+				$('#current_device')[0].innerHTML = '当前设备：' + e.target.innerHTML;
+			}
+		})
+
 		$('#pic').click(function(){
-			socket.emit('oparation', {from:'xx',to:'123',cmd:0x01});
+			if(!$('.active')[0]){
+				alert('请选择设备！');
+				return;
+			}
+
+			if($('.active')[0].style.color !== 'blue'){
+				alert('当前设备为离线状态！');
+				return;
+			}
+			socket.emit('oparation', {from:user,to:$('.active')[0].innerHTML,cmd:0x01});
 		})
 
 		$('#rec').click(function(){
-			socket.emit('oparation', {from:'xx',to:'234',cmd:0x10});
+			if(!$('.active')[0]){
+				alert('请选择设备！');
+				return;
+			}
+
+			if($('.active')[0].style.color !== 'blue'){
+				alert('当前设备为离线状态！');
+				return;
+			}
+			socket.emit('oparation', {from:user,to:$('.active')[0].innerHTML,cmd:0x10});
 		})
 
 		$('#add').click(function(){

@@ -64,6 +64,7 @@ var server = net.createServer(function(socket){
         console.log('socket error:' + exception);
         socket.end();
     });
+    
     //客户端关闭事件
     socket.on('close',function(data){
         exports.serv_sockets.pop(socket);

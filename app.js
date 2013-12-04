@@ -68,6 +68,19 @@ server.listen(app.get('port'), function(){
 	
 	io.sockets.on('connection', function (socket) {
 		server_socket.client_sockets.push(socket);
+
+		for (var i = exports.client_sockets.length - 1; i >= 0; i--) {
+            exports.client_sockets[i].emit('device',{'device_id':socket.device_id,'state':'on'})
+        };
+
+		socket.on('init',function(data){
+
+			socket.user_id = data.user_id;
+
+			console.log(socket.user_id);
+
+		})
+
 		socket.on('oparation', function (data) {
 
 			for(var i=0;i<server_socket.serv_sockets.length;i++){
