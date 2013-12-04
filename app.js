@@ -69,8 +69,8 @@ server.listen(app.get('port'), function(){
 	io.sockets.on('connection', function (socket) {
 		server_socket.client_sockets.push(socket);
 
-		for (var i = exports.client_sockets.length - 1; i >= 0; i--) {
-            exports.client_sockets[i].emit('device',{'device_id':socket.device_id,'state':'on'})
+		for (var i = server_socket.serv_sockets.length - 1; i >= 0; i--) {
+            server_socket.client_sockets[i].emit('device',{'device_id':server_socket.serv_sockets[i].device_id,'state':'on'})
         };
 
 		socket.on('init',function(data){
@@ -83,7 +83,7 @@ server.listen(app.get('port'), function(){
 
 		socket.on('oparation', function (data) {
 
-			for(var i=0;i<server_socket.serv_sockets.length;i++){
+			for(var i = 0 ; i < server_socket.serv_sockets.length ; i++){
 
 				var target = server_socket.serv_sockets[i];
 
