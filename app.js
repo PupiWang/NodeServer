@@ -69,18 +69,16 @@ server.listen(app.get('port'), function(){
 	io.sockets.on('connection', function (socket) {
 		server_socket.client_sockets.push(socket);
 		socket.on('oparation', function (data) {
-			console.log(data);
+
 			for(var i=0;i<server_socket.serv_sockets.length;i++){
 
 				var target = server_socket.serv_sockets[i];
 
-				console.log(target.remoteAddress + ':' + target.remotePort);
+				if(target.device_id == data.to){
+					server_socket.protbufConvertor(target,data);
+					break;
+				}
 
-				server_socket.protbufConvertor(target,data)
-
-				// target.write('socket');
-
-				// target.write(server_socket.protbufConvertor(data));
 			}
 		});
 	});

@@ -44,12 +44,18 @@ var server = net.createServer(function(socket){
     //接收到数据
     socket.on('data',function(data){
 
-        console.log('recv:' + data);
+        var fs = require('fs');
+        var Schema = require('protobuf').Schema;
+        var schema = new Schema(fs.readFileSync('buftest.desc'));
 
-        console.log(BufTest.parse(new Buffer(data)));
+        var BufTest = schema['BufTest'];
+
+        var obj = BufTest.parse(new Buffer(data));
+
+        socket.device_id = obj.from;
         
         for (var i = exports.client_sockets.length - 1; i >= 0; i--) {
-            exports.client_sockets[i].emit('data',data)
+            exports.client_sockets[i].emit('device',{'device_id':socket.device_id,'state':'on'});
         };
     });
 
@@ -60,8 +66,11 @@ var server = net.createServer(function(socket){
     });
     //客户端关闭事件
     socket.on('close',function(data){
-        console.log('close: ' + socket.remoteAddress + ' ' + socket.remotePort);
         exports.serv_sockets.pop(socket);
+        console.log('close: ' + socket.device_id);
+        for (var i = exports.client_sockets.length - 1; i >= 0; i--) {
+            exports.client_sockets[i].emit('device',{'device_id':socket.device_id,'state':'off'})
+        };
     });
 
 }).listen(listenPort);

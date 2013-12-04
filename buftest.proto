@@ -1,3 +1,5 @@
 message BufTest {
-  optional int32 num  = 1;
+  required string from = 1;
+  required string to = 2;
+  optional int32 cmd  = 3;
 }

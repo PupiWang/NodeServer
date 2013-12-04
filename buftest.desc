@@ -1,5 +1,8 @@
 
-'
-buftest.proto"
-BufTest
-num (
+A
+buftest.proto"0
+BufTest
+from (	
+
+to (	
+cmd (

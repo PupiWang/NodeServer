@@ -75,6 +75,7 @@
 				$('[name="email"]')[0].value = cookiemail;
 				$('[name="password"]')[0].value = cookiepassword;
 				$('#rememberme')[0].click();
+				$('#btn_login')[0].click();
 			}
 
 			$('#btn_login').click(function(event){
@@ -145,7 +146,7 @@
 
 					$.post('/signup',{'email':email,'password':password,'password_confirm':password_confirm},function(data){
 						
-						if(data == '/users') {
+						if(data == '/userinfo') {
 							location.href = data;
 						}else {
 							alert(data);

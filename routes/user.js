@@ -45,7 +45,7 @@ exports.signup = function(req, res){
                         console.log(err);
                     } else {
                         req.session.role = email;
-                        res.send('/users');
+                        res.send('/userinfo');
                     }
                 });
 

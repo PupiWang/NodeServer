@@ -7,7 +7,7 @@ exports.getUploadToken = function(req,res){
 	var putPolicy = new qiniu.rs.PutPolicy('ov-orange-private');
 		putPolicy.callbackUrl = 'http://115.29.179.7/uploadCallback';
 		putPolicy.callbackBody = 'bucket=$(bucket)&etag=$(etag)&fname=$(fname)&fsize=$(fsize)' + 
-								 '&mimeType=$(mimeType)&imageInfo=$(imageInfo)' + 
+								 '&mimeType=$(mimeType)&imageInfo=$(imageInfo)&user_id=$(x:user_id)' + 
 								 '&width=$(imageInfo.width)&height=$(imageInfo.height)' + 
 								 '&format=$(imageInfo.format)&endUser=$(endUser)' + 
 								 '&exif=$(exif)&ApertureValue=$(exif.ApertureValue)&val=$(exif.ApertureValue.val)';
@@ -42,7 +42,9 @@ exports.uploadCallback = function(req,res){
 	var url = policy.makeRequest(baseUrl);
 
 	for (var i = client_sockets.length - 1; i >= 0; i--) {
-        client_sockets[i].emit('data',url);
+		if(client_sockets[i].id == req.body.user_id){
+			client_sockets[i].emit('data',url);
+		}
     };
 
 }

@@ -52,13 +52,14 @@
 			padding-top: 0px;
 			margin-top: 0px;
 			text-align: right;
-			font-size: 8px;
+			font-size: 12px;
 			color: #888;
 			display: inline;
 		}
 		.link{
 			text-decoration: none;
 			cursor: pointer;
+			color: red;
 		}
 		.link:hover{
 			color: blue;
@@ -77,13 +78,13 @@
 		<div class="left">
 			<h1 id="title1">我的设备</h1>
 			<div class="smalltitle">
-				<p class="small">当前用户:</p><p class="small"><%= user %></p><a class="small link" href="/logout">&nbsp&nbsp退出&nbsp&nbsp</a>
+				<p class="small">当前用户:</p><p class="small"><%= user %></p><a class="small link" href="/logout">&nbsp退出&nbsp</a>
 			</div>
 			<ul id="my_device"></ul>
 		</div>
 		<div class="right">
 			<h1>添加设备</h1>
-			<lable>设备ID：</lable><input id="device_id" placeholder="位于设备底部的18位编码"/>
+			<lable>设备ID：</lable><input id="device_id" placeholder=""/>
 			<button id="add">添加</button>
 			<br><button id="pic">拍照</button><button id="rec">录像</button><br>
 			<img id="img" src="">
@@ -107,19 +108,27 @@
 			$('#img')[0].src = data;
 		})
 
+		socket.on('device',function(data){
+
+			if(data.state == 'on') {
+				$('#' + data.device_id).css('color','blue');
+			} else if(data.state == 'off') {
+				$('#' + data.device_id).css('color','black');
+			}
+
+		})
+
 		$('#pic').click(function(){
-			socket.emit('oparation', {num:0x01});
+			socket.emit('oparation', {from:'xx',to:'123',cmd:0x01});
 		})
 
 		$('#rec').click(function(){
-			socket.emit('oparation', {num:0x10});
+			socket.emit('oparation', {from:'xx',to:'234',cmd:0x10});
 		})
 
 		$('#add').click(function(){
 			var device_id=document.getElementById('device_id').value;
-			if(device_id.length!=18){
-				return;
-			}
+
 			$.post('/addDevice',{'device_id':device_id},function(data){
 				console.log(data);
 				if(data != 'ok') {
@@ -135,7 +144,8 @@
 		$.get('/devices',function(data){
 			for(var i=0;i<data.length;i++){
 				var li = document.createElement('li');
-				li.innerHTML=data[i].id_device;
+				li.id = data[i].id_device;
+				li.innerHTML = data[i].id_device;
 				document.getElementById('my_device').appendChild(li);
 			}
 		})
