@@ -140,7 +140,7 @@
 			if(e.target.tagName === 'LI'){
 				if($('.active')[0])	$('.active')[0].classList.remove('active');
 				e.target.classList.add('active');
-				$('#current_device')[0].innerHTML = '当前设备：' + e.target.innerHTML;
+				$('#current_device')[0].innerHTML = '当前设备：' + e.target.id;
 			}
 		})
 
