@@ -182,10 +182,13 @@
 				if(data != 'ok') {
 					alert(data);
 					return;
+				} else {
+					location.href = location.href;
 				}
-				var new_device=document.createElement('li');
-				$(new_device).text(device_id);
-				document.getElementById('my_device').appendChild(new_device);
+				// var new_device=document.createElement('li');
+				// new_device.id = device_id;
+				// $(new_device).text(device_id + '(离线)');
+				// document.getElementById('my_device').appendChild(new_device);
 			})
 		})
 
