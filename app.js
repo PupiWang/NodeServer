@@ -70,7 +70,7 @@ server.listen(app.get('port'), function(){
 		server_socket.client_sockets.push(socket);
 
 		for (var i = server_socket.serv_sockets.length - 1; i >= 0; i--) {
-            server_socket.client_sockets[i].emit('device',{'device_id':server_socket.serv_sockets[i].device_id,'state':'on'})
+            socket.emit('device',{'device_id':server_socket.serv_sockets[i].device_id,'state':'on'})
         };
 
 		socket.on('init',function(data){

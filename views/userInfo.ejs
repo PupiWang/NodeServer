@@ -69,7 +69,12 @@
 		}
 		#img{
 			width:320px;
-			margin: 50px;
+			margin: 55px;
+			display: none;
+		}
+		#img_loading{
+			margin:100px 200px;
+			display: none;
 		}
 		.active{
 			background-color: #aaa;
@@ -92,7 +97,8 @@
 			<br>
 			<p id="current_device">当前设备：</p>
 			<br><button id="pic">拍照</button><button id="rec">录像</button><br>
-			<img id="img" src="">
+			<img id="img" src=""><br>
+			<img id="img_loading" src="/images/loading.gif">
 		</div>
 	</div>
 	<script src="\javascripts\jquery-1.10.2.min.js"></script>
@@ -113,8 +119,9 @@
 		socket.emit('init', { user_id:user});
 
 		socket.on('data',function(data){
-			console.log(data);
+			$('#img_loading').hide();
 			$('#img')[0].src = data;
+			$('#img').show();
 		})
 
 		socket.on('device',function(data){
@@ -136,15 +143,17 @@
 		})
 
 		$('#pic').click(function(){
-			if(!$('.active')[0]){
-				alert('请选择设备！');
-				return;
-			}
+			// if(!$('.active')[0]){
+			// 	alert('请选择设备！');
+			// 	return;
+			// }
 
-			if($('.active')[0].style.color !== 'blue'){
-				alert('当前设备为离线状态！');
-				return;
-			}
+			// if($('.active')[0].style.color !== 'blue'){
+			// 	alert('当前设备为离线状态！');
+			// 	return;
+			// }
+			$('#img').hide();
+			$('#img_loading').show();
 			socket.emit('oparation', {from:user,to:$('.active')[0].innerHTML,cmd:0x01});
 		})
 
@@ -183,6 +192,7 @@
 				li.innerHTML = data[i].id_device;
 				document.getElementById('my_device').appendChild(li);
 			}
+			$($('#my_device')[0].children[0]).click();
 		})
 	</script>
 </body>
