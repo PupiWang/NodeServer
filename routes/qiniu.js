@@ -44,14 +44,14 @@ exports.uploadCallback = function(req,res){
 
 	var sql = require('./sql');
 
-	var s = 'INSERT INTO picture_device (key, id_device, datetime_create) VALUES ("'+ 
+	var s = 'INSERT INTO picture_device (`key`, id_device, datetime_create) VALUES ("'+ 
 			req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time + ')';
 
 	sql.execute(s,function(err, rows, fields) {
         if (err) throw err;
     });
 
-    s = 'INSERT INTO resource_picture (bucket, key, name, size, type, datetime_upload) VALUES ("' +
+    s = 'INSERT INTO resource_picture (bucket, `key`, name, size, type, datetime_upload) VALUES ("' +
     	req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' + 
     	req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time + ')';
 

@@ -206,6 +206,7 @@
 
 			if(!device_id){
 				alert('请填写设备号');
+				return;
 			}
 
 			$.post('/addDevice',{'device_id':device_id},function(data){
@@ -225,12 +226,16 @@
 
 		$('#modifyname').on('click',function(){
 			var name = $('#device_name')[0].value;
-			$.post('/modifydevicename',{'name':name,'device_id':$('.active')[0].id},function(data){
-				console.log(data);
-				if(data == 'ok'){
-					location.href = location.href;
-				}
-			})
+			if($('.active')[0] && name){
+				$.post('/modifydevicename',{'name':name,'device_id':$('.active')[0].id},function(data){
+					if(data === 'ok'){
+						location.href = location.href;
+					}
+				})
+			}else{
+				alert('呵呵');
+			}
+			
 		})
 
 		$.get('/devices',function(data){
