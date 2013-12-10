@@ -50,8 +50,14 @@ var server = net.createServer(function(socket){
 
         var BufTest = schema['BufTest'];
 
-        var obj = BufTest.parse(new Buffer(data));
+        try{
+            var obj = BufTest.parse(new Buffer(data));
+        }catch(e){
+            console.log(e);
+            return;
+        }
 
+        
         socket.device_id = obj.from;
         
         for (var i = exports.client_sockets.length - 1; i >= 0; i--) {

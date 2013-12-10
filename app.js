@@ -24,7 +24,7 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
+app.use(express.cookieParser('ov_orange'));
 app.use(express.session());
 
 app.use(function(req, res, next){
@@ -55,14 +55,15 @@ app.get('/websocket', function(req, res){
 });
 app.get('/devices',device.getDevices);
 app.get('/upToken',qn.getUploadToken);
-app.get('/downloadToken',qn.getDownloadUrl);
+// app.get('/downloadToken',qn.getDownloadUrl);
 app.get('/upLoadFile',routes.upLoadFile);
 
 // Post
 app.post('/login', user.login);
 app.post('/signup', user.signup);
 app.post('/adddevice',device.addDevice);
-app.post('/uploadCallback',qn.uploadCallback)
+app.post('/uploadCallback',qn.uploadCallback);
+app.post('/modifydevicename', device.modifyName);
 
 server.listen(app.get('port'), function(){
 	

@@ -33,7 +33,24 @@ exports.addDevice = function(req,res){
 			return;
 		}else {
 
-			s = 'insert into user_device (email,id_device) VALUES ("' + email + '","' + id_device + '")';
+			s = 'select * from device where id_device = "' + id_device + '"';
+
+			sql.execute(s,function(err, rows, fields){
+		        if(err){
+		            console.log(err);
+		        }else {
+		        	if(!rows.length) {
+		        		var s = 'insert into device (id_device,date_activation) VALUES ("' + id_device + '",' + new Date().getTime() + ')';
+		        		sql.execute(s,function(err, rows, fields){
+		        			if(err){
+					            console.log(err);
+					        }
+		        		})
+		        	}
+		        }
+		    });
+
+			s = 'insert into user_device (email,id_device,display_name) VALUES ("' + email + '","' + id_device + '","' + id_device + '")';
 
 			sql.execute(s,function(err, rows, fields){
 		        if(err){
@@ -47,3 +64,21 @@ exports.addDevice = function(req,res){
 	})
 	
 };
+
+exports.modifyName = function(req,res){
+
+	var email = req.session.role,
+		device_id = req.body.device_id,
+		name = req.body.name;
+
+	var s = 'UPDATE user_device SET display_name = "' + name +'" WHERE email = "' + email + '" AND id_device = "' + device_id + '"';
+
+	sql.execute(s,function(err, rows, fields){
+		if(err) {
+			console.log(err);
+		}else {
+			res.send('ok');
+		}
+	})
+
+}

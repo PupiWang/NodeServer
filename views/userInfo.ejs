@@ -39,7 +39,7 @@
 		}
 		ul{
 			list-style: none;
-			padding-left: 20px;
+			padding-left: 15px;
 		}
 		form{
 			padding-left: 30px;
@@ -79,6 +79,22 @@
 		.active{
 			background-color: #aaa;
 		}
+		#adddevice{
+			position: absolute;
+			bottom: 10px;
+		}
+		#device_id{
+			width: 120px;
+		}
+		#action{
+			position: absolute;
+			bottom: 10px;
+			text-align: right;
+			width: 95%;
+		}
+		#pic,#rec{
+			float: right;
+		}
 	</style>
 </head>
 <body>
@@ -89,16 +105,20 @@
 				<p class="small">当前用户:</p><p class="small"><%= user %></p><a class="small link" href="/logout">&nbsp退出&nbsp</a>
 			</div>
 			<ul id="my_device"></ul>
+			<div id="adddevice">
+				<lable>设备ID：</lable><input id="device_id" placeholder=""/><button id="add">添加</button>
+			</div>
 		</div>
 		<div class="right">
-			<h1>添加设备</h1>
-			<lable>设备ID：</lable><input id="device_id" placeholder=""/>
-			<button id="add">添加</button>
-			<br>
+			<h1>设备操作</h1>
 			<p id="current_device">当前设备：</p>
-			<br><button id="pic">拍照</button><button id="rec">录像</button><br>
+			<p id="name_device">设备名称：<input id="device_name"><button id="modifyname">修改</button></p>
+			<p id="status_device">状态：</p>
 			<img id="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
+			<div id="action">
+				<button id="pic">拍照</button><button id="rec">录像</button>
+			</div>
 		</div>
 	</div>
 	<script src="\javascripts\jquery-1.10.2.min.js"></script>
@@ -126,12 +146,17 @@
 
 		socket.on('device',function(data){
 
+			var tag = $('#' + data.device_id)[0];
+			var $tag = $('#' + data.device_id);
+
 			if(data.state == 'on') {
-				$('#' + data.device_id).css('color','blue');
-				$('#' + data.device_id).html(data.device_id + '(在线)');
+				$tag.css('color','blue');
+				$tag.html(data.device_id + '(在线)');
+				tag.setAttribute('OnOff','在线');
 			} else if(data.state == 'off') {
-				$('#' + data.device_id).css('color','black');
-				$('#' + data.device_id).html(data.device_id + '(离线)');
+				$tag.css('color','black');
+				$tag.html(data.device_id + '(离线)');
+				tag.setAttribute('OnOff','离线');
 			}
 
 		})
@@ -141,6 +166,8 @@
 				if($('.active')[0])	$('.active')[0].classList.remove('active');
 				e.target.classList.add('active');
 				$('#current_device')[0].innerHTML = '当前设备：' + e.target.id;
+				$('#device_name')[0].value = e.target.getAttribute('device_name');
+				$('#status_device')[0].innerHTML = '状态：' + e.target.getAttribute('OnOff');
 			}
 		})
 
@@ -175,7 +202,11 @@
 		})
 
 		$('#add').click(function(){
-			var device_id=document.getElementById('device_id').value;
+			var device_id = document.getElementById('device_id').value;
+
+			if(!device_id){
+				alert('请填写设备号');
+			}
 
 			$.post('/addDevice',{'device_id':device_id},function(data){
 				console.log(data);
@@ -192,12 +223,24 @@
 			})
 		})
 
+		$('#modifyname').on('click',function(){
+			var name = $('#device_name')[0].value;
+			$.post('/modifydevicename',{'name':name,'device_id':$('.active')[0].id},function(data){
+				console.log(data);
+				if(data == 'ok'){
+					location.href = location.href;
+				}
+			})
+		})
+
 		$.get('/devices',function(data){
 			for(var i=0;i<data.length;i++){
 				var li = document.createElement('li');
 				li.id = data[i].id_device;
-				li.innerHTML = data[i].id_device + '(离线)';
+				li.innerHTML = data[i].display_name + '(离线)';
 				document.getElementById('my_device').appendChild(li);
+				li.setAttribute('device_name',data[i].display_name);
+				li.setAttribute('OnOff','离线');
 			}
 			$($('#my_device')[0].children[0]).click();
 		})
