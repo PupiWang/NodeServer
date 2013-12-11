@@ -1,29 +1,29 @@
 
-exports.execute = function(sql,callback){
-	var mysql = require('mysql');
+exports.execute = function (sql, callback) {
+  var mysql = require('mysql');
 
-	var connection = mysql.createConnection({
-	  host     : 'onoveinmysql.mysql.rds.aliyuncs.com',
-	  user     : 'pupi',
-	  database : 'onevo',
-	  password : 'PUPI_1'
-	});
+  var connection = mysql.createConnection({
+    host     : 'onoveinmysql.mysql.rds.aliyuncs.com',
+    user     : 'pupi',
+    database : 'onevo',
+    password : 'PUPI_1'
+  });
 
-	// var connection = mysql.createConnection({
-	// 	host     : 'localhost',
-	// 	user     : 'root',
-	// 	database : 'onevo',
-	// 	password : 'root'
-	// });
+  // var connection = mysql.createConnection({
+  // host     : 'localhost',
+  // user     : 'root',
+  // database : 'onevo',
+  // password : 'root'
+  // });
 
-	connection.connect(function(){
-		console.log('database');
-		console.log(sql);
-		console.log(callback);
-	});
+  connection.connect(function () {
+    console.log('database');
+    console.log(sql);
+    console.log(callback);
+  });
 
-	connection.query(sql,callback);
+  connection.query(sql, callback);
 
-	connection.end();
-	
-}
+  connection.end();
+
+};
