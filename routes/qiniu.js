@@ -7,7 +7,7 @@ var getDownloadUrl = function (domain, key) {
   var baseUrl = qiniu.rs.makeBaseUrl(domain, key),
     policy = new qiniu.rs.GetPolicy();
 
-  return (policy.makeRequest(baseUrl));
+  return policy.makeRequest(baseUrl);
 };
 
 exports.getUploadToken = function (req, res) {
