@@ -29,12 +29,20 @@ app.use(express.session());
 
 app.use(function (req, res, next) {
   var url = req.originalUrl;
-  if (url !== '/upToken' && url !== '/signup' && url !== '/' && url !== '/javascripts/jquery-1.10.2.min.js'
-      && url !== '/login' && !req.session.role && url !== '/uploadCallback' && url !== '/javascripts/jquery.cookie.js') {
+
+  var jsPattern = /^\/javascripts\//,
+    cssPattern = /^\/css\//,
+    fontsPattern = /^\/fonts\//,
+    imgPattern = /^\/images\//;
+
+  var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) || imgPattern.test(url);
+
+  if (req.session.role || isStatic || url === '/' || url === '/login' || url === '/uploadCallback' || url === '/upToken' || url === '/signup') {
+    next();
+  } else {
     return res.redirect("/");
   }
 
-  next();
 });
 
 app.use(app.router);

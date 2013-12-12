@@ -1,13 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+	<link rel="stylesheet" href="\css\bootstrap.min.css">
 	<meta charset="utf-8">
 	<title><%= user %></title>
 	<style type="text/css">
 		.main{
 			position: absolute;
 			margin:auto;
-			width: 700px;
+			width: 800px;
 			height: 600px;
 			left: 0px;
 			right: 0px;
@@ -20,13 +21,13 @@
 			position: relative;
 			height: 100%;
 			background-color: #ccc;
-			width: 240px;
+			width: 280px;
 			padding-left: 10px; 
 			overflow: auto;
 		}
 		.right{
 			background-color: #aaa;
-			width: 440px;
+			width: 520px;
 		}
 		li{
 			margin-top: 10px;
@@ -84,7 +85,7 @@
 			bottom: 10px;
 		}
 		#device_id{
-			width: 120px;
+			width: 150px;
 		}
 		#action{
 			position: absolute;
@@ -94,6 +95,10 @@
 		}
 		#pic,#rec{
 			float: right;
+			margin: 5px;
+		}
+		#add,#modifyname{
+			margin-left: 10px;
 		}
 	</style>
 </head>
@@ -106,22 +111,47 @@
 			</div>
 			<ul id="my_device"></ul>
 			<div id="adddevice">
-				<lable>设备ID：</lable><input id="device_id" placeholder=""/><button id="add">添加</button>
+				<lable>设备ID：</lable><input id="device_id" placeholder=""/><button class="btn btn-info btn-sm" id="add">添加</button>
 			</div>
 		</div>
 		<div class="right">
 			<h1>设备操作</h1>
 			<p id="current_device">当前设备：</p>
-			<p id="name_device">设备名称：<input id="device_name"><button id="modifyname">修改</button></p>
+			<p id="name_device">设备名称：<input style="width:300px;" id="device_name"><button class="btn btn-warning btn-sm" id="modifyname">修改</button></p>
 			<p id="status_device">状态：</p>
+			<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#picTable">照片列表</button>
 			<img id="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
-				<button id="pic">拍照</button><button id="rec">录像</button>
+				<button class="btn btn-primary btn-sm" id="pic">拍照</button><button class="btn btn-primary btn-sm" id="rec">录像</button>
 			</div>
 		</div>
 	</div>
+
+	<div id="picTable" class="modal fade">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">照片列表</h4>
+	      </div>
+	      <div class="modal-body">
+        	<table class="table table-striped table-hover">
+        	  <thead>
+        	  	<tr><td>文件名</td><td>上传日期</td><td>格式</td><td>分辨率</td><td>资源名</td><td>文件大小</td></tr>
+        	  </thead>
+        	  <tbody>
+        	  </tbody>
+        	</table>
+	      </div>
+	      <div class="modal-footer">
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
 	<script src="\javascripts\jquery-1.10.2.min.js"></script>
+	<script src="\javascripts\bootstrap.min.js"></script>
 	<script src="\socket.io\socket.io.js"></script>
 	<script type="text/javascript">
 
