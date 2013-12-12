@@ -100,6 +100,13 @@
 		#add,#modifyname{
 			margin-left: 10px;
 		}
+		.modal-body{
+			overflow-y: auto; 
+			max-height: 500px;
+		}
+		.modal-dialog{
+			width: 70%;
+		}
 	</style>
 </head>
 <body>
@@ -141,6 +148,18 @@
         	  	<tr><td>文件名</td><td>上传日期</td><td>格式</td><td>分辨率</td><td>资源名</td><td>文件大小</td></tr>
         	  </thead>
         	  <tbody>
+        	  	<% if (pics.length) { %>
+	        	  	<% pics.forEach(function(pic){ %>
+	        	  	  <tr>
+	        	  	  	<td><%= pic.name %></td>
+	        	  	  	<td><%= pic.datetime_upload %></td>
+	        	  	  	<td><%= pic.type %></td>
+	        	  	  	<td><%= pic.type %></td>
+	        	  	  	<td><%= pic.key %></td>
+	        	  	  	<td><%= pic.size %></td>
+	        	  	  </tr>
+		          	<% }) %>
+		        <% } %>
         	  </tbody>
         	</table>
 	      </div>

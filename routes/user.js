@@ -101,5 +101,14 @@ exports.logout = function (req, res) {
 };
 
 exports.userinfo = function (req, res) {
-  res.render('userInfo', {user: req.session.role});
+  var s = 'SELECT * FROM resource_picture';
+
+  sql.execute(s, function (err, rows, fields) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render('userInfo', {user: req.session.role, pics: rows});
+    }
+  });
+
 };
