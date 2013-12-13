@@ -1,6 +1,10 @@
 
 exports.index = function (req, res) {
-  res.render('index', { title: 'Express' });
+  if (req.signedCookies.user) {
+    res.redirect('/userinfo');
+  } else {
+    res.render('index', { title: 'Express' });
+  }
 };
 
 exports.upLoadFile = function (req, res) {

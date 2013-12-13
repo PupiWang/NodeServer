@@ -60,7 +60,10 @@ exports.signup = function (req, res) {
 exports.login = function (req, res) {
 
   var email = req.body.email,
-    password = req.body.password;
+    password = req.body.password,
+    rememberme = req.body.rememberme;
+
+  console.log('rememberme is ' + rememberme);
 
   var MD5 = require('MD5');
 
@@ -81,7 +84,15 @@ exports.login = function (req, res) {
               console.log(err);
               res.send('error');
             } else {
-              req.session.role = email;
+              // req.session.role = email;
+              if (!rememberme) {
+                console.log('setttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt');
+                res.cookie('name', email, { maxAge: 900000, httpOnly: true });
+              } else {
+                console.log('clearrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+                req.session.role = email;
+                res.clearCookie('name');
+              }
               res.send('/userinfo');
             }
           });
@@ -97,6 +108,7 @@ exports.login = function (req, res) {
 
 exports.logout = function (req, res) {
   req.session.role = '';
+  res.clearCookie('name');
   res.redirect('/');
 };
 

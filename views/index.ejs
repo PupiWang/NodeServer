@@ -61,17 +61,8 @@
 		</div>
 		<script src="\javascripts\jquery-1.10.2.min.js"></script>
 		<script src="\javascripts\bootstrap.min.js"></script>
-		<script src="\javascripts\jquery.cookie.js"></script>
 		<script type="text/javascript">
-			var cookiemail = $.cookie('email'),
-				cookiepassword = $.cookie('password');
 
-			if(cookiemail && cookiepassword){
-				$('[name="email"]')[0].value = cookiemail;
-				$('[name="password"]')[0].value = cookiepassword;
-				$('#rememberme')[0].click();
-				$('#btn_login')[0].click();
-			}
 
 			$('#btn_login').click(function(event){
 
@@ -80,21 +71,8 @@
 					check = $('#rememberme')[0].checked;
 
 				if(email && password){
-					$.post('/login',{'email':email,'password':password},function(data){
+					$.post('/login',{'email':email,'password':password, 'rememberme': check},function(data){
 						if(data == '/userinfo') {
-							if(check){
-
-								if(email == cookiemail && password == cookiepassword){
-									//todo
-								}else {
-									$.cookie('email',email, { expires: 14 });
-									$.cookie('password',password, { expires: 14 });
-								}
-							}else {
-								console.log('remove');
-								$.removeCookie('email');
-								$.removeCookie('password');
-							}
 
 							location.href = data;
 

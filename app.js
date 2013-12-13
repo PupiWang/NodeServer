@@ -28,6 +28,11 @@ app.use(express.cookieParser('ov_orange'));
 app.use(express.session());
 
 app.use(function (req, res, next) {
+
+  if (req.cookies.name) {
+    req.session.role = req.cookies.name;
+  }
+
   var url = req.originalUrl;
 
   var jsPattern = /^\/javascripts\//,
@@ -65,6 +70,7 @@ app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
 // app.get('/downloadToken',qn.getDownloadUrl);
 app.get('/upLoadFile', routes.upLoadFile);
+app.get('/getPicture', qn.getPictureDownloadUrl);
 
 // Post
 app.post('/login', user.login);

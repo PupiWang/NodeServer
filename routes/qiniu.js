@@ -10,6 +10,12 @@ var getDownloadUrl = function (domain, key) {
   return policy.makeRequest(baseUrl);
 };
 
+exports.getPictureDownloadUrl = function (req, res) {
+  var domain = 'ov-orange-private.u.qiniudn.com';
+  var key = req.body.key;
+  res.send(getDownloadUrl(domain, key));
+};
+
 exports.getUploadToken = function (req, res) {
   var qiniu = require('qiniu');
   qiniu.conf.ACCESS_KEY = 'Q-IdFFb3t_WoE_u_cHHB0cG5TM4ABtetTlsBsXW6';
@@ -44,9 +50,10 @@ exports.uploadCallback = function (req, res) {
       }
     });
 
-    s = 'INSERT INTO resource_picture (bucket, `key`, name, size, type, datetime_upload) VALUES ("' +
+    s = 'INSERT INTO resource_picture (bucket, `key`, name, size, type, datetime_upload, width, height) VALUES ("' +
         req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' +
-        req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time + ')';
+        req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time + ',' +
+        req.body.width + ',' + req.body.height + ')';
 
     sql.execute(s, function (err, rows, fields) {
       if (err) {
