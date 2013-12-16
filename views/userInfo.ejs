@@ -305,11 +305,10 @@
 			var key = $(downTD).prev()[0].innerHTML;
 
 			if (key) {
-				$.get('/getPicture',{'key': key}, function (data) {
+				$.post('/getPicture',{'key': key}, function (data) {
 					window.open(data);
 				});
 			}
-
 			
 		});
 	</script>

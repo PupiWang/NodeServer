@@ -11,9 +11,11 @@ var getDownloadUrl = function (domain, key) {
 };
 
 exports.getPictureDownloadUrl = function (req, res) {
+  console.log(req.body);
   var domain = 'ov-orange-private.u.qiniudn.com';
   var key = req.body.key;
-  res.send(getDownloadUrl(domain, key));
+  var url = getDownloadUrl(domain, key);
+  res.send(url);
 };
 
 exports.getUploadToken = function (req, res) {
