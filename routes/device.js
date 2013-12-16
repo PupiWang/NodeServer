@@ -3,7 +3,7 @@ var sql = require('./sql');
 
 exports.getDevices = function (req, res) {
 
-  var email = req.session.role;
+  var email = req.signedCookies.user;
 
   var s = 'select * from user_device where email="' + email + '"';
 
@@ -19,7 +19,7 @@ exports.getDevices = function (req, res) {
 
 exports.addDevice = function (req, res) {
 
-  var email = req.session.role,
+  var email = req.signedCookies.user,
     id_device = req.body.device_id;
 
   var s = 'select * from user_device where email = "' + email + '" and id_device = "' + id_device + '"';
@@ -66,7 +66,7 @@ exports.addDevice = function (req, res) {
 
 exports.modifyName = function (req, res) {
 
-  var email = req.session.role,
+  var email = req.signedCookies.user,
     device_id = req.body.device_id,
     name = req.body.name;
 

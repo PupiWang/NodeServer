@@ -43,7 +43,8 @@ exports.signup = function (req, res) {
           if (err) {
             console.log(err);
           } else {
-            req.session.role = email;
+            res.cookie('user', email, {signed: true});
+            console.log('session');
             res.send('/userinfo');
           }
         });
@@ -60,10 +61,7 @@ exports.signup = function (req, res) {
 exports.login = function (req, res) {
 
   var email = req.body.email,
-    password = req.body.password,
-    rememberme = req.body.rememberme;
-
-  console.log('rememberme is ' + rememberme);
+    password = req.body.password;
 
   var MD5 = require('MD5');
 
@@ -84,12 +82,12 @@ exports.login = function (req, res) {
               console.log(err);
               res.send('error');
             } else {
-              // req.session.role = email;
-              if (rememberme) {
-                res.cookie('user', email, { maxAge: 1000 * 60 * 60 * 24 * 7});
+              if (req.body.rememberme === 'true') {
+                res.cookie('user', email, { maxAge: 1000 * 60 * 60 * 24 * 7, signed: true});
+                console.log('cookie');
               } else {
-                req.session.role = email;
-                res.clearCookie('user');
+                res.cookie('user', email, {signed: true});
+                console.log('session');
               }
               res.send('/userinfo');
             }
@@ -105,7 +103,6 @@ exports.login = function (req, res) {
 };
 
 exports.logout = function (req, res) {
-  req.session.role = null;
   res.clearCookie('user');
   res.redirect('/');
 };
@@ -117,7 +114,7 @@ exports.userinfo = function (req, res) {
     if (err) {
       console.log(err);
     } else {
-      res.render('userInfo', {user: req.session.role, pics: rows});
+      res.render('userInfo', {user: req.signedCookies.user, pics: rows});
     }
   });
 

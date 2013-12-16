@@ -25,31 +25,28 @@ app.use(express.favicon());
 app.use(express.cookieParser('ov_orange'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.session());
 
 app.use(function (req, res, next) {
 
-  if (req.cookies.user) {
-    console.log('Set Sessionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
-    req.session.role = req.cookies.user;
-  }
-
-  var url = req.originalUrl;
-
-  var jsPattern = /^\/javascripts\//,
-    cssPattern = /^\/css\//,
-    fontsPattern = /^\/fonts\//,
-    imgPattern = /^\/images\//;
-
-  var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) || imgPattern.test(url);
-
-  if (req.session.role || isStatic || url === '/' || url === '/login' || url === '/uploadCallback' || url === '/upToken' || url === '/signup') {
+  if (req.signedCookies && req.signedCookies.user) {
     next();
   } else {
-    console.log('You need login');
-    return res.redirect("/");
-  }
+    var url = req.originalUrl;
 
+    var jsPattern = /^\/javascripts\//,
+      cssPattern = /^\/css\//,
+      fontsPattern = /^\/fonts\//,
+      imgPattern = /^\/images\//;
+
+    var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) || imgPattern.test(url);
+
+    if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' || url === '/upToken' || url === '/signup') {
+      next();
+    } else {
+      console.log('You need login');
+      return res.redirect("/");
+    }
+  }
 });
 
 app.use(app.router);
