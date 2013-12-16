@@ -1,9 +1,9 @@
 
 exports.index = function (req, res) {
-  if (req.signedCookies.user) {
+  if (req.cookies.user) {
     res.redirect('/userinfo');
   } else {
-    res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Index' });
   }
 };
 

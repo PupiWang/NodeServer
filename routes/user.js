@@ -85,13 +85,11 @@ exports.login = function (req, res) {
               res.send('error');
             } else {
               // req.session.role = email;
-              if (!rememberme) {
-                console.log('setttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt');
-                res.cookie('name', email, { maxAge: 900000, httpOnly: true });
+              if (rememberme) {
+                res.cookie('user', email, { maxAge: 1000 * 60 * 60 * 24 * 7});
               } else {
-                console.log('clearrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
                 req.session.role = email;
-                res.clearCookie('name');
+                res.clearCookie('user');
               }
               res.send('/userinfo');
             }
@@ -107,8 +105,8 @@ exports.login = function (req, res) {
 };
 
 exports.logout = function (req, res) {
-  req.session.role = '';
-  res.clearCookie('name');
+  req.session.role = null;
+  res.clearCookie('user');
   res.redirect('/');
 };
 

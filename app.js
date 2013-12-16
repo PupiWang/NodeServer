@@ -21,16 +21,17 @@ app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
-app.use(express.logger('dev'));
+// app.use(express.logger('dev'));
+app.use(express.cookieParser('ov_orange'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('ov_orange'));
 app.use(express.session());
 
 app.use(function (req, res, next) {
 
-  if (req.cookies.name) {
-    req.session.role = req.cookies.name;
+  if (req.cookies.user) {
+    console.log('Set Sessionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn');
+    req.session.role = req.cookies.user;
   }
 
   var url = req.originalUrl;
@@ -45,6 +46,7 @@ app.use(function (req, res, next) {
   if (req.session.role || isStatic || url === '/' || url === '/login' || url === '/uploadCallback' || url === '/upToken' || url === '/signup') {
     next();
   } else {
+    console.log('You need login');
     return res.redirect("/");
   }
 
