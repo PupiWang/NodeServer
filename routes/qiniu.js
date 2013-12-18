@@ -39,12 +39,14 @@ exports.uploadCallback = function (req, res) {
   console.log(req.body);
   res.end();
 
-  try {
+  var sql = require('./sql');
 
-    var sql = require('./sql');
+  var s;
 
-    var s = 'INSERT INTO picture_device (`key`, id_device, datetime_create) VALUES ("' +
-            req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time + ')';
+  if (req.body.mimeType === 'image/jpeg') {
+    //图片
+    s = 'INSERT INTO picture_device (`key`, id_device, datetime_create) VALUES ("' +
+            req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time * 1000 + ')';
 
     sql.execute(s, function (err, rows, fields) {
       if (err) {
@@ -54,7 +56,7 @@ exports.uploadCallback = function (req, res) {
 
     s = 'INSERT INTO resource_picture (bucket, `key`, name, size, type, datetime_upload, width, height) VALUES ("' +
         req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' +
-        req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time + ',' +
+        req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time * 1000 + ',' +
         req.body.width + ',' + req.body.height + ')';
 
     sql.execute(s, function (err, rows, fields) {
@@ -75,8 +77,27 @@ exports.uploadCallback = function (req, res) {
       }
     }
 
-  } catch (e) {
-    console.log(e);
+  } else if (req.body.mimeType === 'video/mp4') {
+    //视频
+    s = 'INSERT INTO video_device (`key`, id_device, datetime_create) VALUES ("' +
+            req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time * 1000 + ')';
+
+    sql.execute(s, function (err, rows, fields) {
+      if (err) {
+        throw err;
+      }
+    });
+
+    s = 'INSERT INTO resource_video (bucket, `key`, name, size, type, datetime_upload) VALUES ("' +
+        req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' +
+        req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time * 1000 + ')';
+
+    sql.execute(s, function (err, rows, fields) {
+      if (err) {
+        throw err;
+      }
+    });
+
   }
 
 };

@@ -114,7 +114,7 @@
 		<div class="left">
 			<h1 id="title1">我的设备</h1>
 			<div class="smalltitle">
-				<p class="small">当前用户:</p><p class="small"><%= user %></p><a class="small link" href="/logout">&nbsp退出&nbsp</a>
+				<p class="small">当前用户:</p><p class="small"><%= user %></p><a class="small link" href="/logout">&nbsp;退出&nbsp;</a>
 			</div>
 			<ul id="my_device"></ul>
 			<div id="adddevice">
@@ -127,7 +127,9 @@
 			<p id="name_device">设备名称：<input style="width:300px;" id="device_name"><button class="btn btn-warning btn-sm" id="modifyname">修改</button></p>
 			<p id="status_device">状态：</p>
 			<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#picTable">照片列表</button>
-			<img id="img" src=""><br>
+			<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#videoTable">视频列表</button>
+			<br>
+			<imgid="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
 				<button class="btn btn-primary btn-sm" id="pic">拍照</button><button class="btn btn-primary btn-sm" id="rec">录像</button>
@@ -157,6 +159,40 @@
 	        	  	  	<td><%= pic.width + '*' + pic.height %></td>
 	        	  	  	<td><%= pic.size %></td>
 	        	  	  	<td><%= pic.key %></td>
+	        	  	  	<td><span class="glyphicon glyphicon-arrow-down"></span></td>
+	        	  	  </tr>
+		          	<% }) %>
+		        <% } %>
+        	  </tbody>
+        	</table>
+	      </div>
+	      <div class="modal-footer">
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<div id="videoTable" class="modal fade">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">视频列表</h4>
+	      </div>
+	      <div class="modal-body">
+        	<table class="table table-striped table-hover">
+        	  <thead>
+        	  	<tr><td>文件名</td><td>上传日期</td><td>格式</td><td>文件大小</td><td>资源名</td><td>下载</td></tr>
+        	  </thead>
+        	  <tbody>
+        	  	<% if (videos.length) { %>
+	        	  	<% videos.forEach(function(video){ %>
+	        	  	  <tr>
+	        	  	  	<td><%= video.name %></td>
+	        	  	  	<td><%= new Date(video.datetime_upload).toUTCString() %></td>
+	        	  	  	<td><%= video.type %></td>
+	        	  	  	<td><%= video.size %></td>
+	        	  	  	<td><%= video.key %></td>
 	        	  	  	<td><span class="glyphicon glyphicon-arrow-down"></span></td>
 	        	  	  </tr>
 		          	<% }) %>
@@ -306,7 +342,8 @@
 
 			if (key) {
 				$.post('/getPicture',{'key': key}, function (data) {
-					window.open(data);
+					// window.open(data);
+					locaton.href = data;
 				});
 			}
 			

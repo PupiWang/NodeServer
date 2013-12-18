@@ -110,12 +110,18 @@ exports.logout = function (req, res) {
 exports.userinfo = function (req, res) {
   var s = 'SELECT * FROM resource_picture';
 
-  sql.execute(s, function (err, rows, fields) {
+  sql.execute(s, function (err, rows_pic, fields) {
     if (err) {
       console.log(err);
     } else {
-      res.render('userInfo', {user: req.signedCookies.user, pics: rows});
+      s = 'SELECT * FROM resource_video';
+      sql.execute(s, function (err, rows_video, fields) {
+        if (err) {
+          console.log(err);
+        } else {
+          res.render('userInfo', {user: req.signedCookies.user, pics: rows_pic, videos: rows_video});
+        }
+      });
     }
   });
-
 };
