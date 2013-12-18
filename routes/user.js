@@ -119,6 +119,21 @@ exports.userinfo = function (req, res) {
         if (err) {
           console.log(err);
         } else {
+
+          var getUrl = require('./qiniu').getUrl;
+          var i = 0;
+          var obj;
+
+          for (i = rows_pic.length - 1; i >= 0; i--) {
+            obj = rows_pic[i];
+            obj.url = getUrl('ov-orange-private.u.qiniudn.com', obj.key);
+          }
+
+          for (i = rows_video.length - 1; i >= 0; i--) {
+            obj = rows_video[i];
+            obj.url = getUrl('ov-orange-private.u.qiniudn.com', obj.key);
+          }
+
           res.render('userInfo', {user: req.signedCookies.user, pics: rows_pic, videos: rows_video});
         }
       });

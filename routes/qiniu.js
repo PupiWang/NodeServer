@@ -10,6 +10,11 @@ var getDownloadUrl = function (domain, key) {
   return policy.makeRequest(baseUrl);
 };
 
+exports.getUrl = function (domain, key) {
+  var url = getDownloadUrl(domain, key);
+  return url;
+};
+
 exports.getPictureDownloadUrl = function (req, res) {
   console.log(req.body);
   var domain = 'ov-orange-private.u.qiniudn.com';

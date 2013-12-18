@@ -159,7 +159,7 @@
 	        	  	  	<td><%= pic.width + '*' + pic.height %></td>
 	        	  	  	<td><%= pic.size %></td>
 	        	  	  	<td><%= pic.key %></td>
-	        	  	  	<td><span class="glyphicon glyphicon-arrow-down"></span></td>
+	        	  	  	<td><a href=<%= '"' + pic.url + '"' %> target="_blank"><span class="glyphicon glyphicon-arrow-down"></span></a></td>
 	        	  	  </tr>
 		          	<% }) %>
 		        <% } %>
@@ -193,7 +193,7 @@
 	        	  	  	<td><%= video.type %></td>
 	        	  	  	<td><%= video.size %></td>
 	        	  	  	<td><%= video.key %></td>
-	        	  	  	<td><span class="glyphicon glyphicon-arrow-down"></span></td>
+	        	  	  	<td><a href=<%= '"' + video.url + '"' %> target="_blank"><span class="glyphicon glyphicon-arrow-down"></span></a></td>
 	        	  	  </tr>
 		          	<% }) %>
 		        <% } %>
@@ -336,18 +336,6 @@
 			$($('#my_device')[0].children[0]).click();
 		});
 
-		$('.glyphicon-arrow-down').on('click',function(){
-			var downTD = $(this).parent()[0];
-			var key = $(downTD).prev()[0].innerHTML;
-
-			if (key) {
-				$.post('/getPicture',{'key': key}, function (data) {
-					// window.open(data);
-					locaton.href = data;
-				});
-			}
-			
-		});
 	</script>
 </body>
 </html>
