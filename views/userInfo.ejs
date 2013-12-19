@@ -128,6 +128,7 @@
 			<imgid="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
+				<a id="video-link" href="" style="display: none;"></a><br>
 				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#picTable">照片列表</button>
 				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#videoTable">视频列表</button>
 				<button class="btn btn-primary btn-sm pull-right" id="pic">拍照</button>
@@ -225,9 +226,18 @@
 		socket.emit('init', { user_id:user});
 
 		socket.on('data',function(data){
-			$('#img_loading').hide();
-			$('#img')[0].src = data;
-			$('#img').show();
+			if(data.type === 'img'){
+				$('#img_loading').hide();
+				$('#img')[0].src = data.url;
+				$('#img').show();
+			} else if (data.type === 'video') {
+				$('#img_loading').hide();
+				$('#img').hide();
+				$('video-link')[0].href = data.url;
+				$('video-link')[0].innerHTML = data.url;
+				$('video-link').show();
+			}
+			
 		});
 
 		socket.on('oparation', function (data) {
@@ -245,7 +255,7 @@
 				} else if (data.cmd === 3) {
 					//结束录像
 					$('#img').hide();
-					$('#img_loading').hide();
+					$('#img_loading').show();
 					$('#rec-end').hide();
 					$('#rec').show();
 				}

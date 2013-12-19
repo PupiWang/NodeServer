@@ -50,7 +50,12 @@ exports.uploadCallback = function (req, res) {
 
   var sql = require('./sql');
 
-  var s;
+  var s, i;
+
+  var url;
+
+  var client_sockets = require('./socket').client_sockets;
+
 
   if (req.body.mimeType === 'image/jpeg') {
     //图片
@@ -74,15 +79,11 @@ exports.uploadCallback = function (req, res) {
       }
     });
 
-    var client_sockets = require('./socket').client_sockets;
+    url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
 
-    var url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
-
-    var i = client_sockets.length - 1;
-
-    for (i; i >= 0; i--) {
+    for (i = client_sockets.length - 1; i >= 0; i--) {
       if (client_sockets[i].user_id === req.body.user_id) {
-        client_sockets[i].emit('data', url);
+        client_sockets[i].emit('data', {'type': 'img', 'url': url});
       }
     }
 
@@ -106,6 +107,14 @@ exports.uploadCallback = function (req, res) {
         throw err;
       }
     });
+
+    url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
+
+    for (i = client_sockets.length - 1; i >= 0; i--) {
+      if (client_sockets[i].user_id === req.body.user_id) {
+        client_sockets[i].emit('data', {'type': 'video', 'url': url});
+      }
+    }
 
   }
 
