@@ -105,9 +105,13 @@ server.listen(app.get('port'), function () {
           server_socket.protbufConvertor(target, data);
           break;
         }
-
       }
     });
+
+    socket.on('disconnect', function () {
+      server_socket.client_sockets.pop(socket);
+    });
+
   });
 
 });

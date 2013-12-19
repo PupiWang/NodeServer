@@ -232,21 +232,21 @@
 
 		socket.on('oparation', function (data) {
 			if (data.status) {
-				if (data.cmd === 0x01) {
+				if (data.cmd === 1) {
 					//拍照
 					$('#img').hide();
 					$('#img_loading').show();
-				} else if (data.cmd === 0x02) {
+				} else if (data.cmd === 2) {
 					//开始录像
 					$('#img').hide();
 					$('#img_loading').hide();
-					$(this).hide();
+					$('#rec').hide();
 					$('#rec-end').show();
-				} else if (data.cmd === 0x03) {
+				} else if (data.cmd === 3) {
 					//结束录像
 					$('#img').hide();
 					$('#img_loading').hide();
-					$(this).hide();
+					$('#rec-end').hide();
 					$('#rec').show();
 				}
 			} else {
