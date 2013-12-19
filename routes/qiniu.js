@@ -4,6 +4,10 @@ var getDownloadUrl = function (domain, key) {
   qiniu.conf.ACCESS_KEY = 'Q-IdFFb3t_WoE_u_cHHB0cG5TM4ABtetTlsBsXW6';
   qiniu.conf.SECRET_KEY = 'up-RiROP73u2M8hf94ysPRFf9OlDGr07Xr426r9R';
 
+  if (!key) {
+    return '';
+  }
+
   var baseUrl = qiniu.rs.makeBaseUrl(domain, key),
     policy = new qiniu.rs.GetPolicy();
 

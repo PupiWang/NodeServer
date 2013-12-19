@@ -90,12 +90,7 @@
 		#action{
 			position: absolute;
 			bottom: 10px;
-			text-align: right;
 			width: 95%;
-		}
-		#pic,#rec{
-			float: right;
-			margin: 5px;
 		}
 		#add,#modifyname{
 			margin-left: 10px;
@@ -106,6 +101,9 @@
 		}
 		.modal-dialog{
 			width: 70%;
+		}
+		.btn{
+			margin-right: 5px;
 		}
 	</style>
 </head>
@@ -126,13 +124,14 @@
 			<p id="current_device">当前设备：</p>
 			<p id="name_device">设备名称：<input style="width:300px;" id="device_name"><button class="btn btn-warning btn-sm" id="modifyname">修改</button></p>
 			<p id="status_device">状态：</p>
-			<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#picTable">照片列表</button>
-			<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#videoTable">视频列表</button>
 			<br>
 			<imgid="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
-				<button class="btn btn-primary btn-sm" id="pic">拍照</button><button class="btn btn-primary btn-sm" id="rec">录像</button>
+				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#picTable">照片列表</button>
+				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#videoTable">视频列表</button>
+				<button class="btn btn-primary btn-sm pull-right" id="pic">拍照</button>
+				<button class="btn btn-primary btn-sm pull-right" id="rec">录像</button>
 			</div>
 		</div>
 	</div>
