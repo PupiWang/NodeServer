@@ -1,8 +1,10 @@
 
-A
-buftest.proto"0
+\
+buftest.proto"K
 BufTest
 from (	
 
 to (	
-cmd (
+cmd (
+msg (
+time (	
