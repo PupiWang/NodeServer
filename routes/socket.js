@@ -6,13 +6,13 @@ var listenPort = 7003;//监听端口
 exports.serv_sockets = [];
 exports.client_sockets = [];
 
+var fs = require('fs');
+var Schema = require('protobuf').Schema;
+var schema = new Schema(fs.readFileSync('buftest.desc'));
+
+var BufTest = schema.BufTest;
+
 exports.protbufConvertor = function (soc, obj) {
-
-  var fs = require('fs');
-  var Schema = require('protobuf').Schema;
-  var schema = new Schema(fs.readFileSync('buftest.desc'));
-
-  var BufTest = schema.BufTest;
 
   console.log(BufTest.serialize(obj));
 
@@ -28,28 +28,47 @@ var server = net.createServer(function (socket) {
 
 
 
-    //接收到数据
+  //接收到数据
   socket.on('data', function (data) {
-
-    var fs = require('fs');
-    var Schema = require('protobuf').Schema;
-    var schema = new Schema(fs.readFileSync('buftest.desc'));
-
-    var BufTest = schema.BufTest;
 
     try {
       var obj = BufTest.parse(new Buffer(data));
-      socket.device_id = obj.from;
+      var msg = obj.msg;
+      var send = {};
+      var i, c;
+      if (msg === 1) {
+        // connect
+        socket.device_id = obj.from;
+        for (i = exports.client_sockets.length - 1; i >= 0; i--) {
+          exports.client_sockets[i].emit('device', {'device_id': socket.device_id, 'state': 'on'});
+        }
+      } else if (msg === 2) {
+        // ok
+        send.cmd = obj.cmd;
+        send.status = true;
+        for (i = exports.client_sockets.length - 1; i >= 0; i--) {
+          c = exports.client_sockets[i];
+          if (obj.to === c.user_id) {
+            c.emit('oparation', send);
+          }
+        }
+      } else if (msg === 3) {
+        // refuse
+        send.cmd = obj.cmd;
+        send.status = false;
+        send.msg = '设备被占用，您的操作被拒绝';
+        for (i = exports.client_sockets.length - 1; i >= 0; i--) {
+          c = exports.client_sockets[i];
+          if (obj.to === c.user_id) {
+            c.emit('oparation', send);
+          }
+        }
+      }
+
     } catch (e) {
       console.log(e);
-      return;
     }
 
-    var i = exports.client_sockets.length - 1;
-
-    for (i; i >= 0; i--) {
-      exports.client_sockets[i].emit('device', {'device_id': socket.device_id, 'state': 'on'});
-    }
   });
 
   //数据错误事件
