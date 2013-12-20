@@ -1,45 +1,106 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<link rel="stylesheet" href="/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<meta charset="utf-8">
-		<title>登陆</title>
+		<title>乐屋首页</title>
 		<style type="text/css">
-			.login{
-				position: absolute;
-				margin:auto;
-				width: 604px;
-				height: 300px;
-				left: 0px;
-				right: 0px;
-				top: 0px;
-				bottom: 0px;
-				box-shadow:2px 5px 12px #555,-1px -1px 3px #292929;
+			body{
+				padding-top: 100px;
+				background-color: #f8f8f8;
 			}
-			input{
-				margin: 10px;
+			.container{
+				text-align: center;
 			}
-			#login,#signup{
-				float: left;
-				position: relative;
-				width: 290px;
-				height: 300px;
-				left: 0px;
-				right: 0px;
-				top: 0px;
-				bottom: 0px;
-				padding: 20px 30px 20px 30px;
+			h1{
+				font-weight: 900;
+        margin-bottom: 30px;
+        font-size: 40px;
 			}
-			#login{
-				border-right: 2px #CCCCCC dashed;
-			}
-			input[type="checkbox"]{
-				margin: 14.5px 10px 18.5px 10px;
-			}
+      input{
+        width: 380px;
+        font-size: 20px;
+        margin-bottom: 6px;
+        padding: 8px;
+      }
+      #btn-login,#btn-signup{
+        width: 380px;
+        padding: 6px;
+        font-weight: bolder;
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+      #btn-login:hover,#btn-signup:hover{
+        opacity: 0.6;
+      }
+      #btn-login{
+        background-color: #ff7a4d;
+        color: #f8f8f8;
+      }
+      #btn-signup{
+        background: #ffffff;
+        color: #7c7c7c;
+        border: 1px solid #7c7c7c;
+      }
+      #other-info{
+        width: 380px;
+        margin: 0px auto;
+      }
+      input[type="checkbox"]{
+        display: inline;
+        width: 30px;
+        margin-top: 0px;
+      }
 		</style>
 	</head>
 	<body>
-		<div class="login">
+		<div class="container">
+
+			<img src="images/logo.png"><br><br>
+
+			<H1>乐屋，狂拽霸气吊炸天！</H1>
+
+			<input placeholder="乐屋账号/邮箱/手机号" name="email"><br>
+			<input placeholder="密码" name="password" type="password"><br>
+      <button class="btn" id="btn-login">快速登录</button><br>
+
+      <div id="other-info">
+        <input type="checkbox" id="rememberme" class="pull-left">
+        <h5><small class="pull-left">两周内自动登录</small></h5>
+        <h5><small class="pull-right">忘记密码</small></h5>
+      </div><br><br>
+
+      <button class="btn" id="btn-signup">注册乐屋账户</button>
+		
+    </div>
+
+		<script src="javascripts/jquery-1.10.2.min.js"></script>
+		<script src="javascripts/bootstrap.min.js"></script>
+
+    <script>
+      $('#btn_login').click(function(event){
+        var email = $('[name="email"]')[0].value,
+          password = $('[name="password"]')[0].value,
+          check = $('#rememberme')[0].checked;
+
+        if(email && password){
+          $.post('/login',{'email':email,'password':password, 'rememberme': check},function(data){
+            if(data == '/userinfo') {
+              location.href = data;
+            }else {
+              alert(data);
+            }
+          })
+        }else{
+          alert('用户名或密码为空！');
+          return;
+        }
+      })
+    </script>
+	
+  </body>
+</html>
+		<!--<div class="login">
 			<div id="login">
 				<form action="login" method="post">
 					<h1> 登陆</h1>
@@ -135,4 +196,4 @@
 			})
 		</script>
 	</body>
-</html>
+</html> -->
