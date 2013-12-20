@@ -128,7 +128,7 @@
 			<imgid="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
-				<a id="video-link" href="" style="display: none;"></a><br>
+				<a id="video-link" href="" style="display: none;" target="_blank"></a><br>
 				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#picTable">照片列表</button>
 				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#videoTable">视频列表</button>
 				<button class="btn btn-primary btn-sm pull-right" id="pic">拍照</button>
@@ -233,9 +233,9 @@
 			} else if (data.type === 'video') {
 				$('#img_loading').hide();
 				$('#img').hide();
-				$('video-link')[0].href = data.url;
-				$('video-link')[0].innerHTML = data.url;
-				$('video-link').show();
+				$('#video-link')[0].href = data.url;
+				$('#video-link')[0].innerHTML = data.url.slice(0, 40) + '...';
+				$('#video-link').show();
 			}
 			
 		});
