@@ -58,7 +58,7 @@
 
 			<img src="images/logo.png"><br><br>
 
-			<H1>乐屋，狂拽霸气吊炸天！</H1>
+			<H1>乐屋，您的家庭安全专家！</H1>
 
 			<input placeholder="乐屋账号/邮箱/手机号" name="email"><br>
 			<input placeholder="密码" name="password" type="password"><br>
@@ -78,20 +78,23 @@
 		<script src="javascripts/bootstrap.min.js"></script>
 
     <script>
+
+    	$('#rememberme').click();
+
       $('#btn-login').click(function(event){
         var email = $('[name="email"]')[0].value,
           password = $('[name="password"]')[0].value,
           check = $('#rememberme')[0].checked;
 
-        if(email && password){
-          $.post('/login',{'email':email,'password':password, 'rememberme': check},function(data){
+        if (email && password) {
+          $.post('/login',{'email': email, 'password': password, 'rememberme': check},function (data) {
             if(data == '/userinfo') {
               location.href = data;
-            }else {
+            } else {
               alert(data);
             }
           })
-        }else{
+        } else {
           alert('用户名或密码为空！');
           return;
         }

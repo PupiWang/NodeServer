@@ -69,12 +69,12 @@
 			text-align: right;
 		}
 		#img{
-			width:320px;
-			margin: 55px;
+			width:352px;
+			margin: 50px auto;
 			display: none;
 		}
 		#img_loading{
-			margin:100px 200px;
+			margin:100px 250px;
 			display: none;
 		}
 		.active{
@@ -116,6 +116,7 @@
 			</div>
 			<ul id="my_device"></ul>
 			<div id="adddevice">
+				<label>测试ID：ov_orange_01</label><br>
 				<lable>设备ID：</lable><input id="device_id" placeholder=""/><button class="btn btn-info btn-sm" id="add">添加</button>
 			</div>
 		</div>
@@ -125,7 +126,7 @@
 			<p id="name_device">设备名称：<input style="width:300px;" id="device_name"><button class="btn btn-warning btn-sm" id="modifyname">修改</button></p>
 			<p id="status_device">状态：</p>
 			<br>
-			<imgid="img" src=""><br>
+			<img id="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
 				<a id="video-link" href="" style="display: none;" target="_blank"></a><br>
@@ -301,6 +302,9 @@
 				alert('当前设备为离线状态！');
 				return;
 			}
+
+      $('#img').hide();
+      $('#img_loading').show();
 
 			socket.emit('oparation', {from:user,to:$('.active')[0].id,cmd:0x01});
 		});

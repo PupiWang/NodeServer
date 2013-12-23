@@ -16,10 +16,23 @@ var app = express(),
   server = require('http').createServer(app),
   io = require('socket.io').listen(server, { log : false });
 
+var log4js = require('log4js');
+log4js.configure({
+  appenders: [
+    { type: 'console' },
+    { type: 'file', filename: 'logs/log4jsconnect.log', category: 'log4jslog' }
+  ],
+  replaceConsole: true
+});
+//define logger
+var logger = log4js.getLogger('log4jslog');
+logger.setLevel('INFO');
+
 // All environments
 app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(log4js.connectLogger(logger, { level: 'auto' }));
 app.use(express.favicon());
 // app.use(express.logger('dev'));
 app.use(express.cookieParser('ov_orange'));
