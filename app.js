@@ -5,7 +5,7 @@ var express = require('express'),
   path = require('path');
 
 // Files
-var routes = require('./routes'),
+var routes = require('./routes/index'),
   user = require('./routes/user'),
   device = require('./routes/device'),
   server_socket = require('./routes/socket'),
@@ -20,7 +20,7 @@ var log4js = require('log4js');
 log4js.configure({
   appenders: [
     { type: 'console' },
-    { type: 'file', filename: 'logs/log4jsconnect.log', category: 'log4jslog' }
+    { type: 'file', filename: 'logs/' + new Date().getTime() + '.log', category: 'log4jslog' }
   ],
   replaceConsole: true
 });
@@ -73,6 +73,7 @@ if ('development' === app.get('env')) {
 // Get
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/signup', routes.signup);
 app.get('/logout', user.logout);
 app.get('/userinfo', user.userinfo);
 app.get('/websocket', function (req, res) {
@@ -81,7 +82,6 @@ app.get('/websocket', function (req, res) {
 app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
 // app.get('/downloadToken',qn.getDownloadUrl);
-app.get('/upLoadFile', routes.upLoadFile);
 app.post('/getPicture', qn.getPictureDownloadUrl);
 
 // Post

@@ -8,6 +8,6 @@ exports.index = function (req, res) {
   }
 };
 
-exports.upLoadFile = function (req, res) {
-  res.render('upload');
+exports.signup = function (req, res) {
+  res.render('signup', {title: '用户注册'});
 };

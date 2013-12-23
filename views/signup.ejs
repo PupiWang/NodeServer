@@ -3,78 +3,88 @@
 	<head>
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<meta charset="utf-8">
-		<title>乐屋首页</title>
+		<title><%= title %></title>
 		<style type="text/css">
 			body{
-				padding-top: 100px;
-				background-color: #f8f8f8;
+				background-color: #f1f1f1;
 			}
-			body,input{
+			body,input,h3{
 				font-family: "Hiragino Sans GB","Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 			}
 			.container{
-				text-align: center;
+        background-color: #f9f9f9;
+        border-radius: 10px;
 			}
-			h1{
+      .nav{
+        background-color: #f1f1f1;
+      }
+			h3{
 				font-weight: 900;
         margin-bottom: 30px;
-        font-size: 40px;
+        font-size: 30px;
+        color: #ff9630;
+        text-align: left;
 			}
-      input{
-        width: 380px;
-        font-size: 20px;
-        margin-bottom: 6px;
-        padding: 8px;
+      .main{
+        padding: 30px 70px;
+        position: relative;
       }
-      #btn-login,#btn-signup{
+      .form-row{
+        margin-bottom: 15px;
+      }
+      .form-row label{
+        text-align: right;
+        font-size: 18px;
+        position: absolute;
+        width: 200px;
+      }
+      .form-row input{
         width: 380px;
+        font-size: 16px;
+        margin-bottom: 6px;
+        padding: 4px;
+        position: relative;
+        left: 200px;
+      }
+      #btn-signup{
+        width: 250px;
         padding: 6px;
         font-weight: bolder;
-        font-size: 20px;
-        margin-bottom: 6px;
-      }
-      #btn-login:hover,#btn-signup:hover{
-        opacity: 0.8;
-      }
-      #btn-login{
+        font-size: 18px;
+        margin-top: 20px;
+        margin-left: 200px;
+        margin-bottom: 100px;
         background-color: #ff7a4d;
         color: #f8f8f8;
       }
-      #btn-signup{
-        background: #ffffff;
-        color: #7c7c7c;
-        border: 1px solid #7c7c7c;
-      }
-      #other-info{
-        width: 380px;
-        margin: 0px auto;
-      }
-      input[type="checkbox"]{
-        display: inline;
-        width: 30px;
-        margin-top: 0px;
+      #btn-signup:hover{
+        opacity: 0.8;
       }
 		</style>
 	</head>
 	<body>
-		<div class="container">
+    <div class="nav container"><img src="images/logo.png"></div>
+		<div class="container main">
 
-			<img src="images/logo.png"><br><br>
+			<H3>注册乐屋账号 <small> 简单三步，创建属于自己的乐屋账号</small></H3>
 
-			<H1>乐屋，您的家庭安全专家！</H1>
+			<div class="form-row">
+        <label>邮箱：</label>
+        <input placeholder="请填写正确的邮箱" name="email_signup">
+      </div>
 
-			<input placeholder="乐屋账号/邮箱/手机号" name="email"><br>
-			<input placeholder="密码" name="password" type="password"><br>
-      <button class="btn" id="btn-login">快速登录</button><br>
+      <div class="form-row">
+			 <label>登陆密码：</label>
+       <input placeholder="请输入六个或以上字符数的安全密码" name="password_signup" type="password">
+      </div>
 
-      <div id="other-info">
-        <input type="checkbox" id="rememberme" class="pull-left">
-        <h5><small class="pull-left">两周内自动登录</small></h5>
-        <h5><small class="pull-right">忘记密码</small></h5>
-      </div><br><br>
+      <div class="form-row">
+       <label>密码确认：</label>
+       <input placeholder="请再次填写密码" name="password_signup_confirm" type="password">
+      </div>
 
-      <a href="/signup" class="btn" id="btn-signup">注册乐屋账户</a>
-		
+      <button class="btn" id="btn-signup">立即注册</button><br>
+
     </div>
 
 		<script src="javascripts/jquery-1.10.2.min.js"></script>
@@ -82,26 +92,49 @@
 
     <script>
 
-    	$('#rememberme').click();
+    $('#btn-signup').click(function(event){
 
-      $('#btn-login').click(function(event){
-        var email = $('[name="email"]')[0].value,
-          password = $('[name="password"]')[0].value,
-          check = $('#rememberme')[0].checked;
+        var email = $('[name="email_signup"]')[0].value,
+          password = $('[name="password_signup"]')[0].value,
+          password_confirm=$('[name="password_signup_confirm"]')[0].value;
 
-        if (email && password) {
-          $.post('/login',{'email': email, 'password': password, 'rememberme': check},function (data) {
+        if(email && password && password_confirm){
+
+          if(password != password_confirm){
+            alert('两次输入的密码不一致！');
+            return;
+          }
+
+          var emailreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
+          pwdreg = /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/;
+
+          if(!emailreg.test(email)) {
+            alert('用户名格式不正确');
+            return;
+          }
+
+          if(!pwdreg.test(password)) {
+            alert('密码格式不正确');
+            return;
+          }
+
+          $.post('/signup',{'email':email,'password':password,'password_confirm':password_confirm},function(data){
+            
             if(data == '/userinfo') {
               location.href = data;
-            } else {
+            }else {
               alert(data);
             }
+            
           })
-        } else {
+
+        }else{
+
           alert('用户名或密码为空！');
-          return;
+
         }
       })
+
     </script>
 	
   </body>

@@ -1,0 +1,7 @@
+message BufTest {
+  required string from = 1;
+  required string to = 2;
+  optional int32 cmd  = 3;
+  optional int32 msg = 4;
+  optional string time = 5;
+}
