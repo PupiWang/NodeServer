@@ -1,6 +1,6 @@
 
 exports.index = function (req, res) {
-  console.log(req.signedCookies);
+  //判断用户是否已登录，如果没有，渲染登陆页面；否则跳转到用户主页面
   if (req.signedCookies && req.signedCookies.user) {
     res.redirect('/userinfo');
   } else {

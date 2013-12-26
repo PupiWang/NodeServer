@@ -82,7 +82,7 @@ app.get('/websocket', function (req, res) {
 app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
 // app.get('/downloadToken',qn.getDownloadUrl);
-app.post('/getPicture', qn.getPictureDownloadUrl);
+// app.post('/getPicture', qn.getPictureDownloadUrl);
 
 // Post
 app.post('/login', user.login);

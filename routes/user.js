@@ -14,11 +14,22 @@ exports.list = function (req, res) {
 
 };
 
+/**
+ * 用户注册
+ * @param  {string} email 注册用户的邮箱
+ * @param  {string} password 密码
+ * @param  {string} password_confirm 密码确认
+ */
 exports.signup = function (req, res) {
 
   var email = req.body.email,
     password = req.body.password,
     password_confirm = req.body.password_confirm;
+
+  //判断用户名密码是否为空
+  if (!email || !password || !password_confirm) {
+    res.send('email or password is null');
+  }
 
   var MD5 = require('MD5');
 
@@ -33,7 +44,7 @@ exports.signup = function (req, res) {
         res.send('email already exist');
 
       } else {
-
+        //注册时间
         var time = new Date().getTime();
 
         s = 'insert into user (email,password,datetime_signup,datetime_lastlogin) VALUES ("' +
@@ -58,6 +69,11 @@ exports.signup = function (req, res) {
 
 };
 
+/**
+ * 用户登陆
+ * @param  {string} email    邮箱
+ * @param  {string} password 密码
+ */
 exports.login = function (req, res) {
 
   var email = req.body.email,
@@ -74,7 +90,7 @@ exports.login = function (req, res) {
         if (rows.length === 1 && rows[0].password === MD5(password)) {
 
           var time = new Date().getTime();
-
+          //最近登陆时间
           s = 'UPDATE user SET datetime_lastlogin = ' + time + ' WHERE email = "' + email + '"';
 
           sql.execute(s, function (err, rows, fields) {
@@ -102,11 +118,20 @@ exports.login = function (req, res) {
 
 };
 
+/**
+ * 用户注销
+ */
 exports.logout = function (req, res) {
+  //清除cookie跳转到登陆页面
   res.clearCookie('user');
   res.redirect('/');
 };
 
+/**
+ * 渲染主页面
+ * rows_pic    照片记录集合
+ * rows_video  摄像记录集合
+ */
 exports.userinfo = function (req, res) {
   var s = 'SELECT * FROM resource_picture';
 
@@ -133,7 +158,6 @@ exports.userinfo = function (req, res) {
             obj = rows_video[i];
             obj.url = getUrl('ov-orange-private.u.qiniudn.com', obj.key);
           }
-
           res.render('userInfo', {user: req.signedCookies.user, pics: rows_pic, videos: rows_video});
         }
       });

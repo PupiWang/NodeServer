@@ -106,6 +106,9 @@
 			margin-right: 5px;
 		}
 	</style>
+	<script>
+    
+	</script>
 </head>
 <body>
 	<div class="main">
@@ -129,7 +132,7 @@
 			<img id="img" src=""><br>
 			<img id="img_loading" src="/images/loading.gif">
 			<div id="action">
-				<a id="video-link" href="" style="display: none;" target="_blank"></a><br>
+				<a id="video-link" href="" style="display: none;color:red" target="_blank"></a><br>
 				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#picTable">照片列表</button>
 				<button class="btn btn-primary btn-sm pull-left" data-toggle="modal" data-target="#videoTable">视频列表</button>
 				<button class="btn btn-primary btn-sm pull-right" id="pic">拍照</button>
@@ -152,14 +155,17 @@
         	  	<tr><td>文件名</td><td>上传日期</td><td>格式</td><td>分辨率</td><td>文件大小</td><td>资源名</td><td>下载</td></tr>
         	  </thead>
         	  <tbody>
+        	  	<% var timeFormat = function (date) {
+                return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+	            }%>
         	  	<% if (pics.length) { %>
 	        	  	<% pics.forEach(function(pic){ %>
 	        	  	  <tr>
 	        	  	  	<td><%= pic.name %></td>
-	        	  	  	<td><%= new Date(pic.datetime_upload).toUTCString() %></td>
+	        	  	  	<td><%= timeFormat(new Date(pic.datetime_upload)) %></td>
 	        	  	  	<td><%= pic.type %></td>
 	        	  	  	<td><%= pic.width + '*' + pic.height %></td>
-	        	  	  	<td><%= pic.size %></td>
+	        	  	  	<td><%= (pic.size/1024).toFixed(1) + 'K' %></td>
 	        	  	  	<td><%= pic.key %></td>
 	        	  	  	<td><a href=<%= pic.url %> target="_blank"><span class="glyphicon glyphicon-arrow-down"></span></a></td>
 	        	  	  </tr>
@@ -193,7 +199,7 @@
 	        	  	  	<td><%= video.name %></td>
 	        	  	  	<td><%= new Date(video.datetime_upload).toUTCString() %></td>
 	        	  	  	<td><%= video.type %></td>
-	        	  	  	<td><%= video.size %></td>
+	        	  	  	<td><%= (video.size/(1024*1024)).toFixed(1) + 'M' %></td>
 	        	  	  	<td><%= video.key %></td>
 	        	  	  	<td><a href=<%= video.url %> target="_blank"><span class="glyphicon glyphicon-arrow-down"></span></a></td>
 	        	  	  </tr>
@@ -272,11 +278,11 @@
 
 			if(data.state == 'on') {
 				$tag.css('color','blue');
-				$tag.html(data.device_id + '(在线)');
+				$tag.html(data.device_name + '(在线)');
 				tag.setAttribute('OnOff','在线');
 			} else if(data.state == 'off') {
 				$tag.css('color','black');
-				$tag.html(data.device_id + '(离线)');
+				$tag.html(data.device_name + '(离线)');
 				tag.setAttribute('OnOff','离线');
 			}
 
