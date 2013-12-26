@@ -275,14 +275,14 @@
 
 			var tag = $('#' + data.device_id)[0];
 			var $tag = $('#' + data.device_id);
-
+      var name = tag.getAttribute('device_name');
 			if(data.state == 'on') {
 				$tag.css('color','blue');
-				$tag.html(data.device_name + '(在线)');
+				$tag.html(name + '(在线)');
 				tag.setAttribute('OnOff','在线');
 			} else if(data.state == 'off') {
 				$tag.css('color','black');
-				$tag.html(data.device_name + '(离线)');
+				$tag.html(name + '(离线)');
 				tag.setAttribute('OnOff','离线');
 			}
 
