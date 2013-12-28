@@ -54,12 +54,13 @@
 
     <script src="javascripts/jquery-1.10.2.min.js"></script>
     <script src="javascripts/bootstrap.min.js"></script>
+    <script src="javascripts/md5.js"></script>
     <script>
 
       $('#login p button').on('click', function () {
         var email = $('#login p [name="email"]')[0].value,
           password = $('#login p [name="password"]')[0].value;
-        $.post('/mobile/login', {'email': email, 'password': password}, function (data) {
+        $.post('/mobile/login', {'email': email, 'password': md5(password)}, function (data) {
           $('#login .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
         });
       });
@@ -68,7 +69,7 @@
         var email = $('#signup p [name="email"]')[0].value,
           password = $('#signup p [name="password"]')[0].value,
           password_confirm = $('#signup p [name="password_confirm"]')[0].value;
-        $.post('/mobile/signup', {'email': email, 'password': password, 'password_confirm': password_confirm}, function (data) {
+        $.post('/mobile/signup', {'email': email, 'password': md5(password), 'password_confirm': md5(password_confirm)}, function (data) {
           $('#signup .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
         });
       });
