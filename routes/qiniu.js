@@ -58,7 +58,7 @@ exports.getUploadToken = function (req, res) {
  */
 exports.uploadCallback = function (req, res) {
 
-  var sql = require('./sql');
+  var sql = require('../util/sql');
 
   var s, i;
 

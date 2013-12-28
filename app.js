@@ -7,6 +7,7 @@ var express = require('express'),
 // Files
 var routes = require('./routes/index'),
   user = require('./routes/user'),
+  m_user = require('./mobile/user'),
   device = require('./routes/device'),
   server_socket = require('./routes/socket'),
   qn = require('./routes/qiniu');
@@ -53,7 +54,8 @@ app.use(function (req, res, next) {
 
     var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) || imgPattern.test(url);
 
-    if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' || url === '/upToken' || url === '/signup') {
+    if (isStatic || url === '/' || url === '/login' || url === '/mobile/login' || url === '/uploadCallback' ||
+        url === '/upToken' || url === '/signup' || url === '/mobile/signup') {
       next();
     } else {
       console.log('You need login');
@@ -76,17 +78,14 @@ app.get('/users', user.list);
 app.get('/signup', routes.signup);
 app.get('/logout', user.logout);
 app.get('/userinfo', user.userinfo);
-app.get('/websocket', function (req, res) {
-  res.render('socket');
-});
 app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
-// app.get('/downloadToken',qn.getDownloadUrl);
-// app.post('/getPicture', qn.getPictureDownloadUrl);
 
 // Post
 app.post('/login', user.login);
+app.post('/mobile/login', m_user.login);
 app.post('/signup', user.signup);
+app.post('/mobile/signup', m_user.signup);
 app.post('/adddevice', device.addDevice);
 app.post('/uploadCallback', qn.uploadCallback);
 app.post('/modifydevicename', device.modifyName);

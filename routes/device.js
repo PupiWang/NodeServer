@@ -1,5 +1,5 @@
 
-var sql = require('./sql');
+var sql = require('../util/sql');
 /**
  * 根据用户获取设备
  * @param  {string} email 当前用户邮箱

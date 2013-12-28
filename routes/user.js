@@ -1,4 +1,4 @@
-var sql = require('./sql');
+var sql = require('../util/sql');
 
 exports.list = function (req, res) {
 
