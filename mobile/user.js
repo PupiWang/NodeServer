@@ -8,7 +8,7 @@ exports.login = function (req, res) {
 
   var email = req.body.email,
     password = req.body.password;
-
+  console.log(req.body);
   if (email && password) {
     var s = 'select password from user where email="' + email + '"';
     sql.execute(s, function (err, rows, fields) {
@@ -63,7 +63,7 @@ exports.signup = function (req, res) {
 
   var email = req.body.email,
     password = req.body.password,
-    password_confirm = req.body.password_confirm;
+    password_confirm = req.body.password_confirm || req.body.password;
 
   //判断用户名密码是否为空
   if (!email || !password || !password_confirm) {

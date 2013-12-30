@@ -20,10 +20,8 @@ var app = express(),
 var log4js = require('log4js');
 log4js.configure({
   appenders: [
-    { type: 'console' },
     { type: 'file', filename: 'logs/' + new Date().getTime() + '.log', category: 'log4jslog' }
-  ],
-  replaceConsole: true
+  ]
 });
 //define logger
 var logger = log4js.getLogger('log4jslog');
@@ -91,6 +89,37 @@ app.post('/uploadCallback', qn.uploadCallback);
 app.post('/modifydevicename', device.modifyName);
 
 server.listen(app.get('port'), function () {
+
+  var nodemailer = require("nodemailer");
+
+  // create reusable transport method (opens pool of SMTP connections)
+  var transport = nodemailer.createTransport("SMTP", {
+    service: "Hotmail",
+    auth: {
+      user: 'dreamjl@live.cn',
+      pass: 'a7758258'
+    }
+  });
+
+  // setup e-mail data with unicode symbols
+  var mailOptions = {
+    from: '皇上<dreamjl@live.cn>', // sender address
+    to: 'wz@ov-orange.com, wjh@ov-orange.com, cl@ov-orange.com', // list of receivers
+    subject: 'Node Email Test', // Subject line
+    text: 'Node Email Test', // plaintext body
+    html: '<b>Node service start</b>' // html body
+  };
+
+  transport.sendMail(mailOptions, function (error, response) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Message sent: " + response.message);
+    }
+    // if you don't want to use this transport object anymore, uncomment following line
+    //smtpTransport.close(); // shut down the connection pool, no more messages
+  });
+
   io.sockets.on('connection', function (socket) {
 
     var i = server_socket.serv_sockets.length - 1;
