@@ -94,8 +94,8 @@
       $('#device p button').on('click', function () {
         var email = $('#signup p [name="email"]')[0].value,
           password = $('#signup p [name="password"]')[0].value;
-        $.post('/mobile/user/signup', {'email': email, 'password': md5(password)}, function (data) {
-          $('#device .alert p')[0].innerHTML = data;
+        $.get('/mobile/device', {'email': email, 'password': md5(password)}, function (data) {
+          $('#device .alert p')[0].innerHTML = '[{"id_device": "ov_orange","display_name": "ov_orange","status": ""},{"id_device": "ov_orange_01","display_name": "Test","status": ""},{"id_device": "123456","display_name": "123456","status": ""}]';
         });
       });
     </script>
