@@ -23,9 +23,10 @@ app.get('/mobile/resource/videos', m_resource.videos);
 
 // Post
 app.post('/login', user.login);
-app.post('/mobile/user/login', m_user.login);
 app.post('/signup', user.signup);
-app.post('/mobile/user/signup', m_user.signup);
 app.post('/adddevice', device.addDevice);
 app.post('/uploadCallback', qn.uploadCallback);
 app.post('/modifydevicename', device.modifyName);
+app.post('/mobile/user/login', m_user.login);
+app.post('/mobile/user/signup', m_user.signup);
+app.post('/mobile/device/add', m_device.addDevice);
