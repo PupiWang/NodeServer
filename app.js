@@ -59,6 +59,7 @@ server.listen(exports.app.get('port'), function () {
     socket.on('init', function (data) {
 
       socket.user_id = data.user_id;
+      socket.type = 'websocket';
       console.log(socket.user_id);
 
     });
@@ -81,5 +82,8 @@ server.listen(exports.app.get('port'), function () {
     });
 
   });
+
+  var userUtil = require('./util/userUtil').validUser;
+  console.log(userUtil('1@qq.com', '123456'));
 
 });

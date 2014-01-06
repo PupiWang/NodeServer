@@ -24,9 +24,6 @@ var server = net.createServer(function (socket) {
     // 我们获得一个连接 - 该连接自动关联一个socket对象
   console.log('connect: ' + socket.remoteAddress + ':' + socket.remotePort);
   socket.setEncoding('binary');
-  exports.serv_sockets.push(socket);
-
-
 
   //接收到数据
   socket.on('data', function (data) {
@@ -35,32 +32,60 @@ var server = net.createServer(function (socket) {
       var obj = BufTest.parse(new Buffer(data));
       var msg = obj.msg;
       var send = {};
-      var i, c;
+      var i, c, s;
       if (msg === 1) {
         // connect
-        socket.device_id = obj.from;
-        for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-          exports.client_sockets[i].emit('device', {'device_id': socket.device_id, 'state': 'on'});
-        }
-      } else if (msg === 2) {
-        // ok
-        send.cmd = obj.cmd;
-        send.status = true;
-        for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-          c = exports.client_sockets[i];
-          if (obj.to === c.user_id) {
-            c.emit('oparation', send);
+        if (obj.to === 'server') {
+          socket.device_id = obj.from;
+          exports.serv_sockets.push(socket);
+          for (i = exports.client_sockets.length - 1; i >= 0; i--) {
+            exports.client_sockets[i].emit('device', {'device_id': socket.device_id, 'state': 'on'});
           }
+        } else if (obj.to === 'client') {
+          socket.user_id = obj.from;
+          exports.client_sockets.push(socket);
         }
-      } else if (msg === 3) {
-        // refuse
-        send.cmd = obj.cmd;
-        send.status = false;
-        send.msg = '设备被占用，您的操作被拒绝';
-        for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-          c = exports.client_sockets[i];
-          if (obj.to === c.user_id) {
-            c.emit('oparation', send);
+
+      } else {
+        if (socket.device_id) {
+          //设备端消息
+          if (msg === 2) {
+            // ok
+            send.cmd = obj.cmd;
+            send.status = true;
+            for (i = exports.client_sockets.length - 1; i >= 0; i--) {
+              c = exports.client_sockets[i];
+              if (obj.to === c.user_id) {
+                if (c.type === 'websocket') {
+                  c.emit('oparation', send);
+                } else {
+                  c.write(data);
+                }
+              }
+            }
+          } else if (msg === 3) {
+            // refuse
+            send.cmd = obj.cmd;
+            send.status = false;
+            send.msg = '设备被占用，您的操作被拒绝';
+            for (i = exports.client_sockets.length - 1; i >= 0; i--) {
+              c = exports.client_sockets[i];
+              if (obj.to === c.user_id) {
+                if (c.type === 'websocket') {
+                  c.emit('oparation', send);
+                } else {
+                  c.write(data);
+                }
+              }
+            }
+          }
+        } else if (socket.user_id) {
+          //客户端消息
+          for (i = exports.serv_sockets.length - 1; i >= 0; i--) {
+            s = exports.serv_sockets[i];
+            if (obj.to === s.device_id) {
+              s.write(data);
+            }
           }
         }
       }
