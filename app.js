@@ -83,7 +83,4 @@ server.listen(exports.app.get('port'), function () {
 
   });
 
-  var userUtil = require('./util/userUtil').validUser;
-  console.log(userUtil('1@qq.com', '123456'));
-
 });

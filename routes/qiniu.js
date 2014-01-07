@@ -92,8 +92,14 @@ exports.uploadCallback = function (req, res) {
             url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
 
             for (i = client_sockets.length - 1; i >= 0; i--) {
-              if (client_sockets[i].user_id === req.body.user_id) {
-                client_sockets[i].emit('data', {'type': 'img', 'url': url});
+              var c = client_sockets[i];
+              if (c.type === 'websocket') {
+                if (c.user_id === req.body.user_id) {
+                  c.emit('data', {'type': 'img', 'url': url});
+                }
+              } else {
+                var protbufConvertor = require('./socket').protbufConvertor;
+                protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, msg: url});
               }
             }
 

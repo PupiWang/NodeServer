@@ -14,8 +14,6 @@ var BufTest = schema.BufTest;
 
 exports.protbufConvertor = function (soc, obj) {
 
-  console.log(BufTest.serialize(obj));
-
   soc.write(BufTest.serialize(obj));
 
 };
@@ -33,13 +31,20 @@ var server = net.createServer(function (socket) {
       var msg = obj.msg;
       var send = {};
       var i, c, s;
+      console.log(obj);
+      socket.write(BufTest.serialize({from: 'to', to: 'from', cmd: 11, msg: 22, time: 'time2'}));
       if (msg === 1) {
         // connect
         if (obj.to === 'server') {
           socket.device_id = obj.from;
           exports.serv_sockets.push(socket);
           for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-            exports.client_sockets[i].emit('device', {'device_id': socket.device_id, 'state': 'on'});
+            c = exports.client_sockets[i];
+            if (c.type === 'websocket') {
+              c.emit('device', {'device_id': socket.device_id, 'state': 'on'});
+            } else {
+              c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, msg: 'OnLine'}));
+            }
           }
         } else if (obj.to === 'client') {
           socket.user_id = obj.from;
@@ -104,11 +109,24 @@ var server = net.createServer(function (socket) {
 
   //客户端关闭事件
   socket.on('close', function (data) {
-    exports.serv_sockets.pop(socket);
-    console.log('close: ' + socket.device_id);
-    var i = exports.client_sockets.length - 1;
-    for (i; i >= 0; i--) {
-      exports.client_sockets[i].emit('device', {'device_id': socket.device_id, 'state': 'off'});
+    var s, c;
+    if (socket.device_id) {
+      s = socket;
+      exports.serv_sockets.pop(s);
+      console.log('device close: ' + socket.device_id);
+      var i = exports.client_sockets.length - 1;
+      for (i; i >= 0; i--) {
+        c = exports.client_sockets[i];
+        if (c.type === 'websocket') {
+          c.emit('device', {'device_id': socket.device_id, 'state': 'off'});
+        } else {
+          c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, msg: 'OffLine'}));
+        }
+      }
+    } else if (socket.user_id) {
+      c = socket;
+      exports.client_sockets.pop(c);
+      console.log('client close: ' + socket.user_id);
     }
   });
 

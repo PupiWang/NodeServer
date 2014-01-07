@@ -1,7 +1,7 @@
 message BufTest {
-  required string from = 1;
-  required string to = 2;
-  optional int32 cmd  = 3;
+  required string from = 1; //from和to分别代表消息来源和去向，其值是标示用户或者设备的id
+  required string to = 2;       //如用户邮箱"1@qq.com" 和 "ov_orange_01" 
+  optional int32 cmd  = 3;   //命令标示。1：拍照，2：拍摄，3：停止拍摄
   optional int32 msg = 4;
   optional string time = 5;
 }

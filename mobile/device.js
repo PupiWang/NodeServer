@@ -1,13 +1,7 @@
 var sql = require('../util/sql');
 
 exports.device = function (req, res) {
-  var email = req.param('email'),
-    password = req.param('password');
-
-  if (!email || !password) {
-    res.send({status: 'error', code: 1, msg: '用户名或密码为空,验证无法通过...'});
-    return;
-  }
+  var email = req.param('email');
 
   var s = 'select ud.id_device, ud.display_name, d.status from user_device ud, device d where email="' +
       email + '" AND ud.id_device = d.id_device';
@@ -24,13 +18,7 @@ exports.device = function (req, res) {
 
 exports.addDevice = function (req, res) {
   var email = req.body.email,
-    password = req.body.password,
     id_device = req.body.deviceId;
-
-  if (!email || !password) {
-    res.send({status: 'error', code: 1, msg: '用户名或密码为空...'});
-    return;
-  }
 
   if (!id_device) {
     res.send({status: 'error', code: 2, msg: '设备ID不符合要求...'});
