@@ -93,16 +93,15 @@ exports.uploadCallback = function (req, res) {
 
             for (i = client_sockets.length - 1; i >= 0; i--) {
               var c = client_sockets[i];
-              if (c.type === 'websocket') {
-                if (c.user_id === req.body.user_id) {
+              if (c.user_id === req.body.user_id) {
+                if (c.write) {
+                  var protbufConvertor = require('./socket').protbufConvertor;
+                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, time: url});
+                } else {
                   c.emit('data', {'type': 'img', 'url': url});
                 }
-              } else {
-                var protbufConvertor = require('./socket').protbufConvertor;
-                protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, msg: url});
               }
             }
-
           }
         });
       }

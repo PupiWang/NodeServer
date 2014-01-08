@@ -22,6 +22,7 @@ var server = net.createServer(function (socket) {
     // 我们获得一个连接 - 该连接自动关联一个socket对象
   console.log('connect: ' + socket.remoteAddress + ':' + socket.remotePort);
   socket.setEncoding('binary');
+  socket.pipe(socket);
 
   //接收到数据
   socket.on('data', function (data) {
@@ -32,7 +33,6 @@ var server = net.createServer(function (socket) {
       var send = {};
       var i, c, s;
       console.log(obj);
-      socket.write(BufTest.serialize({from: 'to', to: 'from', cmd: 11, msg: 22, time: 'time2'}));
       if (msg === 1) {
         // connect
         if (obj.to === 'server') {
@@ -40,10 +40,10 @@ var server = net.createServer(function (socket) {
           exports.serv_sockets.push(socket);
           for (i = exports.client_sockets.length - 1; i >= 0; i--) {
             c = exports.client_sockets[i];
-            if (c.type === 'websocket') {
-              c.emit('device', {'device_id': socket.device_id, 'state': 'on'});
-            } else {
+            if (c.write) {
               c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, msg: 'OnLine'}));
+            } else {
+              c.emit('device', {'device_id': socket.device_id, 'state': 'on'});
             }
           }
         } else if (obj.to === 'client') {
@@ -61,10 +61,10 @@ var server = net.createServer(function (socket) {
             for (i = exports.client_sockets.length - 1; i >= 0; i--) {
               c = exports.client_sockets[i];
               if (obj.to === c.user_id) {
-                if (c.type === 'websocket') {
-                  c.emit('oparation', send);
-                } else {
+                if (c.write) {
                   c.write(data);
+                } else {
+                  c.emit('oparation', send);
                 }
               }
             }
@@ -76,10 +76,10 @@ var server = net.createServer(function (socket) {
             for (i = exports.client_sockets.length - 1; i >= 0; i--) {
               c = exports.client_sockets[i];
               if (obj.to === c.user_id) {
-                if (c.type === 'websocket') {
-                  c.emit('oparation', send);
-                } else {
+                if (c.write) {
                   c.write(data);
+                } else {
+                  c.emit('oparation', send);
                 }
               }
             }
@@ -109,18 +109,17 @@ var server = net.createServer(function (socket) {
 
   //客户端关闭事件
   socket.on('close', function (data) {
-    var s, c;
+    var s, c, i;
     if (socket.device_id) {
       s = socket;
       exports.serv_sockets.pop(s);
       console.log('device close: ' + socket.device_id);
-      var i = exports.client_sockets.length - 1;
-      for (i; i >= 0; i--) {
+      for (i = exports.client_sockets.length - 1; i >= 0; i--) {
         c = exports.client_sockets[i];
-        if (c.type === 'websocket') {
-          c.emit('device', {'device_id': socket.device_id, 'state': 'off'});
-        } else {
+        if (c.write) {
           c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, msg: 'OffLine'}));
+        } else {
+          c.emit('device', {'device_id': socket.device_id, 'state': 'off'});
         }
       }
     } else if (socket.user_id) {
