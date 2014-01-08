@@ -96,7 +96,7 @@ exports.uploadCallback = function (req, res) {
               if (c.user_id === req.body.user_id) {
                 if (c.write) {
                   var protbufConvertor = require('./socket').protbufConvertor;
-                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, time: url});
+                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1});
                 } else {
                   c.emit('data', {'type': 'img', 'url': url});
                 }

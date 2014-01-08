@@ -86,11 +86,18 @@ var server = net.createServer(function (socket) {
           }
         } else if (socket.user_id) {
           //客户端消息
+          var flag = false;
           for (i = exports.serv_sockets.length - 1; i >= 0; i--) {
             s = exports.serv_sockets[i];
             if (obj.to === s.device_id) {
               s.write(data);
+              flag = true;
             }
+          }
+          if (!flag) {
+            obj.responseStatus = 0;
+            obj.info = '操作失败，设备不在线...';
+            socket.write(BufTest.serialize(obj));
           }
         }
       }
