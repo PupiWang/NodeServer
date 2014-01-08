@@ -40,7 +40,7 @@ var server = net.createServer(function (socket) {
           for (i = exports.client_sockets.length - 1; i >= 0; i--) {
             c = exports.client_sockets[i];
             if (c.write) {
-              c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, msg: 'OnLine'}));
+              c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, cmd: 4}));
             } else {
               c.emit('device', {'device_id': socket.device_id, 'state': 'on'});
             }
@@ -123,7 +123,7 @@ var server = net.createServer(function (socket) {
       for (i = exports.client_sockets.length - 1; i >= 0; i--) {
         c = exports.client_sockets[i];
         if (c.write) {
-          c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, msg: 'OffLine'}));
+          c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, cmd: 5}));
         } else {
           c.emit('device', {'device_id': socket.device_id, 'state': 'off'});
         }
