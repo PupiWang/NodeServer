@@ -40,7 +40,7 @@ app.use(function (req, res, next) {
         imgPattern.test(url) || mobilePattern.test(url);
 
     if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' ||
-        url === '/upToken' || url === '/signup') {
+        url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk') {
       next();
     } else {
       return res.redirect("/");
