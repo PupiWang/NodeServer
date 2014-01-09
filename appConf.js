@@ -48,35 +48,6 @@ app.use(function (req, res, next) {
   }
 });
 
-app.use(function (req, res, next) {
-  var mobilePattern = /^\/mobile\//;
-  var url = req.path;
-  if (!mobilePattern.test(url) || url === '/mobile/user/signup') {
-    next();
-  } else {
-    var email = req.body.email || req.param('email'),
-      password = req.body.password || req.param('password');
-
-    if (!email || !password) {
-      res.send({status: 'error', code: 401, msg: '用户名或密码为空,验证无法通过...'});
-    } else {
-      var s = 'select * from user where email="' + email + '"';
-      var sql = require('./util/sql');
-      sql.execute(s, function (err, rows, fields) {
-        if (err) {
-          console.log(err);
-        } else {
-          if (rows.length === 1 && rows[0].password === password) {
-            next();
-          } else {
-            res.send({status: 'error', code: 402, msg: '用户名或密码错误...'});
-          }
-        }
-      });
-    }
-  }
-});
-
 app.use(app.router);
 app.use(express['static'](path.join(__dirname, 'public')));
 

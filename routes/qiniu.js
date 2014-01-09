@@ -96,7 +96,7 @@ exports.uploadCallback = function (req, res) {
               if (c.user_id === req.body.user_id) {
                 if (c.write) {
                   var protbufConvertor = require('./socket').protbufConvertor;
-                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1});
+                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1, cmd: 1});
                 } else {
                   c.emit('data', {'type': 'img', 'url': url});
                 }
@@ -130,8 +130,14 @@ exports.uploadCallback = function (req, res) {
             url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
 
             for (i = client_sockets.length - 1; i >= 0; i--) {
-              if (client_sockets[i].user_id === req.body.user_id) {
-                client_sockets[i].emit('data', {'type': 'video', 'url': url});
+              var c = client_sockets[i];
+              if (c.user_id === req.body.user_id) {
+                if (c.write) {
+                  var protbufConvertor = require('./socket').protbufConvertor;
+                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1, cmd: 2});
+                } else {
+                  c.emit('data', {'type': 'video', 'url': url});
+                }
               }
             }
 

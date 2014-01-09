@@ -1,6 +1,8 @@
 var sql = require('./sql');
+var Q = require('q');
 
 exports.validUser = function (email, password) {
+  var deferred = Q.defer();
 
   if (email && password) {
     var s = 'select * from user where email="' + email + '"';
@@ -8,16 +10,22 @@ exports.validUser = function (email, password) {
 
       if (err) {
         console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
       } else {
         if (rows.length === 1 && rows[0].password === password) {
-          return true;
+          deferred.resolve();
+        } else {
+          deferred.reject({status: 'error', code: 402, msg: '用户名或密码错误...'});
         }
-        return false;
       }
 
     });
+
   } else {
     //用户名或密码为空，直接返回false
-    return false;
+    deferred.reject({status: 'error', code: 401, msg: '用户名或密码为空,验证无法通过...'});
   }
+
+  return deferred.promise;
+
 };

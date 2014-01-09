@@ -1,4 +1,5 @@
 var sql = require('../util/sql');
+var validUser = require('../util/userUtil').validUser;
 /**
  * 用户登陆
  * @param  {string} email    邮箱
@@ -6,20 +7,24 @@ var sql = require('../util/sql');
  */
 exports.login = function (req, res) {
 
-  var email = req.body.email;
+  var email = req.body.email || req.param('email'),
+    password = req.body.password || req.param('password');
 
-  var s = 'select password from user where email="' + email + '"';
-
-  var time = new Date().getTime();
-  //最近登陆时间
-  s = 'UPDATE user SET datetime_lastlogin = ' + time + ' WHERE email = "' + email + '"';
-
-  sql.execute(s, function (err, rows, fields) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send({status: 'success', code: 1, msg: '验证成功，跳转中...'});
-    }
+  validUser(email, password).then(function (data) {
+    //验证通过
+    //最近登陆时间
+    var s = 'UPDATE user SET datetime_lastlogin = ' + new Date().getTime() + ' WHERE email = "' + email + '"';
+    sql.execute(s, function (err, rows, fields) {
+      if (err) {
+        console.log(err);
+        res.send({status: 'error', code: 501, msg: err});
+      } else {
+        res.send({status: 'success', code: 1, msg: '验证成功，跳转中...'});
+      }
+    });
+  }, function (error) {
+    //验证失败
+    res.send(error);
   });
 
 };
@@ -58,13 +63,25 @@ exports.signup = function (req, res) {
         if (err) {
           console.log(err);
         } else {
-          // res.cookie('user', email, {signed: true});
-          // console.log('session');
           res.send({status: 'success', code: 1, msg: '注册成功'});
         }
       });
 
     }
   });
+
+};
+
+/**
+ * 修改密码
+ * @param  {string} email 注册用户的邮箱
+ * @param  {string} password 密码
+ * @param  {string} passwordNew 新密码
+ */
+exports.modifyPassword = function (req, res) {
+
+  var email = req.body.email,
+    password = req.body.password,
+    passwordNew = req.body.passwordNew;
 
 };
