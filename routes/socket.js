@@ -35,6 +35,13 @@ var server = net.createServer(function (socket) {
       if (msg === 1) {
         // connect
         if (obj.to === 'server') {
+          var sql = require('../util/sql');
+          var sentense = 'UPDATE `device` SET `status` = 1 WHERE `id_device` = "' + obj.from + '"';
+          sql.execute(sentense, function (err, rows, fields) {
+            if (err) {
+              console.log(err);
+            }
+          });
           socket.device_id = obj.from;
           exports.serv_sockets.push(socket);
           for (i = exports.client_sockets.length - 1; i >= 0; i--) {
@@ -120,6 +127,13 @@ var server = net.createServer(function (socket) {
       s = socket;
       exports.serv_sockets.pop(s);
       console.log('device close: ' + socket.device_id);
+      var sql = require('../util/sql');
+      var sentense = 'UPDATE `device` SET `status` = 0 WHERE `id_device` = "' + s.device_id + '"';
+      sql.execute(sentense, function (err, rows, fields) {
+        if (err) {
+          console.log(err);
+        }
+      });
       for (i = exports.client_sockets.length - 1; i >= 0; i--) {
         c = exports.client_sockets[i];
         if (c.write) {

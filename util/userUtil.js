@@ -12,10 +12,14 @@ exports.validUser = function (email, password) {
         console.log(err);
         deferred.reject({status: 'error', code: 501, msg: err});
       } else {
-        if (rows.length === 1 && rows[0].password === password) {
-          deferred.resolve();
+        if (rows.length === 1) {
+          if (rows[0].password === password) {
+            deferred.resolve();
+          } else {
+            deferred.reject({status: 'error', code: 403, msg: '密码错误...'});
+          }
         } else {
-          deferred.reject({status: 'error', code: 402, msg: '用户名或密码错误...'});
+          deferred.reject({status: 'error', code: 402, msg: '用户名错误...'});
         }
       }
 

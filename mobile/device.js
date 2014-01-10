@@ -41,11 +41,6 @@ exports.addDevice = function (req, res) {
     password = req.body.password || req.param('password'),
     id_device = req.body.deviceId || req.param('deviceId');
 
-  if (!id_device) {
-    res.send({status: 'error', code: 1, msg: '设备ID不符合要求...'});
-    return;
-  }
-
   validUser(email, password)
     .then(function (data) {
       //验证通过
@@ -57,7 +52,7 @@ exports.addDevice = function (req, res) {
           console.log(err);
           deferred.reject({status: 'error', code: 501, msg: err});
         } else {
-          if (rows.length === 1) {
+          if (rows.length >= 1) {
             deferred.resolve();
           } else {
             deferred.reject({status: 'error', code: 1, msg: '设备号错误，不存在此设备...'});
