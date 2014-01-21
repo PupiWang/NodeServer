@@ -19,6 +19,8 @@
         <ul>
           <li><a href="#login">登陆</a></li>
           <li><a href="#signup">注册</a></li>
+          <li><a href="#forget">忘记密码</a></li>
+          <li><a href="#resetPassword">重置密码</a></li>
         </ul>
       </li>
 
@@ -67,6 +69,38 @@
       <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><label>PasswordConfirm</label><input name="password_confirm" type="password" value="123456"></p>
+      <p><button>Submit</button></p>
+      <div class="alert alert-warning">
+        <p></p>
+      </div>
+    </div>
+
+    <div id="forget" class="block">
+      <h3>忘记密码</h3>
+      <p><label>接口：http://115.29.179.7/mobile/user/forget</label></p>
+      <p><label>方法：POST</label></p>
+      <p><label>参数：email </label></p>
+      <p><code>&lt;input name="email" type="text"&gt;</code></p>
+      <h4>示例</h4>
+      <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
+      <p><button>Submit</button></p>
+      <div class="alert alert-warning">
+        <p></p>
+      </div>
+    </div>
+
+    <div id="resetPassword" class="block">
+      <h3>重置密码</h3>
+      <p><label>接口：http://115.29.179.7/mobile/user/resetPassword</label></p>
+      <p><label>方法：POST</label></p>
+      <p><label>参数：email , passwordNew </label></p>
+      <p><code>&lt;input name="email" type="text"&gt;</code></p>
+      <p><code>&lt;input name="passwordNew" type="password"&gt;</code></p>
+      <p><code>&lt;input name="e" type="text"&gt;</code></p>
+      <h4>示例</h4>
+      <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
+      <p><label>Password</label><input name="passwordNew" type="password" value="123456"></p>
+      <p><label>e</label><input name="e" type="text" value="d17a4fcdb0c18ce82ca8262fd6b8ec83"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
@@ -158,6 +192,22 @@
           password_confirm = $('#signup p [name="password_confirm"]')[0].value;
         $.post('/mobile/user/signup', {'email': email, 'password': md5(password), 'password_confirm': md5(password_confirm)}, function (data) {
           $('#signup .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+        });
+      });
+
+      $('#forget p button').on('click', function () {
+        var email = $('#forget p [name="email"]')[0].value;
+        $.post('/mobile/user/forget', {'email': email}, function (data) {
+          $('#forget .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+        });
+      });
+
+      $('#resetPassword p button').on('click', function () {
+        var email = $('#resetPassword p [name="email"]')[0].value,
+          passwordNew = $('#resetPassword p [name="passwordNew"]')[0].value,
+          e = $('#resetPassword p [name="e"]')[0].value;
+        $.post('/mobile/user/resetPassword', {'email': email, 'passwordNew': md5(passwordNew), 'e': e}, function (data) {
+          $('#resetPassword .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
         });
       });
 

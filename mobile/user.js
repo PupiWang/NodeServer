@@ -74,12 +74,14 @@ exports.signup = function (req, res) {
     .then(function (data) {
       var deferred = Q.defer();
       var time = new Date().getTime();
-      var s = 'insert into user (email,password,datetime_signup,datetime_lastlogin) VALUES ("' +
-        email + '","' + password + '",' + time + ',' + time + ')';
+      var MD5 = require('MD5');
+      var e = MD5(Math.random());
+      var s = 'insert into user (email,password,datetime_signup,datetime_lastlogin,activation_e) VALUES ("' +
+        email + '","' + password + '",' + time + ',' + time + ',"' + e + '")';
 
       //判断用户名密码是否为空
       if (!email || !password) {
-        deferred.reject({status: 'error', code: 1, msg: '资料填写不完整'});
+        deferred.reject({status: 'error', code: 1, msg: '资料填写不完整...'});
       }
 
       sql.execute(s, function (err, rows, fields) {
@@ -87,7 +89,29 @@ exports.signup = function (req, res) {
           console.log(err);
           deferred.reject({status: 'error', code: 501, msg: err});
         } else {
-          deferred.resolve({status: 'success', code: 1, msg: '注册成功'});
+          deferred.resolve(e);
+        }
+      });
+      return deferred.promise;
+    })
+    .then(function (data) {
+      var deferred = Q.defer();
+      var transport = require('../util/mail').transport;
+      var url = 'http://115.29.179.7/mobile/user/activation?e=' + data;
+      var mailOptions = {
+        from: '皇上<dreamjl@live.cn>', // sender address
+        to: email, // list of receivers
+        subject: '激活账户', // Subject line
+        text: '激活账户', // plaintext body
+        html: '<a href="' + url + '">点此激活您的账户</a>' // html body
+      };
+      transport.sendMail(mailOptions, function (err, response) {
+        if (err) {
+          console.log(err);
+          deferred.reject({status: 'error', code: 501, msg: err});
+        } else {
+          console.log("Message sent: " + response.message);
+          deferred.resolve({status: 'success', code: 1, msg: '注册成功,已发送激活邮件...'});
         }
       });
       return deferred.promise;
@@ -102,6 +126,24 @@ exports.signup = function (req, res) {
       res.send(error);
     });
 
+};
+
+exports.activation = function (req, res) {
+  var e = req.body.e || req.param('e');
+  var s = 'UPDATE user SET activation_date = ' + new Date().getTime() +
+      ' , activation_e = "" WHERE activation_e = "' + e + '"';
+  sql.execute(s, function (err, rows, fields) {
+    if (err) {
+      console.log(err);
+      deferred.reject({status: 'error', code: 501, msg: err});
+    } else {
+      if (rows.length >= 1) {
+        res.send({status: 'success', code: 1, msg: '用户已激活...'});
+      }else {
+        res.send({status: 'error', code: 1, msg: '链接失效或用户已被激活...'});
+      }
+    }
+  });
 };
 
 /**
@@ -183,7 +225,7 @@ exports.forget = function (req, res) {
       var e = MD5(Math.random());
       var time = new Date().getTime();
       var s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
-        '"" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + email + '"';
+        '" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + email + '"';
 
       sql.execute(s, function (err, rows, fields) {
         if (err) {
@@ -293,18 +335,24 @@ exports.reset = function (req, res) {
 exports.resetPassword = function (req, res) {
 
   var email = req.body.email || req.param('email'),
-    passwordNew = req.body.passwordNew || req.param('passwordNew');
+    passwordNew = req.body.passwordNew || req.param('passwordNew'),
+    e = req.body.e || req.param('e');
 
   var modifyPassword = function (email, passwordNew) {
     var deferred = Q.defer();
-    var s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `email` = "' + email + '"';
+    var s = 'UPDATE `user` SET `password` = "' + passwordNew + '" , `rstpwd_e` = "" WHERE `email` = "' +
+      email + '" AND `rstpwd_e` = "' + e + '"';
 
     sql.execute(s, function (err, rows, fields) {
       if (err) {
         console.log(err);
         deferred.reject({status: 'error', code: 501, msg: err});
       } else {
-        deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
+        if (rows.length >= 1) {
+          deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
+        } else {
+          deferred.reject({status: 'error', code: 1, msg: '修改密码失败，原因：特征值不匹配或链接已失效...'});
+        }
       }
     });
     return deferred.promise;
