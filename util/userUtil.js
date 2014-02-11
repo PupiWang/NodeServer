@@ -1,12 +1,34 @@
 var sql = require('./sql');
 var Q = require('q');
 
-exports.validUser = function (email, password) {
-  var deferred = Q.defer();
+/**
+ * 判断账号类型，email or phone
+ */
+var typeOfUserId = function (userId) {
+  var emailReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
+    phoneReg = /^1[3|4|5|8][0-9]\d{4,8}$/,
+    result;
+  if (emailReg.test(userId)) {
+    result = 'email';
+  } else if (phoneReg.test(userId)) {
+    result = 'phone';
+  } else {
+    result = 'type error';
+  }
+  return result;
+};
 
-  if (email && password) {
-    var s = 'select * from user where email="' + email + '"';
-    sql.execute(s, function (err, rows, fields) {
+exports.validUser = function (userId, password) {
+  var deferred = Q.defer();
+  var type = typeOfUserId(userId);
+  var s;
+  if (userId && password) {
+    if (type === 'email') {
+      s = 'select * from user where email="' + userId + '"';
+    } else if (type === 'phone') {
+      s = 'select * from user where phone="' + userId + '"';
+    }
+    sql.execute(s, function (err, rows) {
 
       if (err) {
         console.log(err);
@@ -36,4 +58,52 @@ exports.validUser = function (email, password) {
 
   return deferred.promise;
 
+};
+
+exports.typeOfUserId = function (userId) {
+  return typeOfUserId(userId);
+};
+
+/**
+ * 发送激活账号邮件或短信
+ */
+exports.sendActivationMessage = function (userId) {
+  var deferred = Q.defer();
+  var e = require('MD5')(Math.random());
+  var type = typeOfUserId(userId);
+  var s;
+  if (type === 'email') {
+    s = 'UPDATE user SET activation_e = "' + e + '" WHERE email = "' + userId + '"';
+    sql.execute(s, function (err) {
+      if (err) {
+        console.log(err);
+      }
+    });
+    var transport = require('../util/mail').transport;
+    var url = 'http://115.29.179.7/mobile/user/activation?e=' + e;
+    var mailOptions = {
+      from: '皇上<dreamjl@live.cn>', // sender address
+      to: userId, // list of receivers
+      subject: '激活账户', // Subject line
+      text: '激活账户', // plaintext body
+      html: '<a href="' + url + '">点此激活您的账户</a>' // html body
+    };
+    transport.sendMail(mailOptions, function (err, response) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Message sent: " + response.message);
+      }
+    });
+    deferred.resolve({status: 'success', code: 1, msg: '注册成功,已发送激活邮件...'});
+  } else if (type === 'phone') {
+    s = 'UPDATE user SET activation_e = "' + e + '" WHERE phone = "' + userId + '"';
+    sql.execute(s, function (err) {
+      if (err) {
+        console.log(err);
+      }
+    });
+    deferred.resolve({status: 'success', code: 2, msg: '注册成功,已发送验证码到您的手机...'});
+  }
+  return deferred.promise;
 };

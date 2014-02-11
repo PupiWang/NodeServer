@@ -42,10 +42,11 @@ server.listen(exports.app.get('port'), function () {
     });
 
     socket.on('oparation', function (data) {
-      var i = 0;
+      var target;
+      i = 0;
       for (i; i < server_socket.serv_sockets.length; i++) {
 
-        var target = server_socket.serv_sockets[i];
+        target = server_socket.serv_sockets[i];
 
         if (target.device_id === data.to) {
           server_socket.protbufConvertor(target, data);

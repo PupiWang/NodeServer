@@ -19,6 +19,7 @@ app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
 
 app.get('/mobile/user/reset', m_user.reset);
+app.get('/mobile/user/sendActivationMessage', m_user.sendActivationMessage);
 app.get('/mobile/user/activation', m_user.activation);
 app.get('/mobile/device', m_device.device);
 app.get('/mobile/resource/pictures', m_resource.pictures);
