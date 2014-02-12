@@ -16,25 +16,27 @@ exports.login = function (req, res) {
 
   var type = typeOfUserId(userId);
 
-  validUser(userId, password)
-    .then(function () {
-      //验证通过
-      var deferred = Q.defer();
-      var s;
-      //最近登陆时间
-      if (type === 'email') {
-        s = 'UPDATE user SET datetime_lastlogin = ' + new Date().getTime() + ' WHERE email = "' + userId + '"';
-      } else if (type === 'phone') {
-        s = 'UPDATE user SET datetime_lastlogin = ' + new Date().getTime() + ' WHERE phone = "' + userId + '"';
+  var setLoginTime = function () {
+    //验证通过
+    var deferred = Q.defer();
+    var s;
+    //最近登陆时间
+    if (type === 'email') {
+      s = 'UPDATE user SET datetime_lastlogin = ' + new Date().getTime() + ' WHERE email = "' + userId + '"';
+    } else if (type === 'phone') {
+      s = 'UPDATE user SET datetime_lastlogin = ' + new Date().getTime() + ' WHERE phone = "' + userId + '"';
+    }
+    sql.execute(s, function (err) {
+      if (err) {
+        console.log(err);
       }
-      sql.execute(s, function (err) {
-        if (err) {
-          console.log(err);
-        }
-      });
-      deferred.resolve({status: 'success', code: 1, msg: '验证通过...'});
-      return deferred.promise;
-    })
+    });
+    deferred.resolve({status: 'success', code: 1, msg: '验证通过...'});
+    return deferred.promise;
+  };
+
+  validUser(userId, password)
+    .then(setLoginTime)
     .then(function (data) {
       //成功返回结果
       res.send(data);
@@ -120,15 +122,15 @@ exports.signup = function (req, res) {
         console.log(err);
         deferred.reject({status: 'error', code: 501, msg: err});
       } else {
-        deferred.resolve();
+        deferred.resolve(userId);
       }
     });
     return deferred.promise;
   };
 
   userIsExist()
-    .then(createUser())
-    .then(sendActivationMessage(userId))
+    .then(createUser)
+    .then(sendActivationMessage)
     .then(function (data) {
       //成功返回结果
       res.send(data);
@@ -185,33 +187,35 @@ exports.modify = function (req, res) {
     password = req.body.password || req.param('password'),
     passwordNew = req.body.passwordNew || req.param('passwordNew');
 
-  validUser(userId, password)
-    .then(function () {
-      //验证通过
-      var deferred = Q.defer();
-      var type = typeOfUserId(userId);
-      var s;
+  var modifyPassword = function () {
+    //验证通过
+    var deferred = Q.defer();
+    var type = typeOfUserId(userId);
+    var s;
 
-      if (type === 'email') {
-        s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `email` = "' + userId + '"';
-      } else if (type === 'phone') {
-        s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `phone` = "' + userId + '"';
-      }
+    if (type === 'email') {
+      s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `email` = "' + userId + '"';
+    } else if (type === 'phone') {
+      s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `phone` = "' + userId + '"';
+    }
 
-      sql.execute(s, function (err, rows) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
+    sql.execute(s, function (err, rows) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        if (rows.changedRows >= 1) {
+          deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
         } else {
-          if (rows.changedRows >= 1) {
-            deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
-          } else {
-            deferred.reject({status: 'error', code: 601, msg: '修改密码失败...'});
-          }
+          deferred.reject({status: 'error', code: 601, msg: '修改密码失败...'});
         }
-      });
-      return deferred.promise;
-    })
+      }
+    });
+    return deferred.promise;
+  };
+
+  validUser(userId, password)
+    .then(modifyPassword)
     .then(function (data) {
       //成功返回结果
       res.send(data);
@@ -260,70 +264,74 @@ exports.forget = function (req, res) {
     return deferred.promise;
   };
 
-  userIsExist()
-    .then(function () {
-      //设置唯一字段rstpwd_e，生效时间字段rstpwd_time，是否生效字段rstpwd_valid
-      //e用以确定链接的真实性，time用以确定链接是否因超时而失效，valid在链接第一次被访问后设置为0
-      //用来构造一次性链接，点击后失效
-      var deferred = Q.defer();
-      var type = typeOfUserId(userId);
-      var MD5 = require('MD5');
-      var e = MD5(Math.random());
-      var time = new Date().getTime();
-      var s;
+  var setUniqueParam = function () {
+    //设置唯一字段rstpwd_e，生效时间字段rstpwd_time，是否生效字段rstpwd_valid
+    //e用以确定链接的真实性，time用以确定链接是否因超时而失效，valid在链接第一次被访问后设置为0
+    //用来构造一次性链接，点击后失效
+    var deferred = Q.defer();
+    var type = typeOfUserId(userId);
+    var MD5 = require('MD5');
+    var e = MD5(Math.random());
+    var time = new Date().getTime();
+    var s;
 
-      if (type === 'email') {
-        s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
-          '" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + userId + '"';
-      } else if (type === 'phone') {
-        s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
-          '" , `rstpwd_valid` = "1" ' + 'WHERE `phone` = "' + userId + '"';
+    if (type === 'email') {
+      s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
+        '" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + userId + '"';
+    } else if (type === 'phone') {
+      s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
+        '" , `rstpwd_valid` = "1" ' + 'WHERE `phone` = "' + userId + '"';
+    }
+
+    sql.execute(s, function (err, rows) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        if (rows.changedRows >= 1) {
+          deferred.resolve(e);
+        } else {
+          deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
+        }
       }
+    });
 
-      sql.execute(s, function (err, rows) {
+    return deferred.promise;
+  };
+
+  var sendResetMail = function (data) {
+    //发送带重置密码链接的邮件
+    var deferred = Q.defer();
+    var type = typeOfUserId(userId);
+    var transport = require('../util/mail').transport;
+    if (type === 'email') {
+      var url = 'http://115.29.179.7/mobile/user/reset?e=' + data;
+      var mailOptions = {
+        from: '皇上<dreamjl@live.cn>', // sender address
+        to: userId, // list of receivers
+        subject: '重置密码', // Subject line
+        text: '重置密码', // plaintext body
+        html: '<a href="' + url + '">点此重置您的密码</a>' // html body
+      };
+      transport.sendMail(mailOptions, function (err, response) {
         if (err) {
           console.log(err);
           deferred.reject({status: 'error', code: 501, msg: err});
         } else {
-          if (rows.changedRows >= 1) {
-            deferred.resolve(e);
-          } else {
-            deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
-          }
+          console.log("Message sent: " + response.message);
+          deferred.resolve({status: 'success', code: 1, msg: '重置密码的链接已发送到您的邮箱...'});
         }
       });
+    } else if (type === 'phone') {
+      deferred.resolve({status: 'success', code: 2, msg: '验证码已发送到您的手机...'});
+    }
 
-      return deferred.promise;
-    })
-    .then(function (data) {
-      //发送带重置密码链接的邮件
-      var deferred = Q.defer();
-      var type = typeOfUserId(userId);
-      var transport = require('../util/mail').transport;
-      if (type === 'email') {
-        var url = 'http://115.29.179.7/mobile/user/reset?e=' + data;
-        var mailOptions = {
-          from: '皇上<dreamjl@live.cn>', // sender address
-          to: userId, // list of receivers
-          subject: '重置密码', // Subject line
-          text: '重置密码', // plaintext body
-          html: '<a href="' + url + '">点此重置您的密码</a>' // html body
-        };
-        transport.sendMail(mailOptions, function (err, response) {
-          if (err) {
-            console.log(err);
-            deferred.reject({status: 'error', code: 501, msg: err});
-          } else {
-            console.log("Message sent: " + response.message);
-            deferred.resolve({status: 'success', code: 1, msg: '重置密码的链接已发送到您的邮箱...'});
-          }
-        });
-      } else if (type === 'phone') {
-        deferred.resolve({status: 'success', code: 2, msg: '验证码已发送到您的手机...'});
-      }
+    return deferred.promise;
+  };
 
-      return deferred.promise;
-    })
+  userIsExist()
+    .then(setUniqueParam)
+    .then(sendResetMail)
     .then(function (data) {
       //成功返回结果
       res.send(data);
@@ -366,25 +374,27 @@ exports.reset = function (req, res) {
     return deferred.promise;
   };
 
-  validURL(e, new Date().getTime())
-    .then(function () {
-      //将rstpwd_valid字段设置为0
-      var deferred = Q.defer();
-      var s = 'UPDATE `user` SET `rstpwd_valid` = 0' + ' WHERE `rstpwd_e` = "' + e + '"';
-      sql.execute(s, function (err, rows) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
+  var setUniqueParam = function () {
+    //将rstpwd_valid字段设置为0
+    var deferred = Q.defer();
+    var s = 'UPDATE `user` SET `rstpwd_valid` = 0' + ' WHERE `rstpwd_e` = "' + e + '"';
+    sql.execute(s, function (err, rows) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        if (rows.changedRows >= 1) {
+          deferred.resolve({status: 'success', code: 1, msg: '链接有效性验证通过...'});
         } else {
-          if (rows.changedRows >= 1) {
-            deferred.resolve({status: 'success', code: 1, msg: '链接有效性验证通过...'});
-          } else {
-            deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
-          }
+          deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
         }
-      });
-      return deferred.promise;
-    })
+      }
+    });
+    return deferred.promise;
+  };
+
+  validURL(e, new Date().getTime())
+    .then(setUniqueParam)
     .then(function (data) {
       //成功返回结果
       res.send(data);
