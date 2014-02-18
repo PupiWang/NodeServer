@@ -69,10 +69,11 @@ exports.typeOfUserId = function (userId) {
  */
 exports.sendActivationMessage = function (userId) {
   var deferred = Q.defer();
-  var e = require('MD5')(Math.random());
+  var e;
   var type = typeOfUserId(userId);
   var s;
   if (type === 'email') {
+    e = require('MD5')(Math.random());
     s = 'UPDATE user SET activation_e = "' + e + '" WHERE email = "' + userId + '"';
     sql.execute(s, function (err) {
       if (err) {
@@ -97,12 +98,19 @@ exports.sendActivationMessage = function (userId) {
     });
     deferred.resolve({status: 'success', code: 1, msg: '注册成功,已发送激活邮件...'});
   } else if (type === 'phone') {
+    var SMS = require('./smsbao').SMS;
+    e = Math.floor((Math.random() * 9 + 1) * 100000);
     s = 'UPDATE user SET activation_e = "' + e + '" WHERE phone = "' + userId + '"';
+
     sql.execute(s, function (err) {
       if (err) {
         console.log(err);
       }
     });
+
+    var content = '欢迎注册乐屋安全卫士，您的验证码为：' + e;
+    SMS(userId, content);
+
     deferred.resolve({status: 'success', code: 2, msg: '注册成功,已发送验证码到您的手机...'});
   }
   return deferred.promise;

@@ -206,9 +206,19 @@ exports.sendActivationMessage = function (req, res) {
 };
 
 exports.activation = function (req, res) {
+  var userId = req.body.userId || req.param('userId');
   var e = req.body.e || req.param('e');
-  var s = 'UPDATE user SET activation_date = ' + new Date().getTime() +
-      ' , activation_e = "" WHERE activation_e = "' + e + '"';
+  var s;
+
+  var type = typeOfUserId(userId);
+  if (type === 'email') {
+    s = 'UPDATE user SET activation_date = ' + new Date().getTime() +
+      ' , activation_e = "" WHERE activation_e = "' + e + '" AND email = "' + userId + '"';
+  } else if (type === 'phone') {
+    s = 'UPDATE user SET activation_date = ' + new Date().getTime() +
+      ' , activation_e = "" WHERE activation_e = "' + e + '" AND phone = "' + userId + '"';
+  }
+
   sql.execute(s, function (err, rows) {
     if (err) {
       console.log(err);
@@ -319,14 +329,16 @@ exports.forget = function (req, res) {
     var deferred = Q.defer();
     var type = typeOfUserId(userId);
     var MD5 = require('MD5');
-    var e = MD5(Math.random());
+    var e;
     var time = new Date().getTime();
     var s;
 
     if (type === 'email') {
+      e = MD5(Math.random());
       s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
         '" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + userId + '"';
     } else if (type === 'phone') {
+      e = Math.floor((Math.random() * 9 + 1) * 100000);
       s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
         '" , `rstpwd_valid` = "1" ' + 'WHERE `phone` = "' + userId + '"';
     }
@@ -371,6 +383,9 @@ exports.forget = function (req, res) {
         }
       });
     } else if (type === 'phone') {
+      var SMS = require('./smsbao').SMS;
+      var content = '您申请重置密码的验证码为：' + data + '。乐屋安全卫士，如果非本人操作请致电客服。';
+      SMS(userId, content);
       deferred.resolve({status: 'success', code: 2, msg: '验证码已发送到您的手机...'});
     }
 

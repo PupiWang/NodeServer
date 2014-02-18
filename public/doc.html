@@ -19,7 +19,8 @@
         <ul>
           <li><a href="#login">登陆</a></li>
           <li><a href="#signup">注册</a></li>
-          <li><a href="#sendActivationMessage">激活账号</a></li>
+          <li><a href="#sendActivationMessage">发送激活码</a></li>
+          <li><a href="#activation">激活账号</a></li>
           <li><a href="#forget">忘记密码</a></li>
           <li><a href="#resetPassword">重置密码</a></li>
         </ul>
@@ -77,13 +78,29 @@
     </div>
 
     <div id="sendActivationMessage" class="block">
-      <h3>激活账号</h3>
+      <h3>发送激活码</h3>
       <p><label>接口：http://115.29.179.7/mobile/user/sendActivationMessage</label></p>
       <p><label>方法：GET</label></p>
       <p><label>参数：userId </label></p>
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <h4>示例</h4>
       <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><button>Submit</button></p>
+      <div class="alert alert-warning">
+        <p></p>
+      </div>
+    </div>
+
+    <div id="activation" class="block">
+      <h3>激活账号</h3>
+      <p><label>接口：http://115.29.179.7/mobile/user/activation</label></p>
+      <p><label>方法：GET</label></p>
+      <p><label>参数：userId , e </label></p>
+      <p><code>&lt;input name="userId" type="text"&gt;</code></p>
+      <p><code>&lt;input name="e" type="text"&gt;</code></p>
+      <h4>示例</h4>
+      <p><label>userId</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>e</label><input name="e" type="text" value=""></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
@@ -216,6 +233,14 @@
         var userId = $('#sendActivationMessage p [name="userId"]')[0].value;
         $.get('/mobile/user/sendActivationMessage', {'userId': userId}, function (data) {
           $('#sendActivationMessage .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+        });
+      });
+
+      $('#activation p button').on('click', function () {
+        var userId = $('#sendActivationMessage p [name="userId"]')[0].value, 
+          e = $('#activation p [name="e"]')[0].value;
+        $.get('/mobile/user/activation', {'e': e, 'userId': userId}, function (data) {
+          $('#activation .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
         });
       });
 
