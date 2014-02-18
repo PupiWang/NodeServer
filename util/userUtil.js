@@ -39,7 +39,7 @@ exports.validUser = function (userId, password) {
             if (rows[0].activation_date === 0) {
               deferred.reject({status: 'error', code: 404, msg: '此账户尚未激活...'});
             } else {
-              deferred.resolve();
+              deferred.resolve(rows[0]._id);
             }
           } else {
             deferred.reject({status: 'error', code: 403, msg: '密码错误...'});

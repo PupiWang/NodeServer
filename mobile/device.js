@@ -1,28 +1,32 @@
 var sql = require('../util/sql');
-var validUser = require('../util/userUtil').validUser;
+var userUtil = require('../util/userUtil');
+var validUser = userUtil.validUser;
+var typeOfUserId = userUtil.typeOfUserId;
 var Q = require('q');
 
 exports.device = function (req, res) {
 
-  var email = req.body.email || req.param('email'),
+  var userId = req.body.userId || req.param('userId'),
     password = req.body.password || req.param('password');
 
-  validUser(email, password)
-    .then(function () {
-      //验证通过
-      var deferred = Q.defer();
-      var s = 'select ud.id_device, ud.display_name, d.status from user_device ud, device d where email="' +
-        email + '" AND ud.id_device = d.id_device';
-      sql.execute(s, function (err, rows, fields) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
-        } else {
-          deferred.resolve({status: 'success', code: 1, msg: '验证通过', results: rows});
-        }
-      });
-      return deferred.promise;
-    })
+  var getDevicesByUser = function (_id) {
+    //验证通过
+    var deferred = Q.defer();
+    var s = 'select * from user_device ud, device d ' +
+      'where ud.id_device = d.id_device AND ud.id_user = ' + _id;
+    sql.execute(s, function (err, rows) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        deferred.resolve({status: 'success', code: 1, msg: '验证通过', results: rows});
+      }
+    });
+    return deferred.promise;
+  };
+
+  validUser(userId, password)
+    .then(getDevicesByUser)
     .then(function (data) {
       //成功返回结果
       res.send(data);
@@ -37,65 +41,71 @@ exports.device = function (req, res) {
 
 exports.addDevice = function (req, res) {
 
-  var email = req.body.email || req.param('email'),
+  var userId = req.body.userId || req.param('userId'),
     password = req.body.password || req.param('password'),
     id_device = req.body.deviceId || req.param('deviceId');
 
-  validUser(email, password)
-    .then(function (data) {
-      //验证通过
-      var deferred = Q.defer();
-      //设备号是否存在
-      var s = 'select * from device where id_device = "' + id_device + '"';
-      sql.execute(s, function (err, rows, fields) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
+  var isDeviceExist = function (_id) {
+    //验证通过
+    var deferred = Q.defer();
+    //设备号是否存在
+    var s = 'select * from device where id_device = "' + id_device + '"';
+    sql.execute(s, function (err, rows) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        if (rows.length >= 1) {
+          deferred.resolve(_id);
         } else {
-          if (rows.length >= 1) {
-            deferred.resolve();
-          } else {
-            deferred.reject({status: 'error', code: 1, msg: '设备号错误，不存在此设备...'});
-          }
+          deferred.reject({status: 'error', code: 1, msg: '设备号错误，不存在此设备...'});
         }
-      });
-      return deferred.promise;
-    })
-    .then(function (data) {
-      //设备号正确
-      var deferred = Q.defer();
-      //检查用户是否绑定过此设备
-      var s = 'select * from user_device where email = "' + email + '" and id_device = "' + id_device + '"';
-      sql.execute(s, function (err, rows, fields) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
+      }
+    });
+    return deferred.promise;
+  };
+
+  var checkSameBinding = function (_id) {
+    //设备号正确
+    var deferred = Q.defer();
+    //检查用户是否绑定过此设备
+    var s = 'select * from user_device ud where ud.id_user = "' + _id + '" and ud.id_device = "' + id_device + '"';
+
+    sql.execute(s, function (err, rows) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        if (rows.length >= 1) {
+          deferred.reject({status: 'error', code: 2, msg: '已经绑定了该设备，无法重复绑定...'});
         } else {
-          if (rows.length >= 1) {
-            deferred.reject({status: 'error', code: 2, msg: '已经绑定了该设备，无法重复绑定...'});
-          } else {
-            deferred.resolve();
-          }
+          deferred.resolve(_id);
         }
-      });
-      return deferred.promise;
-    })
-    .then(function (data) {
-      //不存在相同绑定
-      var deferred = Q.defer();
-      //绑定设备
-      var s = 'insert into user_device (email,id_device,display_name) VALUES ("' +
-        email + '","' + id_device + '","' + id_device + '")';
-      sql.execute(s, function (err, rows, fields) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
-        } else {
-          deferred.resolve({status: 'success', code: 1, msg: '添加设备成功...'});
-        }
-      });
-      return deferred.promise;
-    })
+      }
+    });
+    return deferred.promise;
+  };
+
+  var addDevice = function (_id) {
+    //不存在相同绑定
+    var deferred = Q.defer();
+    //绑定设备
+    var s = 'insert into user_device (id_user,id_device,display_name) VALUES ("' + _id + '","' + id_device + '","' + id_device + '")';
+    sql.execute(s, function (err) {
+      if (err) {
+        console.log(err);
+        deferred.reject({status: 'error', code: 501, msg: err});
+      } else {
+        deferred.resolve({status: 'success', code: 1, msg: '添加设备成功...'});
+      }
+    });
+    return deferred.promise;
+  };
+
+  validUser(userId, password)
+    .then(isDeviceExist)
+    .then(checkSameBinding)
+    .then(addDevice)
     .then(function (data) {
       //成功返回结果
       res.send(data);

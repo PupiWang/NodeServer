@@ -126,11 +126,11 @@
       <h3>获取设备列表</h3>
       <p><label>接口：http://115.29.179.7/mobile/device</label></p>
       <p><label>方法：GET</label></p>
-      <p><label>参数：email , password</label></p>
-      <p><code>&lt;input name="email" type="text"&gt;</code></p>
+      <p><label>参数：userId , password</label></p>
+      <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
+      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -142,12 +142,12 @@
       <h3>添加设备</h3>
       <p><label>接口：http://115.29.179.7/mobile/device/add</label></p>
       <p><label>方法：POST</label></p>
-      <p><label>参数：email , password , deviceId</label></p>
-      <p><code>&lt;input name="email" type="text"&gt;</code></p>
+      <p><label>参数：userId , password , deviceId</label></p>
+      <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <p><code>&lt;input name="deviceId" type="text"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
+      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><label>DeviceId</label><input name="deviceId" type="text" value="ov-orange-01"></p>
       <p><button>Submit</button></p>
@@ -160,11 +160,11 @@
       <h3>获取照片列表</h3>
       <p><label>接口：http://115.29.179.7/mobile/resource/pictures</label></p>
       <p><label>方法：GET</label></p>
-      <p><label>参数：email , password</label></p>
-      <p><code>&lt;input name="email" type="text"&gt;</code></p>
+      <p><label>参数：userId , password</label></p>
+      <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
+      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -176,11 +176,11 @@
       <h3>获取视频列表</h3>
       <p><label>接口：http://115.29.179.7/mobile/resource/videos</label></p>
       <p><label>方法：GET</label></p>
-      <p><label>参数：email , password</label></p>
-      <p><code>&lt;input name="email" type="text"&gt;</code></p>
+      <p><label>参数：userId , password</label></p>
+      <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="email" type="text" value="1@qq.com"></p>
+      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -234,34 +234,34 @@
       });
 
       $('#device p button').on('click', function () {
-        var email = $('#device p [name="email"]')[0].value,
+        var userId = $('#device p [name="userId"]')[0].value,
           password = $('#device p [name="password"]')[0].value;
-        $.get('/mobile/device', {'email': email, 'password': md5(password)}, function (data) {
+        $.get('/mobile/device', {'userId': userId, 'password': md5(password)}, function (data) {
           $('#device .alert p')[0].innerHTML = '[{"id_device": "ov_orange","display_name": "ov_orange","status": ""},{"id_device": "ov_orange_01","display_name": "Test","status": ""},{"id_device": "123456","display_name": "123456","status": ""}]';
         });
       });
 
       $('#picture p button').on('click', function () {
-        var email = $('#picture p [name="email"]')[0].value,
+        var userId = $('#picture p [name="userId"]')[0].value,
           password = $('#picture p [name="password"]')[0].value;
-        $.get('/mobile/resource/pictures', {'email': email, 'password': md5(password)}, function (data) {
+        $.get('/mobile/resource/pictures', {'userId': userId, 'password': md5(password)}, function (data) {
           $('#picture .alert p')[0].innerHTML = data;
         });
       });
 
       $('#video p button').on('click', function () {
-        var email = $('#video p [name="email"]')[0].value,
+        var userId = $('#video p [name="userId"]')[0].value,
           password = $('#video p [name="password"]')[0].value;
-        $.get('/mobile/resource/videos', {'email': email, 'password': md5(password)}, function (data) {
+        $.get('/mobile/resource/videos', {'userId': userId, 'password': md5(password)}, function (data) {
           $('#video .alert p')[0].innerHTML = data;
         });
       });
 
       $('#addDevice p button').on('click', function () {
-        var email = $('#addDevice p [name="email"]')[0].value,
+        var userId = $('#addDevice p [name="userId"]')[0].value,
           password = $('#addDevice p [name="password"]')[0].value,
           deviceId = $('#addDevice p [name="deviceId"]')[0].value;
-        $.post('/mobile/device/add', {'email': email, 'password': md5(password), 'deviceId': deviceId}, function (data) {
+        $.post('/mobile/device/add', {'userId': userId, 'password': md5(password), 'deviceId': deviceId}, function (data) {
           $('#addDevice .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
         });
       });
