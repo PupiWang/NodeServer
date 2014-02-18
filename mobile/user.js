@@ -16,7 +16,52 @@ exports.login = function (req, res) {
 
   var type = typeOfUserId(userId);
 
-  var setLoginTime = function () {
+  var validUser2 = function (userId, password) {
+    var deferred = Q.defer();
+    // var type = typeOfUserId(userId);
+    var s;
+    if (userId && password) {
+      if (type === 'email') {
+        s = 'select * from user where email="' + userId + '"';
+      } else if (type === 'phone') {
+        s = 'select * from user where phone="' + userId + '"';
+      }
+      sql.execute(s, function (err, rows) {
+
+        if (err) {
+          console.log(err);
+          deferred.reject({status: 'error', code: 501, msg: err});
+        } else {
+          if (rows.length === 1) {
+            if (rows[0].password === password) {
+              if (rows[0].activation_date === 0) {
+                deferred.reject({status: 'error', code: 404, msg: '此账户尚未激活...'});
+              } else {
+                var userObj = {};
+                userObj.userId = rows[0]._id;
+                userObj.email = rows[0].email;
+                userObj.phone = rows[0].phone;
+                deferred.resolve(userObj);
+              }
+            } else {
+              deferred.reject({status: 'error', code: 403, msg: '密码错误...'});
+            }
+          } else {
+            deferred.reject({status: 'error', code: 402, msg: '用户名错误...'});
+          }
+        }
+
+      });
+
+    } else {
+      //用户名或密码为空，直接返回false
+      deferred.reject({status: 'error', code: 401, msg: '用户名或密码为空,验证无法通过...'});
+    }
+
+    return deferred.promise;
+  };
+
+  var setLoginTime = function (userObj) {
     //验证通过
     var deferred = Q.defer();
     var s;
@@ -31,11 +76,14 @@ exports.login = function (req, res) {
         console.log(err);
       }
     });
-    deferred.resolve({status: 'success', code: 1, msg: '验证通过...'});
+    userObj.status = 'success';
+    userObj.code = 1;
+    userObj.msg = '验证通过...';
+    deferred.resolve(userObj);
     return deferred.promise;
   };
 
-  validUser(userId, password)
+  validUser2(userId, password)
     .then(setLoginTime)
     .then(function (data) {
       //成功返回结果

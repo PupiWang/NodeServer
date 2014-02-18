@@ -197,7 +197,9 @@
         var userId = $('#login p [name="userId"]')[0].value,
           password = $('#login p [name="password"]')[0].value;
         $.post('/mobile/user/login', {'userId': userId, 'password': md5(password)}, function (data) {
-          $('#login .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#login .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code +
+            ', userId: ' + data.userId + ', email: "' + data.email + '", phone: "' + data.phone + 
+            '", msg: "' + data.msg + '"}';
         });
       });
 
