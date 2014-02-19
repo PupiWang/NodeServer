@@ -18,7 +18,7 @@ app.get('/userinfo', user.userinfo);
 app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
 
-app.get('/mobile/user/reset', m_user.reset);
+// app.get('/mobile/user/reset', m_user.reset);
 app.get('/mobile/user/sendActivationMessage', m_user.sendActivationMessage);
 app.get('/mobile/user/activation', m_user.activation);
 app.get('/mobile/device', m_device.device);
@@ -36,5 +36,5 @@ app.post('/mobile/user/login', m_user.login);
 app.post('/mobile/user/signup', m_user.signup);
 app.post('/mobile/user/modify', m_user.modify);
 app.post('/mobile/user/forget', m_user.forget);
-app.post('/mobile/user/resetPassword', m_user.resetPassword);
+// app.post('/mobile/user/resetPassword', m_user.resetPassword);
 app.post('/mobile/device/add', m_device.addDevice);
