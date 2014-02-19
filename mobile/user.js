@@ -225,7 +225,7 @@ exports.activation = function (req, res) {
       res.send({status: 'error', code: 501, msg: err});
     } else {
       if (rows.changedRows >= 1) {
-        res.send({status: 'success', code: 1, msg: '用户已激活...'});
+        res.send({status: 'success', code: 1, msg: '用户激活成功...'});
       } else {
         res.send({status: 'error', code: 1, msg: '链接失效或用户已被激活...'});
       }
