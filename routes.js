@@ -34,7 +34,7 @@ app.post('/modifydevicename', device.modifyName);
 
 app.post('/mobile/user/login', m_user.login);
 app.post('/mobile/user/signup', m_user.signup);
-app.post('/mobile/user/modify', m_user.modify);
+app.post('/mobile/user/modify', m_user.modifyPassword);
 app.post('/mobile/user/forget', m_user.forget);
-// app.post('/mobile/user/resetPassword', m_user.resetPassword);
+app.post('/mobile/user/resetPassword', m_user.resetPassword);
 app.post('/mobile/device/add', m_device.addDevice);

@@ -239,54 +239,38 @@ exports.activation = function (req, res) {
  * @param  {string} password 密码
  * @param  {string} passwordNew 新密码
  */
-exports.modify = function (req, res) {
+exports.modifyPassword = function (req, res) {
 
   var userId = req.body.userId || req.param('userId'),
     password = req.body.password || req.param('password'),
     passwordNew = req.body.passwordNew || req.param('passwordNew');
 
   var modifyPassword = userUtil.modifyPassword;
-  var userObj = {};
-  userObj.userId = userId;
-  userObj.passwordNew = passwordNew;
 
-  if (password) {
-    //参数不为空为一般修改密码流程
-    var delivaryParams = function () {
-      //传递参数
-      var deferred = Q.defer();
+  //参数不为空为一般修改密码流程
+  var delivaryParams = function () {
+    //传递参数
+    var deferred = Q.defer();
+    var userObj = {};
+    userObj.userId = userId;
+    userObj.passwordNew = passwordNew;
 
-      deferred.resolve(userObj);
-      return deferred.promise;
-    };
+    deferred.resolve(userObj);
+    return deferred.promise;
+  };
 
-    validUser(userId, password)
-      .then(delivaryParams)
-      .then(modifyPassword)
-      .then(function (data) {
-        //成功返回结果
-        res.send(data);
-      })
-      .catch(function (error) {
-        // Handle any error from all above steps
-        console.log('error : ' + error);
-        res.send(error);
-      });
-
-  } else {
-    //参数为空为忘记密码后的修改密码流程
-    modifyPassword(userObj)
-      .then(function (data) {
-        //成功返回结果
-        res.send(data);
-      })
-      .catch(function (error) {
-        // Handle any error from all above steps
-        console.log('error : ' + error);
-        res.send(error);
-      });
-
-  }
+  validUser(userId, password)
+    .then(delivaryParams)
+    .then(modifyPassword)
+    .then(function (data) {
+      //成功返回结果
+      res.send(data);
+    })
+    .catch(function (error) {
+      // Handle any error from all above steps
+      console.log('error : ' + error);
+      res.send(error);
+    });
 
 };
 
@@ -330,6 +314,7 @@ exports.forget = function (req, res) {
     //传递参数
     var deferred = Q.defer();
     var e = Math.floor((Math.random() * 9 + 1) * 100000);
+    var s;
 
     if (type === 'email') {
       var transport = require('../util/mail').transport;
@@ -349,12 +334,22 @@ exports.forget = function (req, res) {
           deferred.resolve({status: 'success', code: 1, msg: e});
         }
       });
+      s = 'UPDATE user SET rstpwd_time = ' + new Date().getTime() +
+        ' , rstpwd_e = "' + e + '" WHERE email = "' + userId + '"';
     } else if (type === 'phone') {
       var SMS = require('./smsbao').SMS;
       var content = '您申请重置密码的验证码为：' + e + '。乐屋安全卫士，如果非本人操作请致电客服。';
       SMS(userId, content);
       deferred.resolve({status: 'success', code: 2, msg: e});
+      s = 'UPDATE user SET rstpwd_time = ' + new Date().getTime() +
+        ' , rstpwd_e = "' + e + '" WHERE phone = "' + userId + '"';
     }
+
+    sql.execute(s, function (err) {
+      if (err) {
+        console.log(err);
+      }
+    });
 
     return deferred.promise;
   };
@@ -363,6 +358,89 @@ exports.forget = function (req, res) {
     .then(sendPIN)
     .then(function (data) {
       //成功返回结果
+      res.send(data);
+    })
+    .catch(function (error) {
+      // Handle any error from all above steps
+      console.log('error : ' + error);
+      res.send(error);
+    });
+
+};
+
+/**
+ * 忘记密码后的修改密码
+ * @param  {string} userId 用户名
+ * @param  {string} passwordNew 新密码
+ */
+exports.resetPassword = function (req, res) {
+
+  var userId = req.body.userId || req.param('userId'),
+    e = req.body.e || req.param('e'),
+    passwordNew = req.body.passwordNew || req.param('passwordNew');
+
+  var type = typeOfUserId(userId);
+
+  var modifyPassword = userUtil.modifyPassword;
+
+  var validPIN = function (userId, e) {
+    var deferred = Q.defer();
+    var s;
+    if (userId && e) {
+      if (type === 'email') {
+        s = 'select * from user where email="' + userId + '" AND rstpwd_e = "' + e + '"';
+      } else if (type === 'phone') {
+        s = 'select * from user where phone="' + userId + '" AND rstpwd_e = "' + e + '"';
+      }
+      sql.execute(s, function (err, rows) {
+        if (err) {
+          console.log(err);
+          deferred.reject({status: 'error', code: 501, msg: err});
+        } else {
+          if (rows.length === 1) {
+            deferred.resolve();
+          } else {
+            deferred.reject({status: 'error', code: 1, msg: '验证码有误...'});
+          }
+        }
+      });
+    }
+    return deferred.promise;
+  };
+
+
+  //参数不为空为一般修改密码流程
+  var delivaryParams = function () {
+    //传递参数
+    var deferred = Q.defer();
+
+    var userObj = {};
+    userObj.userId = userId;
+    userObj.passwordNew = passwordNew;
+
+    deferred.resolve(userObj);
+
+    return deferred.promise;
+  };
+
+  validPIN(userId, e)
+    .then(delivaryParams)
+    .then(modifyPassword)
+    .then(function (data) {
+      //成功返回结果
+      var s;
+      if (type === 'email') {
+        s = 'UPDATE user SET rstpwd_e = "' + e + '" WHERE email = "' + userId + '"';
+      } else if (type === 'phone') {
+        s = 'UPDATE user SET rstpwd_e = "' + e + '" WHERE phone = "' + userId + '"';
+      }
+
+      sql.execute(s, function (err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+
       res.send(data);
     })
     .catch(function (error) {
