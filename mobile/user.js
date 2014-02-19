@@ -245,34 +245,21 @@ exports.modify = function (req, res) {
     password = req.body.password || req.param('password'),
     passwordNew = req.body.passwordNew || req.param('passwordNew');
 
-  var modifyPassword = function () {
-    //验证通过
+  var delivaryParams = function () {
+    //传递参数
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
-    var s;
-
-    if (type === 'email') {
-      s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `email` = "' + userId + '"';
-    } else if (type === 'phone') {
-      s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `phone` = "' + userId + '"';
-    }
-
-    sql.execute(s, function (err, rows) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        if (rows.changedRows >= 1) {
-          deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
-        } else {
-          deferred.reject({status: 'error', code: 601, msg: '修改密码失败...'});
-        }
-      }
-    });
+    var userObj = {};
+    userObj.userId = userId;
+    userObj.passwordNew = passwordNew;
+    userObj.noticeUser = false;
+    deferred.resolve(userObj);
     return deferred.promise;
   };
 
+  var modifyPassword = userUtil.modifyPassword;
+
   validUser(userId, password)
+    .then(delivaryParams)
     .then(modifyPassword)
     .then(function (data) {
       //成功返回结果
@@ -322,79 +309,28 @@ exports.forget = function (req, res) {
     return deferred.promise;
   };
 
-  var setUniqueParam = function () {
-    //设置唯一字段rstpwd_e，生效时间字段rstpwd_time，是否生效字段rstpwd_valid
-    //e用以确定链接的真实性，time用以确定链接是否因超时而失效，valid在链接第一次被访问后设置为0
-    //用来构造一次性链接，点击后失效
+  var delivaryParams = function () {
+    //传递参数
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
+    var userObj = {};
+    var e = Math.floor((Math.random() * 9 + 1) * 100000);
     var MD5 = require('MD5');
-    var e;
-    var time = new Date().getTime();
-    var s;
 
-    if (type === 'email') {
-      e = MD5(Math.random());
-      s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
-        '" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + userId + '"';
-    } else if (type === 'phone') {
-      e = Math.floor((Math.random() * 9 + 1) * 100000);
-      s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
-        '" , `rstpwd_valid` = "1" ' + 'WHERE `phone` = "' + userId + '"';
-    }
+    userObj.userId = userId;
+    userObj.passwordNew = MD5(e);
+    userObj.origin = e;
+    userObj.noticeUser = true;
 
-    sql.execute(s, function (err, rows) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        if (rows.changedRows >= 1) {
-          deferred.resolve(e);
-        } else {
-          deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
-        }
-      }
-    });
+    deferred.resolve(userObj);
 
     return deferred.promise;
   };
 
-  var sendResetMail = function (data) {
-    //发送带重置密码链接的邮件
-    var deferred = Q.defer();
-    var type = typeOfUserId(userId);
-    var transport = require('../util/mail').transport;
-    if (type === 'email') {
-      var url = 'http://115.29.179.7/mobile/user/reset?e=' + data;
-      var mailOptions = {
-        from: '皇上<dreamjl@live.cn>', // sender address
-        to: userId, // list of receivers
-        subject: '重置密码', // Subject line
-        text: '重置密码', // plaintext body
-        html: '<a href="' + url + '">点此重置您的密码</a>' // html body
-      };
-      transport.sendMail(mailOptions, function (err, response) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
-        } else {
-          console.log("Message sent: " + response.message);
-          deferred.resolve({status: 'success', code: 1, msg: '重置密码的链接已发送到您的邮箱...'});
-        }
-      });
-    } else if (type === 'phone') {
-      var SMS = require('./smsbao').SMS;
-      var content = '您申请重置密码的验证码为：' + data + '。乐屋安全卫士，如果非本人操作请致电客服。';
-      SMS(userId, content);
-      deferred.resolve({status: 'success', code: 2, msg: '验证码已发送到您的手机...'});
-    }
-
-    return deferred.promise;
-  };
+  var modifyPassword = userUtil.modifyPassword;
 
   userIsExist()
-    .then(setUniqueParam)
-    .then(sendResetMail)
+    .then(delivaryParams)
+    .then(modifyPassword)
     .then(function (data) {
       //成功返回结果
       res.send(data);
@@ -407,110 +343,231 @@ exports.forget = function (req, res) {
 
 };
 
-exports.reset = function (req, res) {
-  //重置密码，判断URL有效性
-  var e = req.body.e || req.param('e');
+// /**
+//  * 忘记密码
+//  * @param  {string} email 注册用户的邮箱
+//  */
+// exports.forget = function (req, res) {
 
-  var validURL = function (e, time) {
-    var deferred = Q.defer();
-    var s = 'select * from user where rstpwd_e = "' + e + '"';
+//   var userId = req.body.email || req.param('userId');
 
-    sql.execute(s, function (err, rows) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        if (rows.length >= 1) {
-          var data = rows[0];
-          if (data.rstpwd_valid !== 1) {
-            deferred.reject({status: 'error', code: 2, msg: '链接已失效...'});
-          } else if ((time - data.rstpwd_time) > 60 * 60 * 1000) {
-            deferred.reject({status: 'error', code: 3, msg: '链接已过期...'});
-          } else {
-            deferred.resolve();
-          }
-        } else {
-          deferred.reject({status: 'error', code: 1, msg: '链接不合法，请使用邮件中提供的有效链接...'});
-        }
-      }
-    });
-    return deferred.promise;
-  };
+//   var userIsExist = function () {
+//     //判断用户名是否正确
+//     var deferred = Q.defer();
+//     var type = typeOfUserId(userId);
+//     var s;
 
-  var setUniqueParam = function () {
-    //将rstpwd_valid字段设置为0
-    var deferred = Q.defer();
-    var s = 'UPDATE `user` SET `rstpwd_valid` = 0' + ' WHERE `rstpwd_e` = "' + e + '"';
-    sql.execute(s, function (err, rows) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        if (rows.changedRows >= 1) {
-          deferred.resolve({status: 'success', code: 1, msg: '链接有效性验证通过...'});
-        } else {
-          deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
-        }
-      }
-    });
-    return deferred.promise;
-  };
+//     if (type === 'email') {
+//       s = 'select * from user where email = "' + userId + '"';
+//     } else if (type === 'phone') {
+//       s = 'select * from user where phone = "' + userId + '"';
+//     }
 
-  validURL(e, new Date().getTime())
-    .then(setUniqueParam)
-    .then(function (data) {
-      //成功返回结果
-      res.send(data);
-    })
-    .catch(function (error) {
-      // Handle any error from all above steps
-      console.log('error : ' + error);
-      res.send(error);
-    });
-};
+//     sql.execute(s, function (err, rows) {
+//       if (err) {
+//         console.log(err);
+//         deferred.reject({status: 'error', code: 501, msg: err});
+//       } else {
+//         if (rows.length >= 1) {
+//           deferred.resolve();
+//         } else {
+//           deferred.reject({status: 'error', code: 1, msg: '该用户不存在'});
+//         }
+//       }
+//     });
 
-exports.resetPassword = function (req, res) {
+//     return deferred.promise;
+//   };
 
-  var userId = req.body.userId || req.param('userId'),
-    passwordNew = req.body.passwordNew || req.param('passwordNew'),
-    e = req.body.e || req.param('e');
+//   var setUniqueParam = function () {
+//     //设置唯一字段rstpwd_e，生效时间字段rstpwd_time，是否生效字段rstpwd_valid
+//     //e用以确定链接的真实性，time用以确定链接是否因超时而失效，valid在链接第一次被访问后设置为0
+//     //用来构造一次性链接，点击后失效
+//     var deferred = Q.defer();
+//     var type = typeOfUserId(userId);
+//     var MD5 = require('MD5');
+//     var e;
+//     var time = new Date().getTime();
+//     var s;
 
-  var modifyPassword = function (userId, passwordNew) {
-    var deferred = Q.defer();
-    var type = typeOfUserId(userId);
-    var s;
+//     if (type === 'email') {
+//       e = MD5(Math.random());
+//       s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
+//         '" , `rstpwd_valid` = "1" ' + 'WHERE `email` = "' + userId + '"';
+//     } else if (type === 'phone') {
+//       e = Math.floor((Math.random() * 9 + 1) * 100000);
+//       s = 'UPDATE `user` SET `rstpwd_e` = "' + e + '" , `rstpwd_time` = "' + time +
+//         '" , `rstpwd_valid` = "1" ' + 'WHERE `phone` = "' + userId + '"';
+//     }
 
-    if (type === 'email') {
-      s = 'UPDATE `user` SET `password` = "' + passwordNew + '" , `rstpwd_e` = "" WHERE `email` = "' +
-        userId + '" AND `rstpwd_e` = "' + e + '"';
-    } else if (type === 'phone') {
-      s = 'UPDATE `user` SET `password` = "' + passwordNew + '" , `rstpwd_e` = "" WHERE `phone` = "' +
-        userId + '" AND `rstpwd_e` = "' + e + '"';
-    }
+//     sql.execute(s, function (err, rows) {
+//       if (err) {
+//         console.log(err);
+//         deferred.reject({status: 'error', code: 501, msg: err});
+//       } else {
+//         if (rows.changedRows >= 1) {
+//           deferred.resolve(e);
+//         } else {
+//           deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
+//         }
+//       }
+//     });
 
-    sql.execute(s, function (err, rows) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        if (rows.changedRows >= 1) {
-          deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
-        } else {
-          deferred.reject({status: 'error', code: 1, msg: '修改密码失败，原因：特征值不匹配或链接已失效...'});
-        }
-      }
-    });
-    return deferred.promise;
-  };
+//     return deferred.promise;
+//   };
 
-  modifyPassword(userId, passwordNew)
-    .then(function (data) {
-      //成功返回结果
-      res.send(data);
-    })
-    .catch(function (error) {
-      // Handle any error from all above steps
-      console.log('error : ' + error);
-      res.send(error);
-    });
-};
+//   var sendResetMail = function (data) {
+//     //发送带重置密码链接的邮件
+//     var deferred = Q.defer();
+//     var type = typeOfUserId(userId);
+//     var transport = require('../util/mail').transport;
+//     if (type === 'email') {
+//       var url = 'http://115.29.179.7/mobile/user/reset?e=' + data;
+//       var mailOptions = {
+//         from: '皇上<dreamjl@live.cn>', // sender address
+//         to: userId, // list of receivers
+//         subject: '重置密码', // Subject line
+//         text: '重置密码', // plaintext body
+//         html: '<a href="' + url + '">点此重置您的密码</a>' // html body
+//       };
+//       transport.sendMail(mailOptions, function (err, response) {
+//         if (err) {
+//           console.log(err);
+//           deferred.reject({status: 'error', code: 501, msg: err});
+//         } else {
+//           console.log("Message sent: " + response.message);
+//           deferred.resolve({status: 'success', code: 1, msg: '重置密码的链接已发送到您的邮箱...'});
+//         }
+//       });
+//     } else if (type === 'phone') {
+//       var SMS = require('./smsbao').SMS;
+//       var content = '您申请重置密码的验证码为：' + data + '。乐屋安全卫士，如果非本人操作请致电客服。';
+//       SMS(userId, content);
+//       deferred.resolve({status: 'success', code: 2, msg: '验证码已发送到您的手机...'});
+//     }
+
+//     return deferred.promise;
+//   };
+
+//   userIsExist()
+//     .then(setUniqueParam)
+//     .then(sendResetMail)
+//     .then(function (data) {
+//       //成功返回结果
+//       res.send(data);
+//     })
+//     .catch(function (error) {
+//       // Handle any error from all above steps
+//       console.log('error : ' + error);
+//       res.send(error);
+//     });
+
+// };
+
+// exports.reset = function (req, res) {
+//   //重置密码，判断URL有效性
+//   var e = req.body.e || req.param('e');
+
+//   var validURL = function (e, time) {
+//     var deferred = Q.defer();
+//     var s = 'select * from user where rstpwd_e = "' + e + '"';
+
+//     sql.execute(s, function (err, rows) {
+//       if (err) {
+//         console.log(err);
+//         deferred.reject({status: 'error', code: 501, msg: err});
+//       } else {
+//         if (rows.length >= 1) {
+//           var data = rows[0];
+//           if (data.rstpwd_valid !== 1) {
+//             deferred.reject({status: 'error', code: 2, msg: '链接已失效...'});
+//           } else if ((time - data.rstpwd_time) > 60 * 60 * 1000) {
+//             deferred.reject({status: 'error', code: 3, msg: '链接已过期...'});
+//           } else {
+//             deferred.resolve();
+//           }
+//         } else {
+//           deferred.reject({status: 'error', code: 1, msg: '链接不合法，请使用邮件中提供的有效链接...'});
+//         }
+//       }
+//     });
+//     return deferred.promise;
+//   };
+
+//   var setUniqueParam = function () {
+//     //将rstpwd_valid字段设置为0
+//     var deferred = Q.defer();
+//     var s = 'UPDATE `user` SET `rstpwd_valid` = 0' + ' WHERE `rstpwd_e` = "' + e + '"';
+//     sql.execute(s, function (err, rows) {
+//       if (err) {
+//         console.log(err);
+//         deferred.reject({status: 'error', code: 501, msg: err});
+//       } else {
+//         if (rows.changedRows >= 1) {
+//           deferred.resolve({status: 'success', code: 1, msg: '链接有效性验证通过...'});
+//         } else {
+//           deferred.reject({status: 'error', code: 601, msg: '操作失败...'});
+//         }
+//       }
+//     });
+//     return deferred.promise;
+//   };
+
+//   validURL(e, new Date().getTime())
+//     .then(setUniqueParam)
+//     .then(function (data) {
+//       //成功返回结果
+//       res.send(data);
+//     })
+//     .catch(function (error) {
+//       // Handle any error from all above steps
+//       console.log('error : ' + error);
+//       res.send(error);
+//     });
+// };
+
+// exports.resetPassword = function (req, res) {
+
+//   var userId = req.body.userId || req.param('userId'),
+//     passwordNew = req.body.passwordNew || req.param('passwordNew'),
+//     e = req.body.e || req.param('e');
+
+//   var modifyPassword = function (userId, passwordNew) {
+//     var deferred = Q.defer();
+//     var type = typeOfUserId(userId);
+//     var s;
+
+//     if (type === 'email') {
+//       s = 'UPDATE `user` SET `password` = "' + passwordNew + '" , `rstpwd_e` = "" WHERE `email` = "' +
+//         userId + '" AND `rstpwd_e` = "' + e + '"';
+//     } else if (type === 'phone') {
+//       s = 'UPDATE `user` SET `password` = "' + passwordNew + '" , `rstpwd_e` = "" WHERE `phone` = "' +
+//         userId + '" AND `rstpwd_e` = "' + e + '"';
+//     }
+
+//     sql.execute(s, function (err, rows) {
+//       if (err) {
+//         console.log(err);
+//         deferred.reject({status: 'error', code: 501, msg: err});
+//       } else {
+//         if (rows.changedRows >= 1) {
+//           deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
+//         } else {
+//           deferred.reject({status: 'error', code: 1, msg: '修改密码失败，原因：特征值不匹配或链接已失效...'});
+//         }
+//       }
+//     });
+//     return deferred.promise;
+//   };
+
+//   modifyPassword(userId, passwordNew)
+//     .then(function (data) {
+//       //成功返回结果
+//       res.send(data);
+//     })
+//     .catch(function (error) {
+//       // Handle any error from all above steps
+//       console.log('error : ' + error);
+//       res.send(error);
+//     });
+// };

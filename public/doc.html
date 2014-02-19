@@ -21,8 +21,9 @@
           <li><a href="#signup">注册</a></li>
           <li><a href="#sendActivationMessage">发送激活码</a></li>
           <li><a href="#activation">激活账号</a></li>
+          <li><a href="#modify">修改密码</a></li>
           <li><a href="#forget">忘记密码</a></li>
-          <li><a href="#resetPassword">重置密码</a></li>
+          <!-- <li><a href="#resetPassword">重置密码</a></li> -->
         </ul>
       </li>
 
@@ -51,7 +52,7 @@
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -68,7 +69,7 @@
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <p><code>&lt;input name="password_confirm" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><label>PasswordConfirm</label><input name="password_confirm" type="password" value="123456"></p>
       <p><button>Submit</button></p>
@@ -84,7 +85,7 @@
       <p><label>参数：userId </label></p>
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
@@ -99,8 +100,26 @@
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="e" type="text"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>userId</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>e</label><input name="e" type="text" value=""></p>
+      <p><button>Submit</button></p>
+      <div class="alert alert-warning">
+        <p></p>
+      </div>
+    </div>
+
+    <div id="modify" class="block">
+      <h3>修改密码</h3>
+      <p><label>接口：http://115.29.179.7/mobile/user/modify</label></p>
+      <p><label>方法：POST</label></p>
+      <p><label>参数：userId , e </label></p>
+      <p><code>&lt;input name="userId" type="text"&gt;</code></p>
+      <p><code>&lt;input name="password" type="text"&gt;</code></p>
+      <p><code>&lt;input name="passwordNew" type="text"&gt;</code></p>
+      <h4>示例</h4>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>Password</label><input name="password" type="password" value="123456"></p>
+      <p><label>PasswordNew</label><input name="passwordNew" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
@@ -114,14 +133,14 @@
       <p><label>参数：userId </label></p>
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
       </div>
     </div>
 
-    <div id="resetPassword" class="block">
+<!--     <div id="resetPassword" class="block">
       <h3>重置密码</h3>
       <p><label>接口：http://115.29.179.7/mobile/user/resetPassword</label></p>
       <p><label>方法：POST</label></p>
@@ -130,14 +149,14 @@
       <p><code>&lt;input name="passwordNew" type="password"&gt;</code></p>
       <p><code>&lt;input name="e" type="text"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="passwordNew" type="password" value="123456"></p>
       <p><label>e</label><input name="e" type="text" value="d17a4fcdb0c18ce82ca8262fd6b8ec83"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
       </div>
-    </div>
+    </div> -->
 
     <div id="device" class="block">
       <h3>获取设备列表</h3>
@@ -147,7 +166,7 @@
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -164,7 +183,7 @@
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <p><code>&lt;input name="deviceId" type="text"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><label>DeviceId</label><input name="deviceId" type="text" value="ov-orange-01"></p>
       <p><button>Submit</button></p>
@@ -181,7 +200,7 @@
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -197,7 +216,7 @@
       <p><code>&lt;input name="userId" type="text"&gt;</code></p>
       <p><code>&lt;input name="password" type="password"&gt;</code></p>
       <h4>示例</h4>
-      <p><label>Email</label><input name="userId" type="text" value="1@qq.com"></p>
+      <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -241,6 +260,15 @@
           e = $('#activation p [name="e"]')[0].value;
         $.get('/mobile/user/activation', {'e': e, 'userId': userId}, function (data) {
           $('#activation .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+        });
+      });
+
+      $('#modify p button').on('click', function () {
+        var userId = $('#modify p [name="userId"]')[0].value,
+          password = $('#modify p [name="password"]')[0].value,
+          passwordNew = $('#modify p [name="passwordNew"]')[0].value;
+        $.post('/mobile/user/modify', {'userId': userId, 'password': md5(password), 'passwordNew': md5(passwordNew)}, function (data) {
+          $('#modify .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
         });
       });
 
