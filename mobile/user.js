@@ -245,31 +245,48 @@ exports.modify = function (req, res) {
     password = req.body.password || req.param('password'),
     passwordNew = req.body.passwordNew || req.param('passwordNew');
 
-  var delivaryParams = function () {
-    //传递参数
-    var deferred = Q.defer();
-    var userObj = {};
-    userObj.userId = userId;
-    userObj.passwordNew = passwordNew;
-    userObj.noticeUser = false;
-    deferred.resolve(userObj);
-    return deferred.promise;
-  };
-
   var modifyPassword = userUtil.modifyPassword;
+  var userObj = {};
+  userObj.userId = userId;
+  userObj.passwordNew = passwordNew;
 
-  validUser(userId, password)
-    .then(delivaryParams)
-    .then(modifyPassword)
-    .then(function (data) {
-      //成功返回结果
-      res.send(data);
-    })
-    .catch(function (error) {
-      // Handle any error from all above steps
-      console.log('error : ' + error);
-      res.send(error);
-    });
+  if (password) {
+    //参数不为空为一般修改密码流程
+    var delivaryParams = function () {
+      //传递参数
+      var deferred = Q.defer();
+
+      deferred.resolve(userObj);
+      return deferred.promise;
+    };
+
+    validUser(userId, password)
+      .then(delivaryParams)
+      .then(modifyPassword)
+      .then(function (data) {
+        //成功返回结果
+        res.send(data);
+      })
+      .catch(function (error) {
+        // Handle any error from all above steps
+        console.log('error : ' + error);
+        res.send(error);
+      });
+
+  } else {
+    //参数为空为忘记密码后的修改密码流程
+    modifyPassword(userObj)
+      .then(function (data) {
+        //成功返回结果
+        res.send(data);
+      })
+      .catch(function (error) {
+        // Handle any error from all above steps
+        console.log('error : ' + error);
+        res.send(error);
+      });
+
+  }
 
 };
 
@@ -280,11 +297,11 @@ exports.modify = function (req, res) {
 exports.forget = function (req, res) {
 
   var userId = req.body.email || req.param('userId');
+  var type = typeOfUserId(userId);
 
   var userIsExist = function () {
     //判断用户名是否正确
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
     var s;
 
     if (type === 'email') {
@@ -309,28 +326,41 @@ exports.forget = function (req, res) {
     return deferred.promise;
   };
 
-  var delivaryParams = function () {
+  var sendPIN = function () {
     //传递参数
     var deferred = Q.defer();
-    var userObj = {};
     var e = Math.floor((Math.random() * 9 + 1) * 100000);
-    var MD5 = require('MD5');
 
-    userObj.userId = userId;
-    userObj.passwordNew = MD5(e);
-    userObj.origin = e;
-    userObj.noticeUser = true;
-
-    deferred.resolve(userObj);
+    if (type === 'email') {
+      var transport = require('../util/mail').transport;
+      var mailOptions = {
+        from: '皇上<dreamjl@live.cn>', // sender address
+        to: userId, // list of receivers
+        subject: '重置密码', // Subject line
+        text: '重置密码', // plaintext body
+        html: '<p>您申请重置密码的验证码为：' + e + '。乐屋安全卫士，如果非本人操作请致电客服。</p>' // html body
+      };
+      transport.sendMail(mailOptions, function (err, response) {
+        if (err) {
+          console.log(err);
+          deferred.reject({status: 'error', code: 501, msg: err});
+        } else {
+          console.log("Message sent: " + response.message);
+          deferred.resolve({status: 'success', code: 1, msg: e});
+        }
+      });
+    } else if (type === 'phone') {
+      var SMS = require('./smsbao').SMS;
+      var content = '您申请重置密码的验证码为：' + e + '。乐屋安全卫士，如果非本人操作请致电客服。';
+      SMS(userId, content);
+      deferred.resolve({status: 'success', code: 2, msg: e});
+    }
 
     return deferred.promise;
   };
 
-  var modifyPassword = userUtil.modifyPassword;
-
   userIsExist()
-    .then(delivaryParams)
-    .then(modifyPassword)
+    .then(sendPIN)
     .then(function (data) {
       //成功返回结果
       res.send(data);

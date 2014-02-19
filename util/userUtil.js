@@ -136,41 +136,12 @@ exports.modifyPassword = function (userObj) {
       deferred.reject({status: 'error', code: 501, msg: err});
     } else {
       if (rows.changedRows >= 1) {
-        if (!userObj.noticeUser) {
-          deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
-        }
+        deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
       } else {
         deferred.reject({status: 'error', code: 601, msg: '修改密码失败...'});
       }
     }
   });
 
-  if (userObj.noticeUser) {
-    var origin = userObj.origin;
-    if (type === 'email') {
-      var transport = require('../util/mail').transport;
-      var mailOptions = {
-        from: '皇上<dreamjl@live.cn>', // sender address
-        to: userId, // list of receivers
-        subject: '重置密码', // Subject line
-        text: '重置密码', // plaintext body
-        html: '<p>您申请重置密码，系统为您生成的密码为：' + origin + '</p>' // html body
-      };
-      transport.sendMail(mailOptions, function (err, response) {
-        if (err) {
-          console.log(err);
-          deferred.reject({status: 'error', code: 501, msg: err});
-        } else {
-          console.log("Message sent: " + response.message);
-          deferred.resolve({status: 'success', code: 1, msg: '重置后的密码已发送到您的邮箱,请登录后手动修改。'});
-        }
-      });
-    } else if (type === 'phone') {
-      var SMS = require('./smsbao').SMS;
-      var content = '您申请重置，系统为您生成的密码为：' + origin + '。乐屋安全卫士，如果非本人操作请致电客服。';
-      SMS(userId, content);
-      deferred.resolve({status: 'success', code: 2, msg: '置后的密码已发送到您的手机，请登录后手动修改。'});
-    }
-  }
   return deferred.promise;
 };
