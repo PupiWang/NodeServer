@@ -81,7 +81,7 @@ exports.sendActivationMessage = function (userId) {
       }
     });
     var transport = require('../util/mail').transport;
-    var url = 'http://115.29.179.7/mobile/user/activation?e=' + e;
+    var url = 'http://115.29.179.7/mobile/user/activation?e=' + e + '&userId=' + userId;
     var mailOptions = {
       from: '皇上<dreamjl@live.cn>', // sender address
       to: userId, // list of receivers
