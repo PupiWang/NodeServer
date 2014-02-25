@@ -37,4 +37,6 @@ app.post('/mobile/user/signup', m_user.signup);
 app.post('/mobile/user/modify', m_user.modifyPassword);
 app.post('/mobile/user/forget', m_user.forget);
 app.post('/mobile/user/resetPassword', m_user.resetPassword);
-app.post('/mobile/device/add', m_device.addDevice);
+app.post('/mobile/device/bindingAdmin', m_device.bindingAdmin);
+app.post('/mobile/device/bindingUser', m_device.bindingUser);
+app.post('/mobile/device/removeUser', m_device.removeUser);
