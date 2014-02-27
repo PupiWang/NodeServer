@@ -6,14 +6,14 @@ message BufTest {
   required string from = 1; 
   
   //手机客户端，初始化socket后设置为client
-  //硬件客户端，初始化Socket后这是为server
+  //硬件客户端，初始化Socket后这是为device
   required string to = 2;   //如用户邮箱"1@qq.com" 和 "ov_orange_01" 
   
-   //命令标示。1：拍照，2：拍摄，3：停止拍摄  4,上线，5，下线
+   //命令标示。1：拍照，2：拍摄，3：停止拍摄  4,上线，5，下线 , 6 ,前进，7：后退， 8：左转， 9：右 转； 10，修改密码后踢用户下线
    
   optional int32 cmd  = 3  ;
   
-  //存放一些消息
+  //存放一些消息。1：连接，2：成功，3：失败
   optional int32 msg = 4;
   
   //存放时间信息，时间数据转换成秒数的字符串
@@ -24,4 +24,7 @@ message BufTest {
   //储存一些额外的信息
   optional string info = 7;
   
+  //存储请求的id，方便业务扩展，
+  //eg：业务请求带上这个id，服务器返回的时候，也返回这个id，客户端就知道是哪个请求的返回了。
+  optional string socketid =8;
 }

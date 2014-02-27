@@ -298,7 +298,7 @@
       });
 
       $('#activation p button').on('click', function () {
-        var userId = $('#activation p [name="userId"]')[0].value, 
+        var userId = $('#activation p [name="userId"]')[0].value,
           e = $('#activation p [name="e"]')[0].value;
         $.get('/mobile/user/activation', {'e': e, 'userId': userId}, function (data) {
           $('#activation .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';

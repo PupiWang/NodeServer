@@ -64,9 +64,6 @@ exports.uploadCallback = function (req, res) {
 
   var url;
 
-  var client_sockets = require('./socket').client_sockets;
-
-
   if (req.body.mimeType === 'image/jpeg') {
     //如果上传的资源是图片
     //在picture_device、resource_picture两个表中插入数据

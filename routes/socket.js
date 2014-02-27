@@ -1,117 +1,54 @@
 
 var net = require('net');
+var socketUtil = require('../util/socketUtil');
+var protobuf = require('../util/protobuf');
 var timeout = 20000;//超时
 var listenPort = 7003;//监听端口
 
-exports.serv_sockets = [];
-exports.client_sockets = [];
-
-var fs = require('fs');
-var Schema = require('protobuf').Schema;
-var schema = new Schema(fs.readFileSync('buftest.desc'));
-
-var BufTest = schema.BufTest;
-
-exports.protbufConvertor = function (soc, obj) {
-
-  soc.write(BufTest.serialize(obj));
-
-};
-
 var server = net.createServer(function (socket) {
-    // 我们获得一个连接 - 该连接自动关联一个socket对象
+  //我们获得一个连接 - 该连接自动关联一个socket对象
   console.log('connect: ' + socket.remoteAddress + ':' + socket.remotePort);
   socket.setEncoding('binary');
-
   //接收到数据
-  socket.on('data', function (data) {
-
-    try {
-      var obj = BufTest.parse(new Buffer(data));
-      var msg = obj.msg;
+  socket.on('data', function (proData) {
+      var data = protobuf.resolveMessage(proData);
+      var msg = data.msg;
       var send = {};
       var i, c, s;
-      console.log(obj);
+      console.log(data);
       if (msg === 1) {
-        // connect
-        if (obj.to === 'server') {
-          var sql = require('../util/sql');
-          var sentense = 'UPDATE `device` SET `status` = 1 WHERE `id_device` = "' + obj.from + '"';
-          sql.execute(sentense, function (err, rows, fields) {
-            if (err) {
-              console.log(err);
-            }
-          });
-          socket.device_id = obj.from;
-          exports.serv_sockets.push(socket);
-          for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-            c = exports.client_sockets[i];
-            if (c.write) {
-              c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, cmd: 4}));
-            } else {
-              c.emit('device', {'device_id': socket.device_id, 'state': 'on'});
-            }
-          }
-        } else if (obj.to === 'client') {
-          socket.user_id = obj.from;
-          exports.client_sockets.push(socket);
+        //建立连接
+        if (data.to === 'device') {
+          socket.device_id = data.from;
+          socketUtil.addDeviceSocket(socket);
+        } else if (data.to === 'client') {
+          socket.userId = data.from;
+          socketUtil.addClientSocket(socket);
         }
-
       } else {
+        //一般消息
         if (socket.device_id) {
           //设备端消息
-          if (msg === 2) {
-            // ok
-            send.cmd = obj.cmd;
-            send.status = true;
-            for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-              c = exports.client_sockets[i];
-              if (obj.to === c.user_id) {
-                if (c.write) {
-                  c.write(data);
-                } else {
-                  c.emit('oparation', send);
-                }
-              }
-            }
-          } else if (msg === 3) {
-            // refuse
-            send.cmd = obj.cmd;
-            send.status = false;
-            send.msg = '设备被占用，您的操作被拒绝';
-            for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-              c = exports.client_sockets[i];
-              if (obj.to === c.user_id) {
-                if (c.write) {
-                  c.write(data);
-                } else {
-                  c.emit('oparation', send);
-                }
-              }
-            }
+          var clientSocket = socketUtil.getClientSocketBySocketId(data.to, data.socketid);
+          if (clientSocket) {
+            protobuf.sendMessage(clientSocket, data);
           }
         } else if (socket.user_id) {
           //客户端消息
-          var flag = false;
-          for (i = exports.serv_sockets.length - 1; i >= 0; i--) {
-            s = exports.serv_sockets[i];
-            if (obj.to === s.device_id) {
-              s.write(data);
-              flag = true;
-            }
-          }
-          if (!flag) {
-            obj.responseStatus = 0;
-            obj.info = '操作失败，设备不在线...';
-            socket.write(BufTest.serialize(obj));
+          var deviceSocket = socketUtil.getDeviceSocket(data.to);
+          if (deviceSocket) {
+            data.socketid = socket.socketId;
+            protobuf.sendMessage(deviceSocket,data);
+          } else {
+            var res = {};
+            res.from = data.from;
+            res.to = data.to;
+            res.responseStatus = 0;
+            res.info = '操作失败，设备不在线...';
+            protobuf.sendMessage(socket,res);
           }
         }
       }
-
-    } catch (e) {
-      console.log(e);
-    }
-
   });
 
   //数据错误事件
@@ -122,30 +59,10 @@ var server = net.createServer(function (socket) {
 
   //客户端关闭事件
   socket.on('close', function (data) {
-    var s, c, i;
     if (socket.device_id) {
-      s = socket;
-      exports.serv_sockets.pop(s);
-      console.log('device close: ' + socket.device_id);
-      var sql = require('../util/sql');
-      var sentense = 'UPDATE `device` SET `status` = 0 WHERE `id_device` = "' + s.device_id + '"';
-      sql.execute(sentense, function (err, rows, fields) {
-        if (err) {
-          console.log(err);
-        }
-      });
-      for (i = exports.client_sockets.length - 1; i >= 0; i--) {
-        c = exports.client_sockets[i];
-        if (c.write) {
-          c.write(BufTest.serialize({from: socket.device_id, to: c.user_id, cmd: 5}));
-        } else {
-          c.emit('device', {'device_id': socket.device_id, 'state': 'off'});
-        }
-      }
+      socketUtil.removeDeviceSocket(socket);
     } else if (socket.user_id) {
-      c = socket;
-      exports.client_sockets.pop(c);
-      console.log('client close: ' + socket.user_id);
+      socketUtil.removeClientSocket(socket);
     }
   });
 
