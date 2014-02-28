@@ -229,10 +229,8 @@ exports.removeUser = function (req, res) {
 
   var isDeviceExist = deviceUtil.isDeviceExist;
 
-  var checkSameBinding = deviceUtil.checkSameBinding;
-
-  var deleteUserForDevice = function (userId) {
-    // var userId = userDeviceObj.userId;
+  var deleteUserForDevice = function (userDeviceObj) {
+    userId = userDeviceObj.userId;
     // var deviceId = userDeviceObj.deviceId;
     var deferred = Q.defer();
     //绑定设备
@@ -251,7 +249,6 @@ exports.removeUser = function (req, res) {
   validUser(userId, password)
     .then(delivaryParams)
     .then(isDeviceExist)
-    .then(checkSameBinding)
     .then(deleteUserForDevice)
     .then(function (data) {
       //成功返回结果
@@ -262,4 +259,38 @@ exports.removeUser = function (req, res) {
       console.log('error : ' + error);
       res.send(error);
     });
+};
+
+exports.modifyDeviceName = function (req, res) {
+    var userId = req.body.userId || req.param('userId'),
+        password = req.body.password || req.param('password'),
+        deviceName = req.body.deviceName || req.param('deviceName'),
+        deviceId = req.body.deviceId || req.param('deviceId');
+
+    var modifyDeviceName = function (userId) {
+        var deferred = Q.defer();
+        var s = 'UPDATE user_device SET display_name = "' + deviceName + '" WHERE id_user = "' + userId + '" AND id_device = "' + deviceId + '"';
+
+        sql.execute(s, function (err, rows, fields) {
+            if (err) {
+                console.log(err);
+            } else {
+                deferred.resolve({status: 'success', code: 1, msg: '更改设备名成功...'});
+            }
+        });
+        return deferred.promise;
+    };
+
+    validUser(userId, password)
+        .then(modifyDeviceName)
+        .then(function (data) {
+            //成功返回结果
+            res.send(data);
+        })
+        .catch(function (error) {
+            // Handle any error from all above steps
+            console.log('error : ' + error);
+            res.send(error);
+        });
+
 };

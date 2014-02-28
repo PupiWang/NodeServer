@@ -40,3 +40,4 @@ app.post('/mobile/user/resetPassword', m_user.resetPassword);
 app.post('/mobile/device/bindingAdmin', m_device.bindingAdmin);
 app.post('/mobile/device/bindingUser', m_device.bindingUser);
 app.post('/mobile/device/removeUser', m_device.removeUser);
+app.post('/mobile/device/modifyDisplayName', m_device.modifyDeviceName);
