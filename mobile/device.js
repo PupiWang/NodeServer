@@ -59,8 +59,8 @@ exports.bindingAdmin = function (req, res) {
 
   var isDeviceExist = deviceUtil.isDeviceExist;
 
-  var checkSameBinding = function () {
-    // var userId = userDeviceObj.userId;
+  var checkSameBinding = function (userDeviceObj) {
+//    userId = userDeviceObj.userId;
     // var deviceId = userDeviceObj.deviceId;
     var deferred = Q.defer();
     //检查用户是否绑定过此设备
@@ -74,15 +74,15 @@ exports.bindingAdmin = function (req, res) {
         if (rows.length >= 1) {
           deferred.reject({status: 'error', code: 2, msg: '已经绑定了该设备，无法重复绑定...'});
         } else {
-          deferred.resolve();
+          deferred.resolve(userDeviceObj);
         }
       }
     });
     return deferred.promise;
   };
 
-  var addAdminForDevice = function () {
-    // var userId = userDeviceObj.userId;
+  var addAdminForDevice = function (userDeviceObj) {
+    userId = userDeviceObj.userId;
     // var deviceId = userDeviceObj.deviceId;
     var deferred = Q.defer();
     //绑定设备
@@ -156,13 +156,13 @@ exports.bindingUser = function (req, res) {
 
   var checkSameBinding = deviceUtil.checkSameBinding;
 
-  var addUserForDevice = function () {
+  var addUserForDevice = function (userId) {
     // var userId = userDeviceObj.userId;
     // var deviceId = userDeviceObj.deviceId;
     var deferred = Q.defer();
     //绑定设备
     var s = 'insert into user_device (id_user,id_device,display_name,isadmin) VALUES ("' +
-      userIdNew + '","' + deviceId + '","' + deviceId + '",0)';
+        userId + '","' + deviceId + '","' + deviceId + '",0)';
     sql.execute(s, function (err) {
       if (err) {
         console.log(err);
@@ -231,12 +231,12 @@ exports.removeUser = function (req, res) {
 
   var checkSameBinding = deviceUtil.checkSameBinding;
 
-  var deleteUserForDevice = function () {
+  var deleteUserForDevice = function (userId) {
     // var userId = userDeviceObj.userId;
     // var deviceId = userDeviceObj.deviceId;
     var deferred = Q.defer();
     //绑定设备
-    var s = 'delete from user_device where id_user = "' + userIdNew + '" and id_device = "' + deviceId + '"';
+    var s = 'delete from user_device where id_user = "' + userId + '" and id_device = "' + deviceId + '"';
     sql.execute(s, function (err) {
       if (err) {
         console.log(err);
