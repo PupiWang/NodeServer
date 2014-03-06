@@ -34,10 +34,11 @@ app.use(function (req, res, next) {
       cssPattern = /^\/css\//,
       fontsPattern = /^\/fonts\//,
       imgPattern = /^\/images\//,
+      productPagePattern = /^\/product\//,
       mobilePattern = /^\/mobile\//;
 
     var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) ||
-        imgPattern.test(url) || mobilePattern.test(url);
+        imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url);
 
     if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' ||
         url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk') {

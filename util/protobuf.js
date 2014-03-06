@@ -5,6 +5,8 @@ var schema = new Schema(fs.readFileSync('buftest.desc'));
 var BufTest = schema.BufTest;
 
 exports.sendMessage = function (socket, data) {
+    console.log('send : ');
+    console.log(data);
     var proData = BufTest.serialize(data);
     socket.write(proData);
 };

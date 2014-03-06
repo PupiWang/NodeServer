@@ -7,7 +7,8 @@ var routes = require('./routes/index'),
   m_device = require('./mobile/device'),
   m_resource = require('./mobile/resource'),
   device = require('./routes/device'),
-  qn = require('./routes/qiniu');
+  qn = require('./routes/qiniu'),
+  product = require('./routes/product');
 
 // Get
 app.get('/', routes.index);
@@ -17,6 +18,13 @@ app.get('/logout', user.logout);
 app.get('/userinfo', user.userinfo);
 app.get('/devices', device.getDevices);
 app.get('/upToken', qn.getUploadToken);
+
+app.get('/product', product.index);
+app.get('/product/home', product.home);
+app.get('/product/shop', product.shop);
+app.get('/product/details', product.details);
+app.get('/product/download', product.download);
+app.get('/product/preorder', product.preorder);
 
 // app.get('/mobile/user/reset', m_user.reset);
 app.get('/mobile/user/sendActivationMessage', m_user.sendActivationMessage);

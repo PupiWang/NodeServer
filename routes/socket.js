@@ -7,33 +7,35 @@ var listenPort = 7003;//监听端口
 
 var server = net.createServer(function (socket) {
   //我们获得一个连接 - 该连接自动关联一个socket对象
-  console.log('connect: ' + socket.remoteAddress + ':' + socket.remotePort);
   socket.setEncoding('binary');
   //接收到数据
   socket.on('data', function (proData) {
       var data = protobuf.resolveMessage(proData);
       var msg = data.msg;
-      var send = {};
-      var i, c, s;
+      if (!data) {
+          return;
+      }
       console.log(data);
       if (msg === 1) {
         //建立连接
         if (data.to === 'device') {
-          socket.device_id = data.from;
+          socket.deviceId = data.from;
           socketUtil.addDeviceSocket(socket);
+          console.log('device connect : ' + socket.deviceId);
         } else if (data.to === 'client') {
           socket.userId = data.from;
           socketUtil.addClientSocket(socket);
+          console.log('client connect : ' + socket.deviceId + ' , ' + socket.socketId);
         }
       } else {
         //一般消息
-        if (socket.device_id) {
+        if (socket.deviceId) {
           //设备端消息
           var clientSocket = socketUtil.getClientSocketBySocketId(data.to, data.socketid);
           if (clientSocket) {
             protobuf.sendMessage(clientSocket, data);
           }
-        } else if (socket.user_id) {
+        } else if (socket.userId) {
           //客户端消息
           var deviceSocket = socketUtil.getDeviceSocket(data.to);
           if (deviceSocket) {
@@ -58,10 +60,12 @@ var server = net.createServer(function (socket) {
   });
 
   //客户端关闭事件
-  socket.on('close', function (data) {
-    if (socket.device_id) {
+  socket.on('close', function () {
+    if (socket.deviceId) {
+      console.log('device close : ' + socket.deviceId);
       socketUtil.removeDeviceSocket(socket);
-    } else if (socket.user_id) {
+    } else if (socket.userId) {
+      console.log('client close : ' + socket.userId);
       socketUtil.removeClientSocket(socket);
     }
   });
