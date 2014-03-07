@@ -23,26 +23,31 @@ exports.addAlarm = function (deviceId, picId) {
         var JPush = require('./JPush');
         var i;
         var userId;
-        var s;
         var content = {};
         var time = new Date().getTime();
         content.deviceId = deviceId;
         content.time = time;
         content.picId = picId;
         content.type = 'alarm';
-        for (i=0 ; i < data.length ; i++) {
-            userId = data[i].id_user;
-            content.userId = userId;
-            s = 'INSERT INTO historyalarm (id_user,id_device,time) VALUES (' + userId + ',"' + deviceId + '",' + time + ')';
-            sql.execute(s, function (err, rows, fields) {
+
+        var aRASM = function (userId, content) {
+            var s = 'INSERT INTO historyalarm (id_user,id_device,time) VALUES (' + userId + ',"' + deviceId + '",' + time + ')';
+            sql.execute(s, function (err, rows) {
                 if (err) {
                     console.log(err);
                 } else {
                     content.recordId = rows.insertId;
+                    content.userId = userId;
                     JPush.pushMessage(parseInt(userId), JSON.stringify(content));
                 }
             });
+        };
+
+        for (i=0 ; i < data.length ; i++) {
+            userId = data[i].id_user;
+            aRASM(userId,content);
         }
+
         deferred.resolve();
         return deferred.promise;
     };
@@ -55,8 +60,6 @@ exports.addAlarm = function (deviceId, picId) {
             console.log('error : ' + error);
         });
 };
-
-exports.addAlarm('ov_orange_01', 'dsdsd');
 
 exports.getHistoryAlarm = function (userId) {
     var deferred = Q.defer();
