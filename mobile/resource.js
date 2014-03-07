@@ -36,7 +36,7 @@ exports.pictures = function (req, res) {
 
 exports.getPicture = function (req, res) {
 
-    var email = req.body.email || req.param('email'),
+    var userId = req.body.userId || req.param('userId'),
         password = req.body.password || req.param('password'),
         picId = req.body.picId || req.param('picId');
 
@@ -52,7 +52,7 @@ exports.getPicture = function (req, res) {
         return deferred.promise;
     };
 
-    validUser(email, password)
+    validUser(userId, password)
         .then(getPictureURL)
         .then(function (data) {
             //成功返回结果
