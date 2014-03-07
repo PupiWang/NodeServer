@@ -11,10 +11,10 @@ var server = net.createServer(function (socket) {
   //接收到数据
   socket.on('data', function (proData) {
       var data = protobuf.resolveMessage(proData);
-      var msg = data.msg;
       if (!data) {
           return;
       }
+      var msg = data.msg;
       console.log(data);
       if (msg === 1) {
         //建立连接

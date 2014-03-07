@@ -66,43 +66,33 @@ exports.uploadCallback = function (req, res) {
 
   if (req.body.mimeType === 'image/jpeg') {
     //如果上传的资源是图片
-    //在picture_device、resource_picture两个表中插入数据
+    //picture_device
     s = 'INSERT INTO picture_device (`key`, id_device, datetime_create) VALUES ("' +
             req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time * 1000 + ')';
 
     sql.execute(s, function (err, rows, fields) {
       if (err) {
         throw err;
-      } else {
-
-        s = 'INSERT INTO resource_picture (bucket, `key`, name, size, type, datetime_upload, width, height) VALUES ("' +
-          req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' +
-          req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time * 1000 + ',' +
-          req.body.width + ',' + req.body.height + ')';
-
-        sql.execute(s, function (err, rows, fields) {
-          if (err) {
-            throw err;
-          } else {
-            //两条插入操作成功执行
-            //构造图片链接，根据给定的user_id找到client_sockets发送信息
-            url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
-
-            for (i = client_sockets.length - 1; i >= 0; i--) {
-              var c = client_sockets[i];
-              if (c.user_id === req.body.user_id) {
-                if (c.write) {
-                  var protbufConvertor = require('./socket').protbufConvertor;
-                  protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1, cmd: 1});
-                } else {
-                  c.emit('data', {'type': 'img', 'url': url});
-                }
-              }
-            }
-          }
-        });
       }
     });
+
+    //resource_picture
+    s = 'INSERT INTO resource_picture (bucket, `key`, name, size, type, datetime_upload, width, height) VALUES ("' +
+        req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' +
+        req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time * 1000 + ',' +
+        req.body.width + ',' + req.body.height + ')';
+
+    sql.execute(s, function (err) {
+        if (err) {
+            throw err;
+        }
+    });
+
+    //构造图片url
+    var alarmMessageUtil = require('../util/alarmMessageUtil');
+    alarmMessageUtil.addAlarm(req.body.device_id, req.body.etag);
+
+    res.end();
 
   } else if (req.body.mimeType === 'video/mp4') {
     //如果上传的资源是视频
