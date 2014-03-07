@@ -3,7 +3,6 @@ var Q = require('q');
 
 exports.addAlarm = function (deviceId, picId) {
 
-    var picUrl = getDownloadUrl('ov-orange-private.u.qiniudn.com', picId);
     //Step 1
     var getRelationUsers = function (deviceId) {
         var deferred = Q.defer();
@@ -16,7 +15,7 @@ exports.addAlarm = function (deviceId, picId) {
             }
         });
         return deferred.promise;
-    }
+    };
 
     //Step 2
     var addRecordsAndSendMessages = function (data) {
@@ -33,8 +32,7 @@ exports.addAlarm = function (deviceId, picId) {
             content.deviceId = deviceId;
             content.time = time;
             content.picId = picId;
-            content.picUrl = picUrl;
-            JPush.pushMessage(userId, content.toString());
+            JPush.pushMessage(parseInt(userId), content.toString());
             s = 'INSERT INTO historyalarm (id_user,id_device,time) VALUES (' + userId + ',"' + deviceId + '",' + time + ')';
             sql.execute(s, function (err) {
                 if (err) {

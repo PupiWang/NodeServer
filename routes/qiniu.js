@@ -16,9 +16,7 @@ var getDownloadUrl = function (domain, key) {
   var baseUrl = qiniu.rs.makeBaseUrl(domain, key),
     policy = new qiniu.rs.GetPolicy();
 
-  var url = policy.makeRequest(baseUrl);
-
-  return url;
+  return policy.makeRequest(baseUrl);
 };
 
 /**
@@ -28,8 +26,7 @@ var getDownloadUrl = function (domain, key) {
  * @return {string} url    资源链接
  */
 exports.getUrl = function (domain, key) {
-  var url = getDownloadUrl(domain, key);
-  return url;
+  return getDownloadUrl(domain, key);
 };
 
 /**
@@ -70,7 +67,7 @@ exports.uploadCallback = function (req, res) {
     s = 'INSERT INTO picture_device (`key`, id_device, datetime_create) VALUES ("' +
             req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time * 1000 + ')';
 
-    sql.execute(s, function (err, rows, fields) {
+    sql.execute(s, function (err) {
       if (err) {
         throw err;
       }
@@ -100,7 +97,7 @@ exports.uploadCallback = function (req, res) {
     s = 'INSERT INTO video_device (`key`, id_device, datetime_create) VALUES ("' +
             req.body.etag + '", "' + req.body.device_id + '", ' + req.body.time * 1000 + ')';
 
-    sql.execute(s, function (err, rows, fields) {
+    sql.execute(s, function (err) {
       if (err) {
         throw err;
       } else {
@@ -108,7 +105,7 @@ exports.uploadCallback = function (req, res) {
           req.body.bucket + '","' + req.body.etag + '","' + req.body.fname + '","' +
           req.body.fsize + '","' + req.body.mimeType + '",' + req.body.time * 1000 + ')';
 
-        sql.execute(s, function (err, rows, fields) {
+        sql.execute(s, function (err) {
           if (err) {
             throw err;
           } else {
