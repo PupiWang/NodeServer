@@ -25,7 +25,8 @@ var getDownloadUrl = function (domain, key) {
  * @param  {string} key    资源名
  * @return {string} url    资源链接
  */
-exports.getUrl = function (domain, key) {
+exports.getUrl = function (key) {
+  var domain = 'ov-orange-private.u.qiniudn.com';
   return getDownloadUrl(domain, key);
 };
 

@@ -6,6 +6,7 @@ var routes = require('./routes/index'),
   m_user = require('./mobile/user'),
   m_device = require('./mobile/device'),
   m_resource = require('./mobile/resource'),
+  m_historyAlarm = require('./mobile/historyAlarm'),
   device = require('./routes/device'),
   qn = require('./routes/qiniu'),
   product = require('./routes/product');
@@ -31,7 +32,9 @@ app.get('/mobile/user/sendActivationMessage', m_user.sendActivationMessage);
 app.get('/mobile/user/activation', m_user.activation);
 app.get('/mobile/device', m_device.device);
 app.get('/mobile/resource/pictures', m_resource.pictures);
+app.get('/mobile/resource/getPicture', m_resource.getPicture);
 app.get('/mobile/resource/videos', m_resource.videos);
+app.get('/mobile/historyAlarm', m_historyAlarm.getHistoryAlarm);
 
 // Post
 app.post('/login', user.login);
@@ -49,3 +52,4 @@ app.post('/mobile/device/bindingAdmin', m_device.bindingAdmin);
 app.post('/mobile/device/bindingUser', m_device.bindingUser);
 app.post('/mobile/device/removeUser', m_device.removeUser);
 app.post('/mobile/device/modifyDisplayName', m_device.modifyDeviceName);
+app.post('/mobile/readHistoryAlarm', m_historyAlarm.readHistoryAlarm);

@@ -25,7 +25,7 @@ var server = net.createServer(function (socket) {
         } else if (data.to === 'client') {
           socket.userId = data.from;
           socketUtil.addClientSocket(socket);
-          console.log('client connect : ' + socket.deviceId + ' , ' + socket.socketId);
+          console.log('client connect : ' + socket.userId + ' , ' + socket.socketId);
         }
       } else {
         //一般消息
