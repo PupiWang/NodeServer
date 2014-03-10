@@ -4,9 +4,20 @@ var Q = require('q');
 
 exports.getHistoryAlarm = function (req, res) {
     var userId = req.body.userId || req.param('userId'),
-        password = req.body.password || req.param('password');
+        password = req.body.password || req.param('password'),
+        time = req.body.time || req.param('time');
+
+    var delivaryParams = function (_id) {
+        var deferred = Q.defer();
+        var data = {};
+        data.userId = _id;
+        data.time = time;
+        deferred.resolve(data);
+        return deferred.promise;
+    };
 
     userUtil.validUser(userId, password)
+        .then(delivaryParams)
         .then(alarmMessageUtil.getHistoryAlarm)
         .then(function (data) {
             //成功返回结果

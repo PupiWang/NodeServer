@@ -61,14 +61,16 @@ exports.addAlarm = function (deviceId, picId) {
         });
 };
 
-exports.getHistoryAlarm = function (userId) {
+exports.getHistoryAlarm = function (data) {
+    var userId = data.userId;
+    var time = data.time;
     var deferred = Q.defer();
-    var s = 'SELECT * FROM historyalarm WHERE id_user = ' + userId + ' AND status = 0';
+    var s = 'SELECT * FROM historyalarm WHERE id_user = ' + userId + ' AND status = 0 AND time > ' + time;
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
         } else {
-            deferred.resolve({status: 'success', code: 1, msg: '', results:rows});
+            deferred.resolve({status: 'success', code: 1, msg: '', results: rows});
         }
     });
     return deferred.promise;
