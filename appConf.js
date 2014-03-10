@@ -37,9 +37,6 @@ app.use(function (req, res, next) {
       productPagePattern = /^\/product/,
       mobilePattern = /^\/mobile\//;
 
-    console.log(url);
-    console.log(productPagePattern.test(url));
-
     var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) ||
         imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url);
 

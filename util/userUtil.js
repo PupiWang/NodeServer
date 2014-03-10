@@ -137,6 +137,17 @@ exports.modifyPassword = function (userObj) {
     } else {
       if (rows.changedRows >= 1) {
         deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
+        var socketUtil = require('./socketUtil');
+        var protobuf = require('./protobuf');
+        var clients = socketUtil.getClientSocket(userId);
+        var i;
+        var msg = {};
+        msg.from = 'server';
+        msg.to = userId;
+        msg.cmd = 10;
+        for (i=0; i<clients.length; i++) {
+          protobuf.sendMessage(clients[i], msg);
+        }
       } else {
         deferred.reject({status: 'error', code: 601, msg: '修改密码失败...'});
       }

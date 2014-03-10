@@ -15,7 +15,7 @@ exports.getClientSocketBySocketId = function (userId, socketId) {
     var i;
     for (i = 0; i < socket.length ; i ++) {
       if (socket[i].socketId === socketId) {
-        return socket[i]
+        return socket[i];
       }
     }
     return null;
