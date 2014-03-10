@@ -1,6 +1,6 @@
 
-·
-buftest.proto"ƒ
+Ô
+buftest.proto" 
 BufTest
 from (	
 
@@ -10,5 +10,8 @@
 time (	
 responseStatus (
 info (	
-socketid (	B 
+socketid (	
+domain	 (	
+sdp
+ (	B 
 com.onevo.protoBBufTestEntity

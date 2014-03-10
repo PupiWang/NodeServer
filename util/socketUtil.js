@@ -61,8 +61,8 @@ exports.addDeviceSocket = function (socket) {
                 cmg : 4
             };
             for (i; i < rows.length; i++) {
-                socket.relationUsers.push(rows[i]);
-                message.to = rows[i];
+                socket.relationUsers.push(rows[i].id_user);
+                message.to = rows[i].id_user;
                 protobuf.sendMessageToClientsByUserId(rows[i].id_user, message);
             }
         }
