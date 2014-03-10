@@ -41,7 +41,7 @@ app.use(function (req, res, next) {
         imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url);
 
     if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' ||
-        url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk') {
+        url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk' || url === '/LewuSafeGuard.apk') {
       next();
     } else {
       return res.redirect("/");

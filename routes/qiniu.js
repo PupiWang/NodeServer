@@ -86,7 +86,6 @@ exports.uploadCallback = function (req, res) {
         }
     });
 
-    //构造图片url
     var alarmMessageUtil = require('../util/alarmMessageUtil');
     alarmMessageUtil.addAlarm(req.body.device_id, req.body.etag);
 

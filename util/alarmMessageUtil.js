@@ -31,7 +31,7 @@ exports.addAlarm = function (deviceId, picId) {
         content.type = 'alarm';
 
         var aRASM = function (userId, content) {
-            var s = 'INSERT INTO historyalarm (id_user,id_device,id_pic,time) VALUES (' + userId + ',"' + deviceId + '","' + picId + ',' + time + ')';
+            var s = 'INSERT INTO historyalarm (id_user,id_device,id_pic,time) VALUES (' + userId + ',"' + deviceId + '","' + picId + '",' + time + ')';
             sql.execute(s, function (err, rows) {
                 if (err) {
                     console.log(err);
@@ -63,7 +63,7 @@ exports.addAlarm = function (deviceId, picId) {
 
 exports.getHistoryAlarm = function (userId) {
     var deferred = Q.defer();
-    var s = 'SELECT * FROM historyalarm WHERE id_user = ' + userId + 'AND status = 0';
+    var s = 'SELECT * FROM historyalarm WHERE id_user = ' + userId + ' AND status = 0';
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
