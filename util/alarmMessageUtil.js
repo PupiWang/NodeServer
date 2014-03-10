@@ -76,7 +76,7 @@ exports.getHistoryAlarm = function (userId) {
 
 exports.readHistoryAlarm = function (_id) {
     var deferred = Q.defer();
-    var s = 'UPDATE historyalarm SET status = 1 WHERE _id_user = ' + _id;
+    var s = 'UPDATE historyalarm SET status = 1 WHERE id_user = ' + _id;
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);

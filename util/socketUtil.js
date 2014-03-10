@@ -5,9 +5,9 @@
 var clientSocket = {};       //客户端
 var deviceSocket = {};       //设备端
 
-exports.getClientSocket = function (userId) {
-    var socket = clientSocket[userId];
-    return socket;
+exports.getClientSockets = function (userId) {
+    var sockets = clientSocket[userId];
+    return sockets;
 };
 
 exports.getClientSocketBySocketId = function (userId, socketId) {
@@ -39,15 +39,34 @@ exports.addClientSocket = function (socket) {
 };
 
 exports.addDeviceSocket = function (socket) {
-  var deviceId = socket.deviceId;
-  deviceSocket[deviceId] = socket;
-  var sql = require('./sql');
-  var s = 'UPDATE `device` SET `status` = 1 WHERE `id_device` = "' + deviceId + '"';
-  sql.execute(s, function (err) {
-    if (err) {
-      console.log(err);
-    }
-  });
+    var deviceId = socket.deviceId;
+    deviceSocket[deviceId] = socket;
+    var sql = require('./sql');
+    var s = 'UPDATE `device` SET `status` = 1 WHERE `id_device` = "' + deviceId + '"';
+    sql.execute(s, function (err) {
+        if (err) {
+          console.log(err);
+        }
+    });
+    s = 'SELECT id_user FROM user_device WHERE `id_device` = "' + deviceId + '"';
+    sql.execute(s, function (err, rows) {
+        if (err) {
+            console.log(err);
+        } else {
+            var protobuf = require('./protobuf');
+            var i = 0;
+            socket.relationUsers = [];
+            var message = {
+                from : deviceId,
+                cmg : 4
+            };
+            for (i; i < rows.length; i++) {
+                socket.relationUsers.push(rows[i]);
+                message.to = rows[i];
+                protobuf.sendMessageToClientsByUserId(rows[i].id_user, message);
+            }
+        }
+    });
 };
 
 exports.removeClientSocket = function (socket) {
@@ -65,4 +84,17 @@ exports.removeDeviceSocket = function (socket) {
       console.log(err);
     }
   });
+
+  var protobuf = require('./protobuf');
+  var i = 0;
+  var userId;
+  var message = {
+    from : socket.deviceId,
+    cmg : 5
+  };
+  for (i; i < socket.relationUsers.length; i++) {
+    userId = socket.relationUsers[i];
+    message.to = userId;
+    protobuf.sendMessageToClientsByUserId(userId, message);
+  }
 };
