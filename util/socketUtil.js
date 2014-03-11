@@ -58,7 +58,7 @@ exports.addDeviceSocket = function (socket) {
             socket.relationUsers = [];
             var message = {
                 from : deviceId,
-                cmg : 4
+                cmd : 4
             };
             for (i; i < rows.length; i++) {
                 socket.relationUsers.push(rows[i].id_user);
@@ -90,7 +90,7 @@ exports.removeDeviceSocket = function (socket) {
   var userId;
   var message = {
     from : socket.deviceId,
-    cmg : 5
+    cmd : 5
   };
   for (i; i < socket.relationUsers.length; i++) {
     userId = socket.relationUsers[i];
