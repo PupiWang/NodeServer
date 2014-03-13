@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="http://v3.bootcss.com/docs-assets/ico/favicon.png">
 
     <title>乐屋-软件下载</title>
 
@@ -37,6 +36,18 @@
         .downloadicon:hover{
             opacity: 0.6;
         }
+        .footer{
+            color: #7a7777;
+            font-family: "微软雅黑";
+            padding-top: 50px;
+            padding-bottom: 100px;
+        }
+        li,div,td{
+            font-family: "微软雅黑";
+        }
+        td{
+            width: 50%;;
+        }
     </style>
 </head>
 <!-- NAVBAR
@@ -55,7 +66,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/product">乐屋</a>
+                    <a style="font-family: '微软雅黑';" class="navbar-brand" href="/product">乐屋</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -65,6 +76,7 @@
                         <li class="active"><a href="#">软件下载</a></li>
                         <li><a href="/product/details">功能参数</a></li>
                         <li><a href="/product/preorder">产品预订</a></li>
+                        <li><a href="/product/contact">联系我们</a></li>
                     </ul>
                 </div>
             </div>
@@ -76,29 +88,39 @@
 <div class="container marketing">
     <hr class="featurette-divider">
     <div class="row featurette">
-        <table class="table table-bordered">
-            <tbody>
-            <tr><td colspan="3"><b>方法一：PC下载</b></td></tr>
-            <tr>
-                <td><div class="downloadicon" style="background-image: url(../images/downloadandroid.png)"></div></td>
-                <td><div class="downloadicon" style="background-image: url(../images/downloadios.png)"></div></td>
-                <td><div class="downloadicon" style="background-image: url(../images/downloadwindows.png)"></div></td>
-            </tr>
-            <tr></tr>
-            <tr><td  colspan="3"><b>方法二：扫码下载</b></td></tr>
-            <tr>
-                <td><div class="downloadqr" style="background-image: url(../images/qrandroid.png)"></div></td>
-                <td><div class="downloadqr" style="background-image: url(../images/qrandroid.png)"></div></td>
-                <td><div class="downloadqr" style="background-image: url(../images/qrandroid.png)"></div></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">方法一：PC下载</div>
+
+            <table class="table table-bordered">
+                <tr>
+                    <td><a href="http://115.29.179.7/LewuSafeGuard.apk"><div class="downloadicon" style="background-image: url(../images/downloadandroid.png)"></div></a></td>
+                    <td><div class="downloadicon" style="background-image: url(../images/downloadios.png)"></div></td>
+                </tr>
+            </table>
+        </div>
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">方法二：扫码下载</div>
+
+            <table class="table table-bordered">
+                <tr>
+                    <td><div class="downloadqr" style="background-image: url(../images/qrandroid.png)"></div><br></td>
+                    <td><div class="downloadqr text-center" style="padding-top: 110px">暂缺，敬请期待</div></td>
+                </tr>
+                <tr>
+                    <td class="text-center">Android版</td>
+                    <td class="text-center">iPhone版</td>
+                </tr>
+            </table>
+        </div>
+
     </div>
     <hr class="featurette-divider">
     <!-- FOOTER -->
     <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p> 武汉光谷奥源科技股份有限公司 ® 2014<a href="#"> Privacy</a> · <a href="#">Terms</a></p>
+        <!--<p class="pull-right"><a href="#">Back to top</a></p>-->
+        <p class="text-center footer"> 武汉光谷奥源科技股份有限公司 ® 2014</p>
     </footer>
 
 </div><!-- /.container -->

@@ -22,3 +22,7 @@ exports.details = function(req, res){
 exports.preorder = function(req, res){
     res.render('productPreorder');
 };
+
+exports.contact = function(req, res){
+    res.render('productContact');
+};

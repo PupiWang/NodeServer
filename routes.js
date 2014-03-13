@@ -26,6 +26,7 @@ app.get('/product/shop', product.shop);
 app.get('/product/details', product.details);
 app.get('/product/download', product.download);
 app.get('/product/preorder', product.preorder);
+app.get('/product/contact', product.contact);
 
 // app.get('/mobile/user/reset', m_user.reset);
 app.get('/mobile/user/sendActivationMessage', m_user.sendActivationMessage);
