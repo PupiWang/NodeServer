@@ -35,10 +35,11 @@ app.use(function (req, res, next) {
       fontsPattern = /^\/fonts\//,
       imgPattern = /^\/images\//,
       productPagePattern = /^\/product/,
+      staticPattern = /^\/static\//,
       mobilePattern = /^\/mobile\//;
 
     var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) ||
-        imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url);
+        imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url) || staticPattern.test(url);
 
     if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' ||
         url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk' || url === '/LewuSafeGuard.apk') {
