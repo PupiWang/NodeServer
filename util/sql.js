@@ -9,13 +9,6 @@ exports.execute = function (sql, callback) {
     password : 'PUPI_1'
   });
 
-  // var connection = mysql.createConnection({
-  //   host     : 'localhost',
-  //   user     : 'root',
-  //   database : 'onevo',
-  //   password : 'root'
-  // });
-
   connection.connect(function () {
     console.log(sql);
   });

@@ -1,6 +1,6 @@
 {
-  "name": "application-name",
-  "version": "0.0.1",
+  "name": "NodeServer",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -8,5 +8,17 @@
   "dependencies": {
     "express": "3.4.1",
     "ejs": "*"
+  },
+  "description": "nodeserver",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DreamJL/NodeServer.git"
+  },
+  "author": "pupi",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/DreamJL/NodeServer/issues"
   }
 }

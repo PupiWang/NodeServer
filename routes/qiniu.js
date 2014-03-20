@@ -1,3 +1,7 @@
+var qiniu = require('qiniu');
+qiniu.conf.ACCESS_KEY = 'Q-IdFFb3t_WoE_u_cHHB0cG5TM4ABtetTlsBsXW6';
+qiniu.conf.SECRET_KEY = 'up-RiROP73u2M8hf94ysPRFf9OlDGr07Xr426r9R';
+
 /**
  * 根据资源空间域名和资源名生成url
  * @param  {string} domain 资源空间域名ov-orange-private.u.qiniudn.com
@@ -5,10 +9,6 @@
  * @return {string} url    资源链接
  */
 var getDownloadUrl = function (domain, key) {
-  var qiniu = require('qiniu');
-  qiniu.conf.ACCESS_KEY = 'Q-IdFFb3t_WoE_u_cHHB0cG5TM4ABtetTlsBsXW6';
-  qiniu.conf.SECRET_KEY = 'up-RiROP73u2M8hf94ysPRFf9OlDGr07Xr426r9R';
-
   if (!key) {
     return '';
   }
@@ -34,10 +34,6 @@ exports.getUrl = function (key) {
  * 获取上传令牌
  */
 exports.getUploadToken = function (req, res) {
-  var qiniu = require('qiniu');
-  qiniu.conf.ACCESS_KEY = 'Q-IdFFb3t_WoE_u_cHHB0cG5TM4ABtetTlsBsXW6';
-  qiniu.conf.SECRET_KEY = 'up-RiROP73u2M8hf94ysPRFf9OlDGr07Xr426r9R';
-
   var putPolicy = new qiniu.rs.PutPolicy('ov-orange-private');
   //七牛回调链接
   putPolicy.callbackUrl = 'http://115.29.179.7/uploadCallback';
@@ -50,6 +46,25 @@ exports.getUploadToken = function (req, res) {
                            '&user_id=$(x:user_id)&device_id=$(x:device_id)&time=$(x:time)';
   res.send(putPolicy.token());
 };
+
+/**
+ * 获取上传令牌
+ */
+exports.getAccessToken = function (req, res) {
+    var crypto = require('crypto');
+    //加密对象
+    var hmacSha1 = crypto.createHmac('sha1',qiniu.conf.SECRET_KEY);
+    //签名
+    var sign = hmacSha1.update('/pfop/\nbucket=ov-orange-private&key=wangzhi.mp4&fops=avthumb%2Fm3u8%2Fab%2F320k%2Fr%2F24&notifyURL=http%3A%2F%2Ffake.com%2Fqiniu%2Fnotify&');
+    //编码
+    var encodeSign = sign.digest('base64');
+    //最后，将AccessKey和encodedSign用:连接起来
+    var accessToken = qiniu.conf.ACCESS_KEY + ':' + encodeSign;
+    console.log(accessToken);
+    return accessToken;
+};
+
+//exports.getAccessToken();
 
 /**
  * 资源上传完成后的回调
@@ -86,8 +101,8 @@ exports.uploadCallback = function (req, res) {
         }
     });
 
-    var alarmMessageUtil = require('../util/alarmMessageUtil');
-    alarmMessageUtil.addAlarm(req.body.device_id, req.body.etag);
+    var alarmMessageUtil = require('../util/alarmUtil');
+    alarmUtil.addAlarm(req.body.device_id, req.body.etag);
 
     res.end();
 
@@ -117,7 +132,7 @@ exports.uploadCallback = function (req, res) {
               var c = client_sockets[i];
               if (c.user_id === req.body.user_id) {
                 if (c.write) {
-                  var protbufConvertor = require('./socket').protbufConvertor;
+                  var protbufConvertor = require('./socketServer').protbufConvertor;
                   protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1, cmd: 2});
                 } else {
                   c.emit('data', {'type': 'video', 'url': url});

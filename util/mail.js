@@ -15,7 +15,7 @@ exports.transport = nodemailer.createTransport("SMTP", {
 //   to: 'wz@ov-orange.com', // list of receivers
 //   subject: 'Node Email Test', // Subject line
 //   text: 'Node Email Test', // plaintext body
-//   html: '<b>Node service start</b>' // html body
+//   html: '<b>Node services start</b>' // html body
 // };
 
 // transport.sendMail(mailOptions, function (error, response) {

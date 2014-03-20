@@ -1,4 +1,4 @@
-var alarmMessageUtil = require('../util/alarmMessageUtil');
+var alarmMessageUtil = require('../util/alarmUtil');
 var userUtil = require('../util/userUtil');
 var Q = require('q');
 
@@ -18,7 +18,7 @@ exports.getHistoryAlarm = function (req, res) {
 
     userUtil.validUser(userId, password)
         .then(delivaryParams)
-        .then(alarmMessageUtil.getHistoryAlarm)
+        .then(alarmUtil.getHistoryAlarm)
         .then(function (data) {
             //成功返回结果
             res.send(data);
@@ -43,7 +43,7 @@ exports.readHistoryAlarm = function (req, res) {
 
     userUtil.validUser(userId, password)
         .then(delivaryParams)
-        .then(alarmMessageUtil.readHistoryAlarm)
+        .then(alarmUtil.readHistoryAlarm)
         .then(function (data) {
             //成功返回结果
             res.send(data);

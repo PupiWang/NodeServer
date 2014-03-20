@@ -123,70 +123,70 @@ exports.signup = function (req, res) {
     var deferred = Q.defer();
     var s;
     if (type === 'email') {
-      s = 'select * from user where email = "' + userId + '"';
+        s = 'select * from user where email = "' + userId + '"';
     } else if (type === 'phone') {
-      s = 'select * from user where phone = "' + userId + '"';
+        s = 'select * from user where phone = "' + userId + '"';
     }
 
     //判断用户名密码是否为空
     if (!userId || !password) {
-      deferred.reject({status: 'error', code: 1, msg: '资料填写不完整...'});
+        deferred.reject({status: 'error', code: 1, msg: '资料填写不完整...'});
     }
 
     sql.execute(s, function (err, rows) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        if (rows.length >= 1) {
-          deferred.reject({status: 'error', code: 3, msg: '用户名已存在'});
+        if (err) {
+            console.log(err);
+            deferred.reject({status: 'error', code: 501, msg: err});
         } else {
-          deferred.resolve();
+            if (rows.length >= 1) {
+                deferred.reject({status: 'error', code: 3, msg: '用户名已存在'});
+            } else {
+                deferred.resolve();
+            }
         }
-      }
     });
 
     return deferred.promise;
-  };
+};
 
-  /**
-   * 创建用户
-   */
-  var createUser = function () {
+/**
+ * 创建用户
+ */
+var createUser = function () {
     var deferred = Q.defer();
     var time = new Date().getTime();
     var s;
 
     if (type === 'email') {
-      s = 'insert into user (email,password,datetime_signup,datetime_lastlogin) VALUES ("' +
-        userId + '","' + password + '",' + time + ',' + time + ')';
+        s = 'insert into user (email,password,datetime_signup,datetime_lastlogin) VALUES ("' +
+            userId + '","' + password + '",' + time + ',' + time + ')';
     } else if (type === 'phone') {
-      s = 'insert into user (phone,password,datetime_signup,datetime_lastlogin) VALUES ("' +
-        userId + '","' + password + '",' + time + ',' + time + ')';
+        s = 'insert into user (phone,password,datetime_signup,datetime_lastlogin) VALUES ("' +
+            userId + '","' + password + '",' + time + ',' + time + ')';
     }
 
     sql.execute(s, function (err) {
-      if (err) {
-        console.log(err);
-        deferred.reject({status: 'error', code: 501, msg: err});
-      } else {
-        deferred.resolve(userId);
-      }
+        if (err) {
+            console.log(err);
+            deferred.reject({status: 'error', code: 501, msg: err});
+        } else {
+            deferred.resolve(userId);
+        }
     });
     return deferred.promise;
-  };
+};
 
-  userIsExist()
+userIsExist()
     .then(createUser)
     .then(sendActivationMessage)
     .then(function (data) {
-      //成功返回结果
-      res.send(data);
+        //成功返回结果
+        res.send(data);
     })
     .catch(function (error) {
-      // Handle any error from all above steps
-      console.log('error : ' + error);
-      res.send(error);
+        // Handle any error from all above steps
+        console.log('error : ' + error);
+        res.send(error);
     });
 
 };
