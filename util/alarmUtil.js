@@ -6,7 +6,7 @@ exports.addAlarm = function (deviceId, picId) {
     //Step 1
     var getRelationUsers = function (deviceId) {
         var deferred = Q.defer();
-        var s = 'SELECT id_user from user_device where id_device = "' + deviceId + '"';
+        var s = sql.alarmSQL.getRelationUsers(deviceId);
         sql.execute(s, function (err, rows) {
             if (err) {
                 console.log(err);
@@ -31,7 +31,7 @@ exports.addAlarm = function (deviceId, picId) {
         content.type = 'alarm';
 
         var aRASM = function (userId, content) {
-            var s = 'INSERT INTO historyalarm (id_user,id_device,id_pic,time) VALUES (' + userId + ',"' + deviceId + '","' + picId + '",' + time + ')';
+            var s = sql.alarmSQL.addRecordsAndSendMessages(userId, deviceId, picId, time);
             sql.execute(s, function (err, rows) {
                 if (err) {
                     console.log(err);
@@ -65,7 +65,7 @@ exports.getHistoryAlarm = function (data) {
     var userId = data.userId;
     var time = data.time;
     var deferred = Q.defer();
-    var s = 'SELECT * FROM historyalarm WHERE id_user = ' + userId + ' AND status = 0 AND time > ' + time;
+    var s = sql.alarmSQL.getHistoryAlarm(userId, time);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -78,8 +78,8 @@ exports.getHistoryAlarm = function (data) {
 
 exports.readHistoryAlarm = function (_id) {
     var deferred = Q.defer();
-    var s = 'UPDATE historyalarm SET status = 1 WHERE id_user = ' + _id;
-    sql.execute(s, function (err, rows) {
+    var s = sql.alarmSQL.readHistoryAlarm(_id);
+    sql.execute(s, function (err) {
         if (err) {
             console.log(err);
         } else {

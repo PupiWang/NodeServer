@@ -237,13 +237,8 @@ exports.resetPassword = function (userId, e, passwordNew) {
         .then(userUtil.modifyPassword)
         .then(function (data) {
             //成功返回结果
-            var s;
-            if (type === 'email') {
-                s = 'UPDATE user SET rstpwd_e = "' + e + '" WHERE email = "' + userId + '"';
-            } else if (type === 'phone') {
-                s = 'UPDATE user SET rstpwd_e = "' + e + '" WHERE phone = "' + userId + '"';
-            }
-
+            var type = userUtil.typeOfUserId(userId)
+            var s = sql.userSQL.resetE(e, userId, type);
             sql.execute(s, function (err) {
                 if (err) {
                     console.log(err);

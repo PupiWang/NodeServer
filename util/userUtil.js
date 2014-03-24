@@ -27,12 +27,7 @@ exports.typeOfUserId = function (userId) {
 exports.getUserIdByUserName = function (username) {
     var deferred = Q.defer();
     var type = typeOfUserId(username);
-    var s;
-    if (type === 'email') {
-        s = 'select _id from user where email="' + userId + '"';
-    } else if (type === 'phone') {
-        s = 'select _id from user where phone="' + userId + '"';
-    }
+    var s = sql.userSQL.getUserIdByUserName(username,type);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -46,20 +41,15 @@ exports.getUserIdByUserName = function (username) {
 
 /**
  * 验证用户信息
- * @param userId
+ * @param username
  * @param password
  * @returns {promise|Q.promise}
  */
-exports.validUser = function (userId, password) {
+exports.validUser = function (username, password) {
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
-    var s;
-    if (userId && password) {
-        if (type === 'email') {
-            s = 'select * from user where email="' + userId + '"';
-        } else if (type === 'phone') {
-            s = 'select * from user where phone="' + userId + '"';
-        }
+    var type = typeOfUserId(username);
+    if (username && password) {
+        var s = sql.userSQL.validUser(username,type);
         sql.execute(s, function (err, rows) {
             if (err) {
                 console.log(err);
@@ -95,9 +85,7 @@ exports.validUser = function (userId, password) {
 exports.setLoginTime = function (userObj) {
     var deferred = Q.defer();
     var id = userObj._id
-    var s;
-    //最近登陆时间
-    s = 'UPDATE user SET datetime_lastlogin = ' + new Date().getTime() + ' WHERE _id = ' + id;
+    var s = sql.userSQL.setLoginTime(new Date().getTime(), id);
     sql.execute(s, function (err) {
         if (err) {
             console.log(err);
@@ -112,15 +100,10 @@ exports.setLoginTime = function (userObj) {
  * @param userId
  * @returns {promise|Q.promise}
  */
-exports.userIsExist = function (userId) {
+exports.userIsExist = function (username) {
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
-    var s;
-    if (type === 'email') {
-        s = 'select * from user where email = "' + userId + '"';
-    } else if (type === 'phone') {
-        s = 'select * from user where phone = "' + userId + '"';
-    }
+    var type = typeOfUserId(username);
+    var s = sql.userSQL.getUserIdByUserName(username,type);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -139,18 +122,11 @@ exports.userIsExist = function (userId) {
  */
 exports.createUser = function (userObj) {
     var deferred = Q.defer();
-    var userId = userObj.userId;
+    var userName = userObj.userId;
     var password = userObj.password;
     var type = typeOfUserId(userId);
     var time = new Date().getTime();
-    var s;
-    if (type === 'email') {
-        s = 'insert into user (email,password,datetime_signup,datetime_lastlogin) VALUES ("' +
-            userId + '","' + password + '",' + time + ',' + time + ')';
-    } else if (type === 'phone') {
-        s = 'insert into user (phone,password,datetime_signup,datetime_lastlogin) VALUES ("' +
-            userId + '","' + password + '",' + time + ',' + time + ')';
-    }
+    var s = sql.userSQL.createUser(userName, password, type, time);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -168,19 +144,19 @@ exports.createUser = function (userObj) {
  * @param userId
  * @returns {promise|Q.promise}
  */
-exports.sendActivationMessage = function (userId) {
+exports.sendActivationMessage = function (userName) {
     var deferred = Q.defer();
     var e;
     var type = typeOfUserId(userId);
     var s;
     if (type === 'email') {
         e = require('MD5')(Math.random());
-        s = 'UPDATE user SET activation_e = "' + e + '" WHERE email = "' + userId + '"';
+        s = sql.userSQL.sendActivationMessage(userName, e, type);
         sql.execute(s, function (err) {
             if (err) console.log(err);
         });
         var transport = require('../util/mail').transport;
-        var url = 'http://115.29.179.7/mobile/user/activation?e=' + e + '&userId=' + userId;
+        var url = 'http://115.29.179.7/mobile/user/activation?e=' + e + '&userId=' + userName;
         var mailOptions = {
             from: '皇上<dreamjl@live.cn>', // sender address
             to: userId, // list of receivers
@@ -199,16 +175,14 @@ exports.sendActivationMessage = function (userId) {
     } else if (type === 'phone') {
         var SMS = require('./smsbao').SMS;
         e = Math.floor((Math.random() * 9 + 1) * 100000);
-        s = 'UPDATE user SET activation_e = "' + e + '" WHERE phone = "' + userId + '"';
-
+        s = sql.userSQL.sendActivationMessage(userName, e, type);
         sql.execute(s, function (err) {
             if (err) {
                 console.log(err);
             }
         });
         var content = '欢迎注册乐屋安全卫士，您的验证码为：' + e;
-        SMS(userId, content);
-
+        SMS(userName, content);
         deferred.resolve('phone');
     }
     return deferred.promise;
@@ -220,17 +194,11 @@ exports.sendActivationMessage = function (userId) {
  * @param e
  * @returns {promise|Q.promise}
  */
-exports.activateUser = function (userId, e) {
+exports.activateUser = function (userName, e) {
     var deferred = Q.defer();
-    var s;
     var type = typeOfUserId(userId);
-    if (type === 'email') {
-        s = 'UPDATE user SET activation_date = ' + new Date().getTime() +
-            ' , activation_e = "" WHERE activation_e = "' + e + '" AND email = "' + userId + '"';
-    } else if (type === 'phone') {
-        s = 'UPDATE user SET activation_date = ' + new Date().getTime() +
-            ' , activation_e = "" WHERE activation_e = "' + e + '" AND phone = "' + userId + '"';
-    }
+    var time = new Date().getTime();
+    var s = sql.userSQL.activateUser(userName, e, time, type);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -255,7 +223,7 @@ exports.modifyPassword = function (userObj) {
     var userId = userObj._id;
     var passwordNew = userObj.passwordNew;
     var deferred = Q.defer();
-    var s = 'UPDATE `user` SET `password` = "' + passwordNew + '" WHERE `_id` = ' + userId;
+    var s = sql.userSQL.modifyPassword(userId, passwordNew);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -283,16 +251,16 @@ exports.modifyPassword = function (userObj) {
  * @param userId
  * @returns {promise|Q.promise}
  */
-exports.sendPIN = function (userId) {
+exports.sendPIN = function (userName) {
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
+    var type = typeOfUserId(userName);
     var e = Math.floor((Math.random() * 9 + 1) * 100000);
-    var s;
+    var time = new Date().getTime();
     if (type === 'email') {
         var transport = require('../util/mail').transport;
         var mailOptions = {
             from: '皇上<dreamjl@live.cn>', // sender address
-            to: userId, // list of receivers
+            to: userName, // list of receivers
             subject: '重置密码', // Subject line
             text: '重置密码', // plaintext body
             html: '<p>您申请重置密码的验证码为：' + e + '。乐屋安全卫士，如果非本人操作请致电客服。</p>' // html body
@@ -306,16 +274,13 @@ exports.sendPIN = function (userId) {
                 deferred.resolve({status: 'success', code: 1, msg: e});
             }
         });
-        s = 'UPDATE user SET rstpwd_time = ' + new Date().getTime() +
-            ' , rstpwd_e = "' + e + '" WHERE email = "' + userId + '"';
     } else if (type === 'phone') {
         var SMS = require('./smsbao').SMS;
         var content = '您申请重置密码的验证码为：' + e + '。乐屋安全卫士，如果非本人操作请致电客服。';
-        SMS(userId, content);
+        SMS(userName, content);
         deferred.resolve({status: 'success', code: 2, msg: e});
-        s = 'UPDATE user SET rstpwd_time = ' + new Date().getTime() +
-            ' , rstpwd_e = "' + e + '" WHERE phone = "' + userId + '"';
     }
+    var s = sql.userSQL.sendPIN(time, e, type);
     sql.execute(s, function (err) {
         if (err) {
             console.log(err);
@@ -330,16 +295,11 @@ exports.sendPIN = function (userId) {
  * @param e
  * @returns {promise|Q.promise}
  */
-exports.validPIN = function (userId, e) {
+exports.validPIN = function (userName, e) {
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
-    var s;
-    if (userId && e) {
-        if (type === 'email') {
-            s = 'select * from user where email="' + userId + '" AND rstpwd_e = "' + e + '"';
-        } else if (type === 'phone') {
-            s = 'select * from user where phone="' + userId + '" AND rstpwd_e = "' + e + '"';
-        }
+    var type = typeOfUserId(userName);
+    var s = sql.userSQL.validPIN(userName, e, type);
+    if (userName && e) {
         sql.execute(s, function (err, rows) {
             if (err) {
                 console.log(err);

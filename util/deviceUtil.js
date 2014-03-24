@@ -8,8 +8,7 @@ var Q = require('q');
  */
 exports.getDevicesByUser = function (userObj) {
     var deferred = Q.defer();
-    var s = 'select * from user_device ud, device d ' +
-        'where ud.id_device = d.id_device AND ud.id_user = ' + userObj._id;
+    var s = sql.deviceSQL.getDevicesByUser(userObj._id);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -30,7 +29,7 @@ exports.isDeviceExist = function (userDeviceObj) {
     var deferred = Q.defer();
     var deviceId = userDeviceObj.deviceId;
     //设备号是否存在
-    var s = 'select * from device where id_device = "' + deviceId + '"';
+    var s = sql.deviceSQL.isDeviceExist(deviceId);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -56,7 +55,7 @@ exports.checkAdminBinding = function (userDeviceObj) {
     var userId = userDeviceObj.userId;
     var deviceId = userDeviceObj.deviceId;
     //检查用户是否绑定过此设备
-    var s = 'select * from user_device ud where ud.id_device = "' + deviceId + '"';
+    var s = sql.deviceSQL.checkAdminBinding(deviceId);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -82,7 +81,7 @@ exports.checkSameBinding = function (userDeviceObj) {
     var userId = userDeviceObj.userId;
     var deviceId = userDeviceObj.deviceId;
     //检查用户是否绑定过此设备
-    var s = 'select * from user_device ud where ud.id_user = "' + userId + '" and ud.id_device = "' + deviceId + '"';
+    var s = sql.deviceSQL.checkSameBinding(userId, deviceId);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -108,8 +107,7 @@ exports.addAdminForDevice = function (userDeviceObj) {
     var userId = userDeviceObj.userId;
     var deviceId = userDeviceObj.deviceId;
     //绑定设备
-    var s = 'insert into user_device (id_user,id_device,display_name,isadmin) VALUES ("' +
-        userId + '","' + deviceId + '","' + deviceId + '",1)';
+    var s = sql.deviceSQL.addAdminForDevice(userId, deviceId);
     sql.execute(s, function (err) {
         if (err) {
             console.log(err);
@@ -131,8 +129,7 @@ exports.addUserForDevice = function (userDeviceObj) {
     var userId = userDeviceObj.userId;
     var deviceId = userDeviceObj.deviceId;
     //绑定设备
-    var s = 'insert into user_device (id_user,id_device,display_name,isadmin) VALUES ("' +
-        userId + '","' + deviceId + '","' + deviceId + '",0)';
+    var s = sql.deviceSQL.addUserForDevice(userId, deviceId);
     sql.execute(s, function (err) {
         if (err) {
             console.log(err);
@@ -177,7 +174,7 @@ exports.modifyDeviceName = function (userDeviceObj) {
     var deviceId = userDeviceObj.deviceId;
     var deviceName = userDeviceObj.deviceName;
     var s = 'UPDATE user_device SET display_name = "' + deviceName + '" WHERE id_user = "' + userId + '" AND id_device = "' + deviceId + '"';
-    sql.execute(s, function (err, rows, fields) {
+    sql.execute(s, function (err) {
         if (err) {
             console.log(err);
         } else {

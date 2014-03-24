@@ -42,13 +42,13 @@ exports.addDeviceSocket = function (socket) {
     var deviceId = socket.deviceId;
     deviceSocket[deviceId] = socket;
     var sql = require('./sql');
-    var s = 'UPDATE `device` SET `status` = 1 WHERE `id_device` = "' + deviceId + '"';
+    var s = sql.deviceSQL.deviceConnect(deviceId);
     sql.execute(s, function (err) {
         if (err) {
           console.log(err);
         }
     });
-    s = 'SELECT id_user FROM user_device WHERE `id_device` = "' + deviceId + '"';
+    s = sql.deviceSQL.getUsersByDevice(deviceId);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -78,7 +78,7 @@ exports.removeDeviceSocket = function (socket) {
   var deviceId = socket.deviceId;
   deviceSocket[deviceId] = null;
   var sql = require('./sql');
-  var s = 'UPDATE `device` SET `status` = 0 WHERE `id_device` = "' + deviceId + '"';
+    var s = sql.deviceSQL.deviceDisconnect(deviceId);
   sql.execute(s, function (err) {
     if (err) {
       console.log(err);

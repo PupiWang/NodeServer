@@ -3,6 +3,9 @@ exports.appConfig = function (app) {
 
     var express = require('express');
 
+    var orm = require('orm');
+    var mysqlUrl = 'mysql://pupi:PUPI_1@onevoout.mysql.rds.aliyuncs.com/onevo';
+
     var path = require('path');
 
     var log4js = require('log4js');
@@ -28,6 +31,7 @@ exports.appConfig = function (app) {
     app.use(express.cookieParser('ov_orange'));                                                                         //cookie解析并用ov_orange签名
     app.use(express.bodyParser());                                                                                      //解析请求body
     app.use(express.methodOverride());
+    app.use(express['static'](path.join(__dirname, 'public')));                                                         //静态文件目录
 
     app.use(function (req, res, next) {
         if (req.signedCookies && req.signedCookies.user) {
@@ -55,8 +59,14 @@ exports.appConfig = function (app) {
         }
     });
 
+    app.use(orm.express(mysqlUrl, {
+        define: function (db, models, next) {
+            models.person = db.define("person");
+            next();
+        }
+    }));
+
     app.use(app.router);
-    app.use(express['static'](path.join(__dirname, 'public')));
 
     // development only
     if ('development' === app.get('env')) {
