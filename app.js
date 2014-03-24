@@ -22,5 +22,3 @@ socketServer.socketServer(app);
 // HTTP Server initing...
 var server = require('http').createServer(app);
 server.listen(app.get('port'));
-
-//var orm = require('./util/orm');

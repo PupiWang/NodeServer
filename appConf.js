@@ -3,9 +3,6 @@ exports.appConfig = function (app) {
 
     var express = require('express');
 
-    var orm = require('orm');
-    var mysqlUrl = 'mysql://pupi:PUPI_1@onevoout.mysql.rds.aliyuncs.com/onevo';
-
     var path = require('path');
 
     var log4js = require('log4js');
@@ -58,13 +55,6 @@ exports.appConfig = function (app) {
             }
         }
     });
-
-    app.use(orm.express(mysqlUrl, {
-        define: function (db, models, next) {
-            models.person = db.define("person");
-            next();
-        }
-    }));
 
     app.use(app.router);
 
