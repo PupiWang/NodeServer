@@ -1,12 +1,13 @@
 var mysql = require('mysql');
+var dbConfig = {
+    host     : 'onevoout.mysql.rds.aliyuncs.com',
+    user     : 'pupi',
+    database : 'onevo',
+    password : 'PUPI_1'
+};
 
 exports.execute = function (sql, callback) {
-    var connection = mysql.createConnection({
-        host     : 'onevoout.mysql.rds.aliyuncs.com',
-        user     : 'pupi',
-        database : 'onevo',
-        password : 'PUPI_1'
-    });
+    var connection = mysql.createConnection(dbConfig);
     connection.connect(function () {
         console.log(sql);
     });
@@ -126,3 +127,5 @@ var alarmSQL = {
 exports.userSQL = userSQL;
 exports.deviceSQL = deviceSQL;
 exports.alarmSQL = alarmSQL;
+
+console.log(userSQL.validUser('1@qq.com','email'));

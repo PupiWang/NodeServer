@@ -56,6 +56,7 @@ exports.socketServer = function (app) {
                         var res = {};
                         res.from = data.from;
                         res.to = data.to;
+                        res.cmd = data.cmd;
                         res.responseStatus = 2;                                                                         //1代表成功，由设备返回；2代表失败；
                         res.info = '操作失败，设备不在线...';
                         protobuf.sendMessage(socket,res);

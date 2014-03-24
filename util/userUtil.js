@@ -147,7 +147,7 @@ exports.createUser = function (userObj) {
 exports.sendActivationMessage = function (userName) {
     var deferred = Q.defer();
     var e;
-    var type = typeOfUserId(userId);
+    var type = typeOfUserId(userName);
     var s;
     if (type === 'email') {
         e = require('MD5')(Math.random());
@@ -159,7 +159,7 @@ exports.sendActivationMessage = function (userName) {
         var url = 'http://115.29.179.7/mobile/user/activation?e=' + e + '&userId=' + userName;
         var mailOptions = {
             from: '皇上<dreamjl@live.cn>', // sender address
-            to: userId, // list of receivers
+            to: userName, // list of receivers
             subject: '激活账户', // Subject line
             text: '激活账户', // plaintext body
             html: '<a href="' + url + '">点此激活您的账户</a>' // html body
