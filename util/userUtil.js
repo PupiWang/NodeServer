@@ -196,7 +196,7 @@ exports.sendActivationMessage = function (userName) {
  */
 exports.activateUser = function (userName, e) {
     var deferred = Q.defer();
-    var type = typeOfUserId(userId);
+    var type = typeOfUserId(userName);
     var time = new Date().getTime();
     var s = sql.userSQL.activateUser(userName, e, time, type);
     sql.execute(s, function (err, rows) {
