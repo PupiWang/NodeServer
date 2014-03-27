@@ -18,17 +18,21 @@ exports.socketServer = function (app) {
                 return;
             }
             var msg = data.msg;
-            console.log(data);
             if (msg === 1) {
                 //建立连接
                 if (data.to === 'device') {
+                    //设备
                     socket.deviceId = data.from;
                     socketUtil.addDeviceSocket(socket);
                     console.log('device connect : ' + socket.deviceId);
                 } else if (data.to === 'client') {
+                    //用户
                     socket.userId = data.from;
                     socketUtil.addClientSocket(socket);
                     console.log('client connect : ' + socket.userId + ' , ' + socket.socketId);
+                } else {
+                    //都不是，主动断开
+                    socket.destroy();
                 }
             } else {
                 var REALTIMEVIDEO = 11;
@@ -74,11 +78,16 @@ exports.socketServer = function (app) {
         //客户端关闭事件
         socket.on('close', function () {
             if (socket.deviceId) {
+                //设备
                 console.log('device close : ' + socket.deviceId);
                 socketUtil.removeDeviceSocket(socket);
             } else if (socket.userId) {
-                console.log('client close : ' + socket.userId);
+                //用户
+                console.log('client close : ' + socket.userId + ' , ' + socket.socketId);
                 socketUtil.removeClientSocket(socket);
+            } else {
+                //都不是
+                console.log('illegal socket close :' + socket.remoteAddress);
             }
         });
 

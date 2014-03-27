@@ -19,8 +19,11 @@ exports.resolveMessage = function (proData) {
     var data;
     try{
         data = BufTest.parse(new Buffer(proData));
+        console.log('recieved : ');
+        console.log(data);
     } catch(e) {
         console.log(e);
+        return null;
     }
     return data;
 };
