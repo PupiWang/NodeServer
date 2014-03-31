@@ -69,12 +69,12 @@ exports.addDeviceSocket = function (socket) {
     });
 };
 
-exports.removeClientSocket = function (socket) {
+removeClientSocket = function (socket) {
   var userId = socket.userId;
   clientSocket[userId].pop(socket);
 };
 
-exports.removeDeviceSocket = function (socket) {
+removeDeviceSocket = function (socket) {
   var deviceId = socket.deviceId;
   deviceSocket[deviceId] = null;
   var sql = require('./sql');
@@ -97,4 +97,19 @@ exports.removeDeviceSocket = function (socket) {
     message.to = userId;
     protobuf.sendMessageToClientsByUserId(userId, message);
   }
+};
+
+exports.removeSocket = function (socket) {
+    if (socket.deviceId) {
+        //设备
+        console.log('device close : ' + socket.deviceId);
+        removeDeviceSocket(socket);
+    } else if (socket.userId) {
+        //用户
+        console.log('client close : ' + socket.userId + ' , ' + socket.socketId);
+        removeClientSocket(socket);
+    } else {
+        //都不是
+        console.log('illegal socket close :' + socket.remoteAddress);
+    }
 };

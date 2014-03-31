@@ -12,7 +12,7 @@ exports.getPictureByPicId = function (req, res) {
         password = req.body.password || req.param('password'),
         picId = req.body.picId || req.param('picId');
 
-    resourceService.login(userId, password)
+    resourceService.getPictureByPicId(userId, password, picId)
         .then(function (data) {
             res.send(data);
         })

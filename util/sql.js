@@ -127,5 +127,3 @@ var alarmSQL = {
 exports.userSQL = userSQL;
 exports.deviceSQL = deviceSQL;
 exports.alarmSQL = alarmSQL;
-
-console.log(userSQL.validUser('1@qq.com','email'));

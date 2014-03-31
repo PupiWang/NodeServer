@@ -7,7 +7,7 @@ var Q = require('q');
  * @returns {*}
  */
 var typeOfUserId = function (userId) {
-    var emailReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
+    var emailReg = /^([a-zA-Z0-9]+[_|_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/,
         phoneReg = /^1[3|4|5|8][0-9]\d{4,8}$/,
         result;
     if (emailReg.test(userId)) {

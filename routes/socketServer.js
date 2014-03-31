@@ -3,13 +3,15 @@ exports.socketServer = function (app) {
     var net = require('net');
     var socketUtil = require('../util/socketUtil');
     var protobuf = require('../util/protobuf');
-//    var timeout = 20000;//超时
-    var listenPort = app.get('socport');//监听端口
-    var streamingServerPort = 554;//流媒体服务器端口
+    var timeout = 10 * 60 * 1000;                               //超时
+    var listenPort = app.get('socport');                        //监听端口
+    var streamingServerPort = 554;                              //流媒体服务器端口
     var streamingServerDomain = '115.29.179.7';
 
     var server = net.createServer(function (socket) {
         //我们获得一个连接 - 该连接自动关联一个socket对象
+        socket.remoteInfo = socket.remoteAddress + ':' + socket.remotePort
+        console.log('connect:' + socket.remoteInfo);
         socket.setEncoding('binary');
         //接收到数据
         socket.on('data', function (proData) {
@@ -65,37 +67,31 @@ exports.socketServer = function (app) {
                         res.info = '操作失败，设备不在线...';
                         protobuf.sendMessage(socket,res);
                     }
+                } else {
+                    console.log('can not know msg resource');
                 }
             }
         });
 
         //数据错误事件
         socket.on('error', function (exception) {
-            console.log('socket error:' + exception);
+            console.log('socket error:' + socket.remoteInfo + '\n' + exception);
+            socketUtil.removeSocket(socket);
             socket.end();
         });
 
         //客户端关闭事件
         socket.on('close', function () {
-            if (socket.deviceId) {
-                //设备
-                console.log('device close : ' + socket.deviceId);
-                socketUtil.removeDeviceSocket(socket);
-            } else if (socket.userId) {
-                //用户
-                console.log('client close : ' + socket.userId + ' , ' + socket.socketId);
-                socketUtil.removeClientSocket(socket);
-            } else {
-                //都不是
-                console.log('illegal socket close :' + socket.remoteAddress);
-            }
+            console.log('error:' + socket.remoteInfo);
+            socketUtil.removeSocket(socket);
         });
 
         //超时事件
-        // socket.setTimeout(timeout,function(){
-        //  console.log('连接超时');
-        //  socket.end();
-        // });
+        socket.setTimeout(timeout,function(){
+            console.log('timeout:' + socket.remoteInfo);
+            socketUtil.removeSocket(socket);
+            socket.end();
+        });
 
     }).listen(listenPort);
 
