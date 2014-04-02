@@ -15,6 +15,11 @@ exports.sendProtobufMessage = function (socket, proData) {
     socket.write(proData);
 };
 
+exports.serializeMessage = function (data) {
+    var proData = BufTest.serialize(data);
+    return proData;
+};
+
 exports.resolveMessage = function (proData) {
     var data;
     try{

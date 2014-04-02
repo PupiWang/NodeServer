@@ -4,6 +4,14 @@
 
 var clientSocket = {};       //客户端
 var deviceSocket = {};       //设备端
+var webSockets = [];         //websocket
+
+var arrayRemove = function(arr,val) {
+    var index = arr.indexOf(val);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+};
 
 exports.getClientSockets = function (userId) {
     var sockets = clientSocket[userId];
@@ -69,12 +77,12 @@ exports.addDeviceSocket = function (socket) {
     });
 };
 
-removeClientSocket = function (socket) {
-  var userId = socket.userId;
-  clientSocket[userId].pop(socket);
+var removeClientSocket = function (socket) {
+    var userId = socket.userId;
+    arrayRemove(clientSocket[userId], socket);
 };
 
-removeDeviceSocket = function (socket) {
+var removeDeviceSocket = function (socket) {
   var deviceId = socket.deviceId;
   deviceSocket[deviceId] = null;
   var sql = require('./sql');
@@ -113,3 +121,15 @@ exports.removeSocket = function (socket) {
         console.log('illegal socket close :' + socket.remoteAddress);
     }
 };
+
+exports.addWebSocket = function (ws) {
+    webSockets.push(ws);
+};
+
+exports.removeWebSocket = function (ws) {
+    arrayRemove(webSockets, ws);
+};
+
+exports.getWebSocket = function () {
+    return webSockets;
+}

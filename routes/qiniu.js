@@ -132,7 +132,7 @@ exports.uploadCallback = function (req, res) {
               var c = client_sockets[i];
               if (c.user_id === req.body.user_id) {
                 if (c.write) {
-                  var protbufConvertor = require('./socketServer').protbufConvertor;
+                  var protbufConvertor = require('./../socketServer').protbufConvertor;
                   protbufConvertor(c, {from: req.body.device_id, to: req.body.user_id, info: url, responseStatus: 1, cmd: 2});
                 } else {
                   c.emit('data', {'type': 'video', 'url': url});

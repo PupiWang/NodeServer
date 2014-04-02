@@ -1,9 +1,9 @@
 
 exports.socketServer = function (app) {
     var net = require('net');
-    var socketUtil = require('../util/socketUtil');
-    var protobuf = require('../util/protobuf');
-    var timeout = 10 * 60 * 1000;                               //超时
+    var socketUtil = require('./util/socketUtil');
+    var protobuf = require('./util/protobuf');
+    var timeout = 0.1 * 60 * 1000;                               //超时
     var listenPort = app.get('socport');                        //监听端口
     var streamingServerPort = 554;                              //流媒体服务器端口
     var streamingServerDomain = '115.29.179.7';
@@ -13,6 +13,7 @@ exports.socketServer = function (app) {
         socket.remoteInfo = socket.remoteAddress + ':' + socket.remotePort
         console.log('connect:' + socket.remoteInfo);
         socket.setEncoding('binary');
+        socket.setNoDelay(true);                                //禁用Nagle算法
         //接收到数据
         socket.on('data', function (proData) {
             var data = protobuf.resolveMessage(proData);
@@ -69,6 +70,8 @@ exports.socketServer = function (app) {
                     }
                 } else {
                     console.log('can not know msg resource');
+                    //都不是，主动断开
+                    socket.destroy();
                 }
             }
         });
@@ -86,12 +89,14 @@ exports.socketServer = function (app) {
             socketUtil.removeSocket(socket);
         });
 
-        //超时事件
-        socket.setTimeout(timeout,function(){
-            console.log('timeout:' + socket.remoteInfo);
-            socketUtil.removeSocket(socket);
-            socket.end();
-        });
+        if (socket.remoteAddress != '127.0.0.1') {
+            //超时事件
+            socket.setTimeout(timeout,function(){
+                console.log('timeout:' + socket.remoteInfo);
+                socketUtil.removeSocket(socket);
+                socket.end();
+            });
+        }
 
     }).listen(listenPort);
 
@@ -104,4 +109,39 @@ exports.socketServer = function (app) {
     server.on("error", function (exception) {
         console.log("server error:" + exception);
     });
+};
+
+exports.createTestClient = function (app) {
+
+    var net = require('net');
+    var listenPort = app.get('socport');                        //监听端口
+    var protobuf = require('./util/protobuf');
+    var init = {
+        from: 'test',
+        to: 'client',
+        msg: 1
+    };
+
+    var client = net.connect(listenPort, function () {
+        console.log('TestClient connected');
+        client.write(protobuf.serializeMessage(init));
+    });
+
+    client.on('data', function(prodata) {
+        var data = protobuf.resolveMessage(prodata);
+        var socketUtil = require('./util/socketUtil');
+        socketUtil.getWebSocket().forEach(function (ws) {
+            ws.emit('receive', data);
+        });
+    });
+
+    client.on('error', function(err) {
+        console.log(err);
+    });
+
+    client.on('end', function() {
+        console.log('TestClient disconnected');
+    });
+
+    return client;
 };

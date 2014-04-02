@@ -19,7 +19,10 @@ exports.appRoutes = function (app) {
     app.get('/devices', device.getDevices);
     app.get('/upToken', qn.getUploadToken);
 
-
+    //socket test
+    app.get('/socketTest', function (req, res) {
+        res.render('socketTest');
+    });
 
     // app.get('/mobile/user/reset', m_user.reset);
 

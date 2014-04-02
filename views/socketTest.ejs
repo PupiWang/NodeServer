@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <meta charset="utf-8">
+        <title>测试工具</title>
+        <style type="text/css">
+            .dl-horizontal dt {
+                width: 50px;
+                font-size: 18px;
+            }
+            .dl-horizontal dd {
+                margin-left: 70px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" style="margin-top: 30px;">
+            <div class="col-md-8">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Console Panel</h3>
+                    </div>
+                    <div class="panel-body console" style="height: 500px;overflow: auto"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Tool Panel</h3>
+                    </div>
+                    <div class="panel-body" style="height: 500px;overflow: hidden">
+                        <form class="form-horizontal" role="form" id="send-form">
+                            <div class="form-group">
+                                <label for="inputFrom" class="col-md-3 control-label">From</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="inputFrom" placeholder="UserId" value="test" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTo" class="col-md-3 control-label">To</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="inputTo" placeholder="DeviceId" value="ov_orange_01">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="inputCmd" class="col-md-3 control-label">CMD</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="inputCmd" placeholder="cmd" value="0">
+                                        <span class="input-group-addon" style="padding: 0"><button type="button" class="btn btn-sm btn-info" id="send" style="margin-left: 0">Send</button></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-default" id="sssp">实时视频</button>
+                                </div>
+                                <label for="inputTo" class="col-md-6 control-label">CMD = 11</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-default" id="front">前进</button>
+                                </div>
+                                <label for="inputTo" class="col-md-6 control-label">CMD = 6</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-default" id="back">后退</button>
+                                </div>
+                                <label for="inputTo" class="col-md-6 control-label">CMD = 7</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-default" id="left">左转</button>
+                                </div>
+                                <label for="inputTo" class="col-md-6 control-label">CMD = 8</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-default" id="right">右转</button>
+                                </div>
+                                <label for="inputTo" class="col-md-6 control-label">CMD = 9</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="javascripts/jquery-1.10.2.min.js"></script>
+        <script src="javascripts/bootstrap.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var init = {
+                from: 'test',
+                to: 'client',
+                msg: 1
+            };
+            $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(init) + '</p>');
+
+            var socket = io.connect('http://localhost/');
+            socket.on('connect', function () {
+                socket.on('receive', function (msg) {
+                    $('.console').append( '<p class="text-danger">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
+                });
+            });
+
+            $('#send').on('click', function () {
+                var msg = {
+                    from: $('#inputFrom')[0].value,
+                    to: $('#inputTo')[0].value
+                };
+                msg.cmd = $('#inputCmd')[0].value;
+                $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(msg) + '</p>');
+                socket.emit('send', msg);
+            })
+
+            var buttonClick = function (btnid, cmd) {
+                $('#' + btnid).on('click', function () {
+                    var msg = {
+                        from: $('#inputFrom')[0].value,
+                        to: $('#inputTo')[0].value
+                    };
+                    msg.cmd = cmd;
+                    $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(msg) + '</p>');
+                    socket.emit('send', msg);
+                })
+            };
+
+            buttonClick('front', 6);
+            buttonClick('back', 7);
+            buttonClick('left', 8);
+            buttonClick('right', 9);
+            buttonClick('sssp', 11);
+
+        </script>
+    </body>
+</html>
