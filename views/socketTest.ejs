@@ -21,7 +21,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Console Panel</h3>
                     </div>
-                    <div class="panel-body console" style="height: 500px;overflow: auto"></div>
+                    <div class="panel-body console" style="height: 500px;overflow: auto;word-break: break-all"></div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -90,22 +90,22 @@
             </div>
         </div>
 
-        <script src="javascripts/jquery-1.10.2.min.js"></script>
-        <script src="javascripts/bootstrap.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
+        <script src="./javascripts/jquery-1.10.2.min.js"></script>
+        <script src="./javascripts/bootstrap.min.js"></script>
+        <script src="./socket.io/socket.io.js"></script>
         <script>
             var init = {
                 from: 'test',
                 to: 'client',
                 msg: 1
             };
-            $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(init) + '</p>');
 
-            var socket = io.connect('http://localhost/');
+            var socket = io.connect(location.origin);
             socket.on('connect', function () {
-                socket.on('receive', function (msg) {
-                    $('.console').append( '<p class="text-danger">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
-                });
+                $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(init) + '</p>');
+            });
+            socket.on('receive', function (msg) {
+                $('.console').append( '<p class="text-danger">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
             });
 
             $('#send').on('click', function () {
