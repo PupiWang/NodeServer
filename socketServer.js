@@ -3,7 +3,7 @@ exports.socketServer = function (app) {
     var net = require('net');
     var socketUtil = require('./util/socketUtil');
     var protobuf = require('./util/protobuf');
-    var timeout = 0.1 * 60 * 1000;                               //超时
+    var timeout = 5 * 60 * 1000;                               //超时
     var listenPort = app.get('socport');                        //监听端口
     var streamingServerPort = 554;                              //流媒体服务器端口
     var streamingServerDomain = '115.29.179.7';
@@ -28,6 +28,8 @@ exports.socketServer = function (app) {
                     socket.deviceId = data.from;
                     socketUtil.addDeviceSocket(socket);
                     console.log('device connect : ' + socket.deviceId);
+                    //timeout
+                    socket.setTimeout(0);
                 } else if (data.to === 'client') {
                     //用户
                     socket.userId = data.from;
@@ -79,13 +81,11 @@ exports.socketServer = function (app) {
         //数据错误事件
         socket.on('error', function (exception) {
             console.log('socket error:' + socket.remoteInfo + '\n' + exception);
-            socketUtil.removeSocket(socket);
             socket.end();
         });
 
         //客户端关闭事件
         socket.on('close', function () {
-            console.log('error:' + socket.remoteInfo);
             socketUtil.removeSocket(socket);
         });
 
@@ -93,9 +93,10 @@ exports.socketServer = function (app) {
             //超时事件
             socket.setTimeout(timeout,function(){
                 console.log('timeout:' + socket.remoteInfo);
-                socketUtil.removeSocket(socket);
                 socket.end();
             });
+        } else {
+            socket.setKeepAlive(true);
         }
 
     }).listen(listenPort);
@@ -136,7 +137,10 @@ exports.createTestClient = function (app) {
     });
 
     client.on('error', function(err) {
-        console.log(err);
+        var socketUtil = require('./util/socketUtil');
+        socketUtil.getWebSocket().forEach(function (ws) {
+            ws.emit('err', err);
+        });
     });
 
     client.on('end', function() {

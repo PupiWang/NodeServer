@@ -5,13 +5,6 @@
         <meta charset="utf-8">
         <title>测试工具</title>
         <style type="text/css">
-            .dl-horizontal dt {
-                width: 50px;
-                font-size: 18px;
-            }
-            .dl-horizontal dd {
-                margin-left: 70px;
-            }
         </style>
     </head>
     <body>
@@ -94,29 +87,20 @@
         <script src="./javascripts/bootstrap.min.js"></script>
         <script src="./socket.io/socket.io.js"></script>
         <script>
-            var init = {
-                from: 'test',
-                to: 'client',
-                msg: 1
-            };
 
             var socket = io.connect(location.origin);
             socket.on('connect', function () {
-                $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(init) + '</p>');
+                $('.console').append( '<p class="text-warning">Connect success , enjoy yourself.</p>');
+            });
+            socket.on('disconnect', function() {
+                $('.console').append( '<p class="text-warning">Server disconnected , please check your network state and waiting for server to fix this.</p>');
             });
             socket.on('receive', function (msg) {
+                $('.console').append( '<p class="text-success">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
+            });
+            socket.on('err', function (msg) {
                 $('.console').append( '<p class="text-danger">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
             });
-
-            $('#send').on('click', function () {
-                var msg = {
-                    from: $('#inputFrom')[0].value,
-                    to: $('#inputTo')[0].value
-                };
-                msg.cmd = $('#inputCmd')[0].value;
-                $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(msg) + '</p>');
-                socket.emit('send', msg);
-            })
 
             var buttonClick = function (btnid, cmd) {
                 $('#' + btnid).on('click', function () {
@@ -124,12 +108,13 @@
                         from: $('#inputFrom')[0].value,
                         to: $('#inputTo')[0].value
                     };
-                    msg.cmd = cmd;
+                    msg.cmd = cmd || $('#inputCmd')[0].value;
                     $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(msg) + '</p>');
                     socket.emit('send', msg);
                 })
             };
 
+            buttonClick('send');
             buttonClick('front', 6);
             buttonClick('back', 7);
             buttonClick('left', 8);
