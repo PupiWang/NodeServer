@@ -1,3 +1,4 @@
+var sendConsoleLog = require('./util/socketUtil').sendConsoleLog;
 
 exports.socketServer = function (app) {
     var net = require('net');
@@ -12,6 +13,7 @@ exports.socketServer = function (app) {
         //我们获得一个连接 - 该连接自动关联一个socket对象
         socket.remoteInfo = socket.remoteAddress + ':' + socket.remotePort
         console.log('connect:' + socket.remoteInfo);
+        sendConsoleLog(socket.remoteInfo, 'connect');
         socket.setEncoding('binary');
         socket.setNoDelay(true);                                //禁用Nagle算法
         //接收到数据
@@ -20,6 +22,7 @@ exports.socketServer = function (app) {
             if (!data) {
                 return;
             }
+            sendConsoleLog(data, 'received');
             var msg = data.msg;
             if (msg === 1) {
                 //建立连接
@@ -47,8 +50,7 @@ exports.socketServer = function (app) {
                     var clientSocket = socketUtil.getClientSocketBySocketId(data.to, data.socketid);
                     if (clientSocket) {
                         if (data.cmd === REALTIMEVIDEO) {
-                            var url = 'rtsp://' + data.domain + ':' + streamingServerPort + '/' + data.sdp;
-                            data.info = url;
+                            data.info = 'rtsp://' + data.domain + ':' + streamingServerPort + '/' + data.sdp;
                         }
                         protobuf.sendMessage(clientSocket, data);
                     }
@@ -81,17 +83,20 @@ exports.socketServer = function (app) {
         //数据错误事件
         socket.on('error', function (exception) {
             console.log('socket error:' + socket.remoteInfo + '\n' + exception);
+            sendConsoleLog(socket.remoteInfo + '\n' + exception, 'error');
             socket.end();
         });
 
         //客户端关闭事件
         socket.on('close', function () {
+            sendConsoleLog(socket.remoteInfo, 'close');
             socketUtil.removeSocket(socket);
         });
 
         if (socket.remoteAddress != '127.0.0.1') {
             //超时事件
             socket.setTimeout(timeout,function(){
+                sendConsoleLog(socket.remoteInfo, 'timeout');
                 console.log('timeout:' + socket.remoteInfo);
                 socket.end();
             });

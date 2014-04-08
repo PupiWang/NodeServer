@@ -10,11 +10,20 @@
     <body>
         <div class="container" style="margin-top: 30px;">
             <div class="col-md-8">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Console Panel</h3>
+                <div class="panel panel-default">
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li class="active"><a href="#client" data-toggle="tab">Client</a></li>
+                        <li><a href="#console" data-toggle="tab">Console</a></li>
+                    </ul>
+                    <div class="panel-body" style="height: 441px;overflow: auto;word-break: break-all">
+                        <div class="tab-content">
+                            <div class="tab-pane active client" id="client"></div>
+                            <div class="tab-pane console" id="console"></div>
+                        </div>
                     </div>
-                    <div class="panel-body console" style="height: 500px;overflow: auto;word-break: break-all"></div>
+                    <div class="panel-footer text-right">
+                        <button type="button" class="btn btn-default" id="clear">Clear</button>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -90,16 +99,19 @@
 
             var socket = io.connect(location.origin);
             socket.on('connect', function () {
-                $('.console').append( '<p class="text-warning">Connect success , enjoy yourself.</p>');
+                $('.client').append( '<p class="text-warning">Connect success , enjoy yourself.</p>');
             });
             socket.on('disconnect', function() {
-                $('.console').append( '<p class="text-warning">Server disconnected , please check your network state and waiting for server to fix this.</p>');
+                $('.client').append( '<p class="text-warning">Server disconnected , please check your network state and waiting for server to fix this.</p>');
             });
             socket.on('receive', function (msg) {
-                $('.console').append( '<p class="text-success">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
+                $('.client').append( '<p class="text-success">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
             });
             socket.on('err', function (msg) {
-                $('.console').append( '<p class="text-danger">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
+                $('.client').append( '<p class="text-danger">&lt;&lt;&lt;' + JSON.stringify(msg) + '</p>');
+            });
+            socket.on('console', function (msg) {
+                $('.console').append( '<p class="text-muted">' + msg + '</p>');
             });
 
             var buttonClick = function (btnid, cmd) {
@@ -109,7 +121,7 @@
                         to: $('#inputTo')[0].value
                     };
                     msg.cmd = cmd || $('#inputCmd')[0].value;
-                    $('.console').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(msg) + '</p>');
+                    $('.client').append( '<p class="text-primary">&gt;&gt;&gt;' + JSON.stringify(msg) + '</p>');
                     socket.emit('send', msg);
                 })
             };
@@ -120,6 +132,10 @@
             buttonClick('left', 8);
             buttonClick('right', 9);
             buttonClick('sssp', 11);
+
+            $('#clear').on('click', function () {
+                $('.active.tab-pane').html('');
+            });
 
         </script>
     </body>

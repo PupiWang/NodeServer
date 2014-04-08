@@ -133,3 +133,9 @@ exports.removeWebSocket = function (ws) {
 exports.getWebSocket = function () {
     return webSockets;
 }
+
+exports.sendConsoleLog = function (log, type) {
+    webSockets.forEach(function (ws) {
+        ws.emit('console', new Date().toLocaleTimeString() + ' ' + type + ' : ' + JSON.stringify(log));
+    });
+};

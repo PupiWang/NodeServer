@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
 		<meta charset="utf-8">
 		<title>乐屋首页</title>
 		<style type="text/css">
@@ -59,7 +59,7 @@
 	<body>
 		<div class="container">
 
-			<img src="images/logo.png"><br><br>
+			<img src="./images/logo.png"><br><br>
 
 			<H1>乐屋，您的家庭安全专家！</H1>
 
@@ -92,7 +92,7 @@
         if (email && password) {
           $.post('/login',{'email': email, 'password': password, 'rememberme': check},function (data) {
             if(data == '/userinfo') {
-              location.href = data;
+              location.href = '';
             } else {
               alert(data);
             }

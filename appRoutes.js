@@ -56,7 +56,7 @@ exports.appRoutes = function (app) {
     app.post('/mobile/user/modify', controllers.user.modifyPassword);                                       //修改密码
     app.post('/mobile/user/forget', controllers.user.forgetPassword);                                       //忘记密码
     app.post('/mobile/user/resetPassword', controllers.user.resetPassword);                                 //重置密码
-    app.get('/mobile/user/sendActivationMessage', controllers.user.sendActivationMessage);                  //发送激活吗
+    app.get('/mobile/user/sendActivationMessage', controllers.user.sendActivationMessage);                  //发送激活码
     app.get('/mobile/user/activation', controllers.user.activateUser);                                      //激活用户
 
     //device
