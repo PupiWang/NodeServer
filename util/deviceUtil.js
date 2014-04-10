@@ -64,7 +64,7 @@ exports.checkAdminBinding = function (userDeviceObj) {
             if (rows.length >= 1) {
                 deferred.reject({status: 'error', code: 2, msg: '已经绑定了该设备，无法重复绑定...'});
             } else {
-                deferred.resolve(userId);
+                deferred.resolve(userDeviceObj);
             }
         }
     });
@@ -90,7 +90,7 @@ exports.checkSameBinding = function (userDeviceObj) {
             if (rows.length >= 1) {
                 deferred.reject({status: 'error', code: 2, msg: '已经绑定了该设备，无法重复绑定...'});
             } else {
-                deferred.resolve(userId);
+                deferred.resolve(userDeviceObj);
             }
         }
     });
