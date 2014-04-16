@@ -124,7 +124,7 @@ exports.createUser = function (userObj) {
     var deferred = Q.defer();
     var userName = userObj.userId;
     var password = userObj.password;
-    var type = typeOfUserId(userId);
+    var type = typeOfUserId(userName);
     var time = new Date().getTime();
     var s = sql.userSQL.createUser(userName, password, type, time);
     sql.execute(s, function (err, rows) {
@@ -133,7 +133,7 @@ exports.createUser = function (userObj) {
             deferred.reject({status: 'error', code: 501, msg: err});
         } else {
             userObj._id = rows.insertId;
-            deferred.resolve(userId);
+            deferred.resolve(userName);
         }
     });
     return deferred.promise;
