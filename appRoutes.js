@@ -11,7 +11,7 @@ exports.appRoutes = function (app) {
         product = require('./routes/product');
 
     // Get
-    app.get('/', routes.index);
+    app.get('/background', routes.index);
     app.get('/users', user.list);
     app.get('/signup', routes.signup);
     app.get('/logout', user.logout);
@@ -42,13 +42,14 @@ exports.appRoutes = function (app) {
     var controllers = require('./controllers');
 
     //Lewu product page
-    app.get('/product', product.index);
-    app.get('/product/home', product.home);
-    app.get('/product/shop', product.shop);
-    app.get('/product/details', product.details);
-    app.get('/product/download', product.download);
-    app.get('/product/preorder', product.preorder);
-    app.get('/product/contact', product.contact);
+    app.get('/', product.index);
+    app.get('/home', product.home);
+    app.get('/shop', product.shop);
+    app.get('/details', product.details);
+    app.get('/download', product.download);
+    app.get('/preorder', product.preorder);
+    app.get('/contact', product.contact);
+
 
     //user
     app.post('/mobile/user/login', controllers.user.login);                                                 //登陆

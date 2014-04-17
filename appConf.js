@@ -34,25 +34,30 @@ exports.appConfig = function (app) {
         if (req.signedCookies && req.signedCookies.user) {
             next();
         } else {
-            var url = req.path;
-
-            var jsPattern = /^\/javascripts\//,
-                cssPattern = /^\/css\//,
-                fontsPattern = /^\/fonts\//,
-                imgPattern = /^\/images\//,
-                productPagePattern = /^\/product/,
-                staticPattern = /^\/static\//,
-                mobilePattern = /^\/mobile\//;
-
-            var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) ||
-                imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url) || staticPattern.test(url);
-
-            if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' ||
-                url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk' || url === '/LewuSafeGuard.apk') {
-                next();
-            } else {
-                return res.redirect("/");
+            var url = req.path.toLowerCase();
+            console.log(url);
+            if (url === '/sockettest' || url === '/doc.html') {
+                return res.redirect("/background");
             }
+            next();
+
+//            var jsPattern = /^\/javascripts\//,
+//                cssPattern = /^\/css\//,
+//                fontsPattern = /^\/fonts\//,
+//                imgPattern = /^\/images\//,
+//                productPagePattern = /^\/product/,
+//                staticPattern = /^\/static\//,
+//                mobilePattern = /^\/mobile\//;
+//
+//            var isStatic = jsPattern.test(url) || cssPattern.test(url) || fontsPattern.test(url) ||
+//                imgPattern.test(url) || mobilePattern.test(url) || productPagePattern.test(url) || staticPattern.test(url);
+//
+//            if (isStatic || url === '/' || url === '/login' || url === '/uploadCallback' ||
+//                url === '/upToken' || url === '/signup' || url === '/AndroidOnevo.apk' || url === '/LewuSafeGuard.apk') {
+//                next();
+//            } else {
+//                return res.redirect("/");
+//            }
         }
     });
 
