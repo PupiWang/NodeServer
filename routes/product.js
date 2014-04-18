@@ -26,3 +26,7 @@ exports.preorder = function(req, res){
 exports.contact = function(req, res){
     res.render('productContact');
 };
+
+exports.member = function(req, res){
+    res.render('productMember');
+};

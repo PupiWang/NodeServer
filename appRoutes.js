@@ -49,6 +49,7 @@ exports.appRoutes = function (app) {
     app.get('/download', product.download);
     app.get('/preorder', product.preorder);
     app.get('/contact', product.contact);
+    app.get('/member', product.member);
 
 
     //user

@@ -92,7 +92,7 @@
         if (email && password) {
           $.post('/login',{'email': email, 'password': password, 'rememberme': check},function (data) {
             if(data == '/userinfo') {
-              location.href = '';
+              location.href = '/background';
             } else {
               alert(data);
             }

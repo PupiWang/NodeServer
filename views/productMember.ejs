@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>乐屋-店铺应用</title>
+    <title>乐屋-快乐家族</title>
 
 
     <link rel="stylesheet" href="../css/bootstrap.min.css">
@@ -24,20 +24,6 @@
     <link href="http://v3.bootcss.com/examples/carousel/carousel.css" rel="stylesheet">
     <link rel="shortcut icon" href="http://ov-orange.com/favicon.ico" type="image/x-icon">
     <style type="text/css">
-        .fontColorOrange {
-            color: #eb7d08;
-            font-family: "微软雅黑";
-        }
-        .featureTitle{
-            font-family: "微软雅黑";
-            color: #474747;
-            font-size: 32px;
-        }
-        .featureText{
-            font-family: "微软雅黑";
-            color: #6a6a6a;
-            font-size: 16px;
-        }
         .footer{
             color: #7a7777;
             font-family: "微软雅黑";
@@ -47,8 +33,27 @@
         li{
             font-family: "微软雅黑";
         }
+        .member{
+            height: 200px;
+            width: 175px;
+            position: relative;
+            text-align: center;
+            margin: 0 auto;
+        }
+        .info{
+            height: 0;
+            background-color: #f5f5f5;
+            position: absolute;
+            bottom: 0;
+            z-index: 1000;
+            width: 175px;
+            opacity: .8;
+            /*visibility: hidden;*/
+            display: none;
+            font-family: "微软雅黑";
+        }
     </style>
-</head>
+    </head>
 <!-- NAVBAR
 ================================================== -->
 <body style="">
@@ -71,12 +76,12 @@
                     <ul class="nav navbar-nav">
                         <li><a href="../">产品介绍</a></li>
                         <li><a href="./home">家庭应用</a></li>
-                        <li class="active"><a href="#">店铺应用</a></li>
+                        <li><a href="./shop">店铺应用</a></li>
                         <li><a href="./download">软件下载</a></li>
                         <li><a href="./details">功能参数</a></li>
                         <li><a href="./preorder">产品预订</a></li>
                         <li><a href="./contact">联系我们</a></li>
-                        <li><a href="./member">乐屋族</a></li>
+                        <li class="active"><a href="#">乐屋族</a></li>
                     </ul>
                 </div>
             </div>
@@ -86,74 +91,92 @@
 </div>
 
 <div class="container marketing">
-    <!-- START THE FEATURETTES -->
-
     <hr class="featurette-divider">
-
-    <div class="row featurette">
-        <div class="col-md-7">
-            <h2 class="featureTitle"><b>店铺防盗</b><br><br><b class="fontColorOrange">无论是白天还是夜晚，随时随地拿出手机照看店铺，把商铺带在身边</b></h2><br>
-            <p class="lead featureText">高清视频，严密监控店铺动态</p>
-            <p class="lead featureText">红外夜视，即使晚上也能正常使用</p>
-            <p class="lead featureText">为您的商铺提供紧急事件提醒和入侵防护，让入侵抢劫的歹徒无法得逞</p>
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="member">
+                <img src="./images/member-bigcat.jpg">
+                <div class="info">狂野粗犷的却喜欢卖萌的男人，他的世界我们不懂</div>
+            </div>
         </div>
-        <div class="col-md-5">
-            <img class="featurette-image img-responsive" src="../images/shop1.jpg">
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-craier.jpg">
+                <div class="info">拥有着王者气质的豪迈女汉子</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-huhu&pupi.jpg">
+                <div class="info">永远顶着避雷针一般发型的皇家礼炮，那个被称为“奇葩”的男人</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-jim.jpg">
+                <div class="info">蓄起了胡子就是悍匪，刮掉了胡子就是玉面书生的多情男人</div>
+            </div>
         </div>
     </div>
-
     <hr class="featurette-divider">
 
-    <div class="row featurette">
-        <div class="col-md-5">
-            <img class="featurette-image img-responsive" src="../images/shop2.jpg">
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="member">
+                <img src="./images/member-lydia.jpg">
+                <div class="info">她不笑你不敢笑，她笑了你却感动的哭了：原来笑容可以融化人的心</div>
+            </div>
         </div>
-        <div class="col-md-7">
-            <h2 class="featureTitle"><b>企业连锁店管理</b><br><br><b class="fontColorOrange">层级管理，助力运营，乐屋让您轻松的通过手机同时管理多个店铺，省时、省力、省心</b></h2><br>
-            <p class="lead featureText">一个手机即可监控所有连锁店的现场情况，省去了东奔西跑的时间</p>
-            <p class="lead featureText">直接与现场的员工共同交流，提高企业运营效率</p>
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-michael.jpg">
+                <div class="info">喜欢旅游却几乎从未出去旅游过的风情诗人</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-paul.jpg">
+                <div class="info">曾经梦想成为海贼王的男人结果却搞起了硬件的男人</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-sam.jpg">
+                <div class="info">驾着切诺基不走寻常路的魅力大叔</div>
+            </div>
         </div>
     </div>
-
     <hr class="featurette-divider">
 
-    <div class="row featurette">
-        <div class="col-md-7">
-            <h2 class="featureTitle"><b>店铺日常经营</b><br><br><b class="fontColorOrange">随时了解店铺的客流情况，避免纠纷，规范管理</b></h2><br>
-            <p class="lead featureText">留下证据，避免员工内部纠纷、避免客户纠纷</p>
-            <p class="lead featureText">保护员工、客户及店铺的私人财产安全</p>
-            <p class="lead featureText">提高员工工作效率和服务质量</p>
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="member">
+                <img src="./images/member-tank.jpg">
+                <div class="info">在技术的海洋里自由翱翔的不羁少年</div>
+            </div>
         </div>
-        <div class="col-md-5">
-            <img class="featurette-image img-responsive" src="../images/shop3.jpg">
+        <div class="col-md-3">
+            <div class="member">
+                <img src="./images/member-huhu.jpg">
+                <div class="info">喜欢小众摇滚乐团和小清新美少女的萌正太</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+        </div>
+        <div class="col-md-3">
+
         </div>
     </div>
-
     <hr class="featurette-divider">
-
-    <div class="row featurette">
-        <div class="col-md-5">
-            <img class="featurette-image img-responsive" src="../images/shop4.jpg">
-        </div>
-        <div class="col-md-7">
-            <h2 class="featureTitle"><b>企业经营管理</b><br><br><b class="fontColorOrange">在公司的不同区域安装乐屋家庭安全卫士，构建企业内部管理系统</b></h2><br>
-            <p class="lead featureText">一手掌握公司动态，监督员工工作</p>
-            <p class="lead featureText">视频智能应用，可视化营销，助力做大做强生意</p>
-        </div>
-    </div>
-
-    <hr class="featurette-divider">
-
-    <!-- /END THE FEATURETTES -->
-
-
     <!-- FOOTER -->
     <footer>
         <!--<p class="pull-right"><a href="#">Back to top</a></p>-->
         <p class="text-center footer"> 武汉光谷奥源科技股份有限公司 ® 2014</p>
     </footer>
 
-</div>
+</div><!-- /.container -->
+
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
@@ -164,6 +187,19 @@
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
 <script src="../javascripts/bootstrap.min.js"></script>
 <script src="../javascripts/holder.min.js"></script>
+<script>
+
+    $('.member').mouseenter(function () {
+        var info = $(this.children[1]);
+        info.show();
+        info.animate({height:'50px'},200);
+    });
+    $('.member').mouseleave(function () {
+        var info = $(this.children[1]);
+        info.animate({height:'0'},200).hide();
+    });
+
+</script>
 
 
 </body></html>
