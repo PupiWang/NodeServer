@@ -44,9 +44,9 @@ var userSQL = {
         var s = 'UPDATE `user` SET `password` = ? WHERE `_id` = ?';
         return mysql.format(s,[password, id]);
     },
-    sendPIN : function (time, e, type) {
+    sendPIN : function (time, e, type, userName) {
         var s = 'UPDATE user SET rstpwd_time = ? , rstpwd_e = ? WHERE ' + type + ' = ?';
-        return mysql.format(s,[time, e]);
+        return mysql.format(s,[time, e, userName]);
     },
     validPIN : function (userName, e, type) {
         var s = 'SELECT _id FROM user where ' + type + ' = ? AND rstpwd_e = ?';

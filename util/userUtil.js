@@ -280,7 +280,7 @@ exports.sendPIN = function (userName) {
         SMS(userName, content);
         deferred.resolve({status: 'success', code: 2, msg: e});
     }
-    var s = sql.userSQL.sendPIN(time, e, type);
+    var s = sql.userSQL.sendPIN(time, e, type, userName);
     sql.execute(s, function (err) {
         if (err) {
             console.log(err);

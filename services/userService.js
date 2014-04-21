@@ -194,7 +194,7 @@ exports.forgetPassword = function (userId) {
         .then(function (data) {
             var deferred = Q.defer();
             if (data) {
-                deferred.resolve(data._id);
+                deferred.resolve(userId);
             } else {
                 deferred.reject({status: 'error', code: 1, msg: '该用户不存在'});
             }
