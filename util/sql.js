@@ -38,7 +38,7 @@ var userSQL = {
     },
     activateUser : function (userName, e, time, type) {
         var s = 'UPDATE user SET activation_date = ? , activation_e = "" WHERE activation_e = ? AND ' + type + ' = ?';
-        return mysql.format(s,[e, userName]);
+        return mysql.format(s,[time, e, userName]);
     },
     modifyPassword : function (id, password) {
         var s = 'UPDATE `user` SET `password` = ? WHERE `_id` = ?';
