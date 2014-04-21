@@ -220,7 +220,8 @@ exports.activateUser = function (userName, e) {
  * @returns {promise|Q.promise}
  */
 exports.modifyPassword = function (userObj) {
-    var userId = userObj._id;
+    console.log(userObj);
+    var userId = userObj.userId;
     var passwordNew = userObj.passwordNew;
     var deferred = Q.defer();
     var s = sql.userSQL.modifyPassword(userId, passwordNew);
