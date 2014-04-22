@@ -23,6 +23,30 @@ exports.getDevicesByUser = function (req, res) {
 };
 
 /**
+ * 获取设备关联的普通用户
+ * @param userId     用户名
+ * @param password   密码
+ * @param deviceId   设备号
+ */
+exports.getUsersByDevice = function (req, res) {
+
+    var userId = req.body.userId || req.param('userId'),
+        password = req.body.password || req.param('password'),
+        deviceId = req.body.deviceId || req.param('deviceId');
+
+    deviceService.getUsersByDevice(userId, password, deviceId)
+        .then(function (data) {
+            res.send(data);
+        })
+        .catch(function (error) {
+            // Handle any error from all above steps
+            console.log(error);
+            res.send(error);
+        });
+
+};
+
+/**
  * 为新设备绑定管理员
  * @param userId    用户名
  * @param password  密码
@@ -113,6 +137,31 @@ exports.modifyDeviceName = function (req, res) {
         deviceId = req.body.deviceId || req.param('deviceId');
 
     deviceService.modifyDeviceName(userId, password, deviceName, deviceId)
+        .then(function (data) {
+            res.send(data);
+        })
+        .catch(function (error) {
+            // Handle any error from all above steps
+            console.log(error);
+            res.send(error);
+        });
+
+};
+
+/**
+ * 设备报警开关
+ * @param userId        用户名
+ * @param password      密码
+ * @param deviceId      设备号
+ */
+exports.switchDeviceAlarm = function (req, res) {
+
+    var userId = req.body.userId || req.param('userId'),
+        password = req.body.password || req.param('password'),
+        deviceId = req.body.deviceId || req.param('deviceId'),
+        isAlarmOpen = req.body.isAlarmOpen || req.param('isAlarmOpen');
+
+    deviceService.switchDeviceAlarm(userId, password, deviceId, isAlarmOpen)
         .then(function (data) {
             res.send(data);
         })

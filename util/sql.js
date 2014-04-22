@@ -63,6 +63,14 @@ var deviceSQL = {
         var s = 'SELECT * FROM user_device ud, device d WHERE ud.id_device = d.id_device AND ud.id_user = ? ';
         return mysql.format(s,[id]);
     },
+    getUsersByDevice : function (deviceId) {
+        var s = 'SELECT u._id , u.email , u.phone , u.username FROM user_device ud , user u WHERE ud.id_device = ? AND ud.isadmin = 0 AND u._id = ud.id_user';
+        return mysql.format(s,[deviceId]);
+    },
+    isAdminOfDevice : function (userId, deviceId) {
+        var s = 'SELECT isadmin FROM user_device WHERE id_user = ? AND id_device = ? ';
+        return mysql.format(s,[userId, deviceId]);
+    },
     isDeviceExist : function (deviceId) {
         var s = 'SELECT * FROM device WHERE id_device = ? ';
         return mysql.format(s,[deviceId]);
@@ -91,9 +99,9 @@ var deviceSQL = {
         var s = 'UPDATE user_device SET display_name = ? WHERE id_user = ? AND id_device = ? ';
         return mysql.format(s,[deviceName, userId, deviceId]);
     },
-    getUsersByDevice : function (deviceId) {
-        var s = 'SELECT id_user FROM user_device WHERE id_device = ? ';
-        return mysql.format(s,[deviceId]);
+    switchDeviceAlarm : function (userId, deviceId, isAlarmOpen) {
+        var s = 'UPDATE user_device SET isAlarmOpen = ? WHERE id_user = ? AND id_device = ? ';
+        return mysql.format(s,[isAlarmOpen, userId, deviceId]);
     },
     deviceConnect : function (deviceId) {
         var s = 'UPDATE device SET status = 1 WHERE id_device = ? ';

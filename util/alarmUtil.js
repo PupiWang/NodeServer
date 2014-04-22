@@ -45,7 +45,9 @@ exports.addAlarm = function (deviceId, picId) {
 
         for (i=0 ; i < data.length ; i++) {
             userId = data[i].id_user;
-            aRASM(userId,content);
+            if (data[i].isalarmopen == 1) {
+                aRASM(userId,content);
+            }
         }
 
         deferred.resolve();

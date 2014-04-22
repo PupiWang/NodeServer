@@ -31,9 +31,12 @@
         设备
         <ul>
           <li><a href="#device">获取设备列表</a></li>
+          <li><a href="#getUsersByDevice">获取用户列表</a></li>
           <li><a href="#bindingAdmin">添加管理员</a></li>
-          <li><a href="#bindingUser">添加用户</a></li>
-          <li><a href="#removeUser">删除用户</a></li>
+          <li><a href="#bindingUser">添加普通用户</a></li>
+          <li><a href="#removeUser">删除普通用户</a></li>
+          <li><a href="#modifyDeviceName">修改设备显示名</a></li>
+          <li><a href="#switchDeviceAlarm">设备报警开关</a></li>
         </ul>
       </li>
 
@@ -176,6 +179,24 @@
       </div>
     </div>
 
+    <div id="getUsersByDevice" class="block">
+        <h3>获取用户列表</h3>
+        <p><label>接口：http://115.29.179.7/mobile/device/getUsersByDevice</label></p>
+        <p><label>方法：GET</label></p>
+        <p><label>参数：userId , password , deviceId</label></p>
+        <p><code>&lt;input name="userId" type="text"&gt;</code></p>
+        <p><code>&lt;input name="password" type="password"&gt;</code></p>
+        <p><code>&lt;input name="deviceId" type="text"&gt;</code></p>
+        <h4>示例</h4>
+        <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
+        <p><label>Password</label><input name="password" type="password" value="123456"></p>
+        <p><label>deviceId</label><input name="deviceId" type="text" value="ov_orange_01"></p>
+        <p><button>Submit</button></p>
+        <div class="alert alert-warning">
+            <p></p>
+        </div>
+    </div>
+
     <div id="bindingAdmin" class="block">
       <h3>添加管理员</h3>
       <p><label>接口：http://115.29.179.7/mobile/device/bindingAdmin</label></p>
@@ -187,7 +208,7 @@
       <h4>示例</h4>
       <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
-      <p><label>DeviceId</label><input name="deviceId" type="text" value="ov-orange-01"></p>
+      <p><label>DeviceId</label><input name="deviceId" type="text" value="ov_orange_01"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
@@ -195,7 +216,7 @@
     </div>
 
     <div id="bindingUser" class="block">
-      <h3>添加用户</h3>
+      <h3>添加普通用户</h3>
       <p><label>接口：http://115.29.179.7/mobile/device/bindingUser</label></p>
       <p><label>方法：POST</label></p>
       <p><label>参数：userId , password , deviceId , userIdNew </label></p>
@@ -206,7 +227,7 @@
       <h4>示例</h4>
       <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
-      <p><label>DeviceId</label><input name="deviceId" type="text" value="ov-orange-01"></p>
+      <p><label>DeviceId</label><input name="deviceId" type="text" value="ov_orange_01"></p>
       <p><label>userIdNew</label><input name="userIdNew" type="text" value="2@qq.com"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
@@ -215,7 +236,7 @@
     </div>
 
     <div id="removeUser" class="block">
-      <h3>删除用户</h3>
+      <h3>删除普通用户</h3>
       <p><label>接口：http://115.29.179.7/mobile/device/removeUser</label></p>
       <p><label>方法：POST</label></p>
       <p><label>参数：userId , password , deviceId , userIdNew </label></p>
@@ -226,12 +247,52 @@
       <h4>示例</h4>
       <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
       <p><label>Password</label><input name="password" type="password" value="123456"></p>
-      <p><label>DeviceId</label><input name="deviceId" type="text" value="ov-orange-01"></p>
+      <p><label>DeviceId</label><input name="deviceId" type="text" value="ov_orange_01"></p>
       <p><label>userIdNew</label><input name="userIdNew" type="text" value="2@qq.com"></p>
       <p><button>Submit</button></p>
       <div class="alert alert-warning">
         <p></p>
       </div>
+    </div>
+
+    <div id="modifyDeviceName" class="block">
+        <h3>修改设备显示名</h3>
+        <p><label>接口：http://115.29.179.7/mobile/device/modifyDisplayName</label></p>
+        <p><label>方法：POST</label></p>
+        <p><label>参数：userId , password , deviceId , deviceName </label></p>
+        <p><code>&lt;input name="userId" type="text"&gt;</code></p>
+        <p><code>&lt;input name="password" type="password"&gt;</code></p>
+        <p><code>&lt;input name="deviceId" type="text"&gt;</code></p>
+        <p><code>&lt;input name="deviceName" type="text"&gt;</code></p>
+        <h4>示例</h4>
+        <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
+        <p><label>Password</label><input name="password" type="password" value="123456"></p>
+        <p><label>DeviceId</label><input name="deviceId" type="text" value="ov_orange_01"></p>
+        <p><label>deviceName</label><input name="deviceName" type="text" value="name1"></p>
+        <p><button>Submit</button></p>
+        <div class="alert alert-warning">
+            <p></p>
+        </div>
+    </div>
+
+    <div id="switchDeviceAlarm" class="block">
+        <h3>设备报警开关</h3>
+        <p><label>接口：http://115.29.179.7/mobile/device/switchDeviceAlarm</label></p>
+        <p><label>方法：POST</label></p>
+        <p><label>参数：userId , password , deviceId , deviceName </label></p>
+        <p><code>&lt;input name="userId" type="text"&gt;</code></p>
+        <p><code>&lt;input name="password" type="password"&gt;</code></p>
+        <p><code>&lt;input name="deviceId" type="text"&gt;</code></p>
+        <p><code>&lt;input name="isAlarmOpen" type="text"&gt;</code></p>
+        <h4>示例</h4>
+        <p><label>UserId</label><input name="userId" type="text" value="1@qq.com"></p>
+        <p><label>Password</label><input name="password" type="password" value="123456"></p>
+        <p><label>DeviceId</label><input name="deviceId" type="text" value="ov_orange_01"></p>
+        <p><label>isAlarmOpen</label><input name="isAlarmOpen" type="text" value="1"></p>
+        <p><button>Submit</button></p>
+        <div class="alert alert-warning">
+            <p></p>
+        </div>
     </div>
 
     <div id="picture" class="block">
@@ -275,9 +336,7 @@
         var userId = $('#login p [name="userId"]')[0].value,
           password = $('#login p [name="password"]')[0].value;
         $.post('/mobile/user/login', {'userId': userId, 'password': md5(password)}, function (data) {
-          $('#login .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code +
-            ', userId: ' + data.userId + ', email: "' + data.email + '", phone: "' + data.phone + 
-            '", msg: "' + data.msg + '"}';
+          $('#login .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -286,14 +345,14 @@
           password = $('#signup p [name="password"]')[0].value,
           password_confirm = $('#signup p [name="password_confirm"]')[0].value;
         $.post('/mobile/user/signup', {'userId': userId, 'password': md5(password), 'password_confirm': md5(password_confirm)}, function (data) {
-          $('#signup .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#signup .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
       
       $('#sendActivationMessage p button').on('click', function () {
         var userId = $('#sendActivationMessage p [name="userId"]')[0].value;
         $.get('/mobile/user/sendActivationMessage', {'userId': userId}, function (data) {
-          $('#sendActivationMessage .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#sendActivationMessage .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -301,7 +360,7 @@
         var userId = $('#activation p [name="userId"]')[0].value,
           e = $('#activation p [name="e"]')[0].value;
         $.get('/mobile/user/activation', {'e': e, 'userId': userId}, function (data) {
-          $('#activation .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#activation .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -310,14 +369,14 @@
           password = $('#modify p [name="password"]')[0].value,
           passwordNew = $('#modify p [name="passwordNew"]')[0].value;
         $.post('/mobile/user/modify', {'userId': userId, 'password': md5(password), 'passwordNew': md5(passwordNew)}, function (data) {
-          $('#modify .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#modify .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
       $('#forget p button').on('click', function () {
         var userId = $('#forget p [name="userId"]')[0].value;
         $.post('/mobile/user/forget', {'userId': userId}, function (data) {
-          $('#forget .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#forget .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -326,7 +385,7 @@
           passwordNew = $('#resetPassword p [name="passwordNew"]')[0].value,
           e = $('#resetPassword p [name="e"]')[0].value;
         $.post('/mobile/user/resetPassword', {'userId': userId, 'passwordNew': md5(passwordNew), 'e': e}, function (data) {
-          $('#resetPassword .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#resetPassword .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -334,15 +393,24 @@
         var userId = $('#device p [name="userId"]')[0].value,
           password = $('#device p [name="password"]')[0].value;
         $.get('/mobile/device', {'userId': userId, 'password': md5(password)}, function (data) {
-          $('#device .alert p')[0].innerHTML = '[{"id_device": "ov_orange","display_name": "ov_orange","status": ""},{"id_device": "ov_orange_01","display_name": "Test","status": ""},{"id_device": "123456","display_name": "123456","status": ""}]';
+          $('#device .alert p')[0].innerHTML = JSON.stringify(data);
         });
+      });
+
+      $('#getUsersByDevice p button').on('click', function () {
+          var userId = $('#getUsersByDevice p [name="userId"]')[0].value,
+            password = $('#getUsersByDevice p [name="password"]')[0].value,
+            deviceId = $('#getUsersByDevice p [name="deviceId"]')[0].value;
+          $.get('/mobile/device/getUsersByDevice', {'userId': userId, 'password': md5(password), 'deviceId': deviceId}, function (data) {
+              $('#getUsersByDevice .alert p')[0].innerHTML = JSON.stringify(data);
+          });
       });
 
       $('#picture p button').on('click', function () {
         var userId = $('#picture p [name="userId"]')[0].value,
           password = $('#picture p [name="password"]')[0].value;
         $.get('/mobile/resource/pictures', {'userId': userId, 'password': md5(password)}, function (data) {
-          $('#picture .alert p')[0].innerHTML = data;
+          $('#picture .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -350,7 +418,7 @@
         var userId = $('#video p [name="userId"]')[0].value,
           password = $('#video p [name="password"]')[0].value;
         $.get('/mobile/resource/videos', {'userId': userId, 'password': md5(password)}, function (data) {
-          $('#video .alert p')[0].innerHTML = data;
+          $('#video .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -359,7 +427,7 @@
           password = $('#bindingAdmin p [name="password"]')[0].value,
           deviceId = $('#bindingAdmin p [name="deviceId"]')[0].value;
         $.post('/mobile/device/bindingAdmin', {'userId': userId, 'password': md5(password), 'deviceId': deviceId}, function (data) {
-          $('#bindingAdmin .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#bindingAdmin .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -369,7 +437,7 @@
           deviceId = $('#bindingUser p [name="deviceId"]')[0].value,
           userIdNew = $('#bindingUser p [name="userIdNew"]')[0].value;
         $.post('/mobile/device/bindingUser', {'userId': userId, 'password': md5(password), 'deviceId': deviceId, 'userIdNew': userIdNew}, function (data) {
-          $('#bindingUser .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#bindingUser .alert p')[0].innerHTML = JSON.stringify(data);
         });
       });
 
@@ -379,8 +447,28 @@
           deviceId = $('#removeUser p [name="deviceId"]')[0].value,
           userIdNew = $('#removeUser p [name="userIdNew"]')[0].value;
         $.post('/mobile/device/removeUser', {'userId': userId, 'password': md5(password), 'deviceId': deviceId, 'userIdNew': userIdNew}, function (data) {
-          $('#removeUser .alert p')[0].innerHTML = '{status: "' + data.status + '", code: ' + data.code + ', msg: "' + data.msg + '"}';
+          $('#removeUser .alert p')[0].innerHTML = JSON.stringify(data);
         });
+      });
+
+      $('#modifyDeviceName p button').on('click', function () {
+          var userId = $('#modifyDeviceName p [name="userId"]')[0].value,
+              password = $('#modifyDeviceName p [name="password"]')[0].value,
+              deviceId = $('#modifyDeviceName p [name="deviceId"]')[0].value,
+              deviceName = $('#modifyDeviceName p [name="deviceName"]')[0].value;
+          $.post('/mobile/device/modifyDisplayName', {'userId': userId, 'password': md5(password), 'deviceId': deviceId, 'deviceName': deviceName}, function (data) {
+              $('#modifyDeviceName .alert p')[0].innerHTML = JSON.stringify(data);
+          });
+      });
+
+      $('#switchDeviceAlarm p button').on('click', function () {
+          var userId = $('#switchDeviceAlarm p [name="userId"]')[0].value,
+              password = $('#switchDeviceAlarm p [name="password"]')[0].value,
+              deviceId = $('#switchDeviceAlarm p [name="deviceId"]')[0].value,
+                  isAlarmOpen = $('#switchDeviceAlarm p [name="isAlarmOpen"]')[0].value;
+          $.post('/mobile/device/switchDeviceAlarm', {'userId': userId, 'password': md5(password), 'deviceId': deviceId, 'isAlarmOpen': isAlarmOpen}, function (data) {
+              $('#switchDeviceAlarm .alert p')[0].innerHTML = JSON.stringify(data);
+          });
       });
 
     </script>

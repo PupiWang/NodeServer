@@ -63,10 +63,12 @@ exports.appRoutes = function (app) {
 
     //device
     app.get('/mobile/device', controllers.device.getDevicesByUser);                                         //获取设备列表
+    app.get('/mobile/device/getUsersByDevice', controllers.device.getUsersByDevice);                        //获取设备关联的普通用户
     app.post('/mobile/device/bindingAdmin', controllers.device.bindingAdmin);                               //绑定管理员
     app.post('/mobile/device/bindingUser', controllers.device.bindingUser);                                 //绑定普通用户
     app.post('/mobile/device/removeUser', controllers.device.removeUser);                                   //解绑普通用户
     app.post('/mobile/device/modifyDisplayName', controllers.device.modifyDeviceName);                      //修改显示名
+    app.post('/mobile/device/switchDeviceAlarm', controllers.device.switchDeviceAlarm);                     //设备报警开关
 
     //resource
     app.get('/mobile/resource/getPicture', controllers.resource.getPictureByPicId);                         //获取照片资源链接
