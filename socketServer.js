@@ -20,8 +20,9 @@ exports.socketServer = function (app) {
         socket.on('data', function (proData) {
             var data = protobuf.resolveMessage(proData);
             if (!data) {
+                sendConsoleLog(proData, 'HeartBeat');
                 return;
-        }
+            }
             sendConsoleLog(data, 'received');
             var msg = data.msg;
             if (msg === 1) {
@@ -64,7 +65,7 @@ exports.socketServer = function (app) {
                             data.domain = streamingServerDomain;
                         }
                         data.socketid = socket.socketId;
-                        protobuf.sendMessage(deviceSocket,data);
+                        protobuf.sendMessage(deviceSocket, data);
                     } else {
                         var res = {};
                         res.from = data.from;
@@ -72,7 +73,7 @@ exports.socketServer = function (app) {
                         res.cmd = data.cmd;
                         res.responseStatus = 2;                                                                         //1代表成功，由设备返回；2代表失败；
                         res.info = '操作失败，设备不在线...';
-                        protobuf.sendMessage(socket,res);
+                        protobuf.sendMessage(socket, res);
                     }
                 } else {
                     console.log('can not know msg resource');
@@ -103,7 +104,7 @@ exports.socketServer = function (app) {
 
         if (socket.remoteAddress != '127.0.0.1') {
             //超时事件
-            socket.setTimeout(timeout,function(){
+            socket.setTimeout(timeout, function () {
                 sendConsoleLog(socket.remoteInfo, 'timeout');
                 console.log('timeout:' + socket.remoteInfo);
                 socket.destroy();
@@ -141,7 +142,7 @@ exports.createTestClient = function (app) {
         client.write(protobuf.serializeMessage(init));
     });
 
-    client.on('data', function(prodata) {
+    client.on('data', function (prodata) {
         var data = protobuf.resolveMessage(prodata);
         var socketUtil = require('./util/socketUtil');
         socketUtil.getWebSocket().forEach(function (ws) {
@@ -149,14 +150,14 @@ exports.createTestClient = function (app) {
         });
     });
 
-    client.on('error', function(err) {
+    client.on('error', function (err) {
         var socketUtil = require('./util/socketUtil');
         socketUtil.getWebSocket().forEach(function (ws) {
             ws.emit('err', err);
         });
     });
 
-    client.on('end', function() {
+    client.on('end', function () {
         console.log('TestClient disconnected');
     });
 
