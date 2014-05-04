@@ -1,6 +1,8 @@
 var qiniu = require('qiniu');
-qiniu.conf.ACCESS_KEY = 'Q-IdFFb3t_WoE_u_cHHB0cG5TM4ABtetTlsBsXW6';
-qiniu.conf.SECRET_KEY = 'up-RiROP73u2M8hf94ysPRFf9OlDGr07Xr426r9R';
+qiniu.conf.ACCESS_KEY = 'obDE4SpABqsQANOkEvNHOvmj4gFaHXhdSKo29yKp';
+qiniu.conf.SECRET_KEY = 'mlVKnO88LPHbR9WcgMy0bttvN2n5iqIIn0Sw_zCo';
+var domain = 'lewu.qiniudn.com';
+var bucketName = 'lewu';
 
 /**
  * 根据资源空间域名和资源名生成url
@@ -21,12 +23,11 @@ var getDownloadUrl = function (domain, key) {
 
 /**
  * 暴露给别的模块用的方法，同getDownloadUrl
- * @param  {string} domain 资源空间域名ov-orange-private.u.qiniudn.com
+ * @param  {string} domain 资源空间域名
  * @param  {string} key    资源名
  * @return {string} url    资源链接
  */
 exports.getUrl = function (key) {
-    var domain = 'ov-orange-private.u.qiniudn.com';
     return getDownloadUrl(domain, key);
 };
 
@@ -34,7 +35,7 @@ exports.getUrl = function (key) {
  * 获取上传令牌
  */
 exports.getUploadToken = function (req, res) {
-    var putPolicy = new qiniu.rs.PutPolicy('ov-orange-private');
+    var putPolicy = new qiniu.rs.PutPolicy(bucketName);
     //七牛回调链接
     putPolicy.callbackUrl = 'http://115.29.179.7/uploadCallback';
     //魔法变量和自定义变量
@@ -126,7 +127,7 @@ exports.uploadCallback = function (req, res) {
                     } else {
                         //两条插入操作成功执行
                         //构造视频链接，根据给定的user_id找到client_sockets发送信息
-                        url = getDownloadUrl('ov-orange-private.u.qiniudn.com', req.body.etag);
+                        url = getDownloadUrl(domain, req.body.etag);
 
                         for (i = client_sockets.length - 1; i >= 0; i--) {
                             var c = client_sockets[i];
