@@ -11,7 +11,6 @@ exports.socketServer = function (app) {
 
     var server = net.createServer(function (socket) {
         //我们获得一个连接 - 该连接自动关联一个socket对象
-        console.log(socket);
         socket.remoteInfo = socket.remoteAddress + ':' + socket.remotePort
         console.log('connect:' + socket.remoteInfo);
         sendConsoleLog(socket.remoteInfo, 'connect');
