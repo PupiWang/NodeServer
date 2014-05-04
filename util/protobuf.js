@@ -39,9 +39,10 @@ exports.sendMessageToClientsByUserId = function (userId, data) {
     var socketUtil = require('./socketUtil');
     var clientSockets = socketUtil.getClientSockets(userId);
     if (clientSockets) {
-        var i = 0;
-        for (i; i < clientSockets.length; i++) {
-            exports.sendMessage(clientSockets[i], data);
+        for (var i in clientSockets) {
+            if (clientSockets.hasOwnProperty(i)) {
+                exports.sendMessage(clientSockets[i], data);
+            }
         }
     }
 };
