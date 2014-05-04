@@ -21,7 +21,7 @@ exports.socketServer = function (app) {
             var data = protobuf.resolveMessage(proData);
             if (!data) {
                 return;
-            }
+        }
             sendConsoleLog(data, 'received');
             var msg = data.msg;
             if (msg === 1) {
@@ -42,7 +42,7 @@ exports.socketServer = function (app) {
                     console.log('client connect : ' + socket.userId + ' , ' + socket.socketId);
                 } else {
                     //都不是，主动断开
-                    socket.end();
+                    socket.destroy();
                 }
             } else {
                 var REALTIMEVIDEO = 11;
@@ -77,7 +77,7 @@ exports.socketServer = function (app) {
                 } else {
                     console.log('can not know msg resource');
                     //都不是，主动断开
-                    socket.end();
+                    socket.destroy();
                 }
             }
         });
@@ -86,7 +86,7 @@ exports.socketServer = function (app) {
         socket.on('error', function (exception) {
             console.log('socket error:' + socket.remoteInfo + '\n' + exception);
             sendConsoleLog(socket.remoteInfo + ' ' + exception, 'error');
-            socket.end();
+            socket.destroy();
         });
 
         //客户端关闭事件
@@ -106,7 +106,7 @@ exports.socketServer = function (app) {
             socket.setTimeout(timeout,function(){
                 sendConsoleLog(socket.remoteInfo, 'timeout');
                 console.log('timeout:' + socket.remoteInfo);
-                socket.end();
+                socket.destroy();
             });
         } else {
             socket.setKeepAlive(true);
