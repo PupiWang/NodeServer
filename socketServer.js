@@ -11,6 +11,7 @@ exports.socketServer = function (app) {
 
     var server = net.createServer(function (socket) {
         //我们获得一个连接 - 该连接自动关联一个socket对象
+        console.log(socket);
         socket.remoteInfo = socket.remoteAddress + ':' + socket.remotePort
         console.log('connect:' + socket.remoteInfo);
         sendConsoleLog(socket.remoteInfo, 'connect');
@@ -40,7 +41,7 @@ exports.socketServer = function (app) {
                     console.log('client connect : ' + socket.userId + ' , ' + socket.socketId);
                 } else {
                     //都不是，主动断开
-                    socket.destroy();
+                    socket.end();
                 }
             } else {
                 var REALTIMEVIDEO = 11;
@@ -75,7 +76,7 @@ exports.socketServer = function (app) {
                 } else {
                     console.log('can not know msg resource');
                     //都不是，主动断开
-                    socket.destroy();
+                    socket.end();
                 }
             }
         });
@@ -83,13 +84,19 @@ exports.socketServer = function (app) {
         //数据错误事件
         socket.on('error', function (exception) {
             console.log('socket error:' + socket.remoteInfo + '\n' + exception);
-            sendConsoleLog(socket.remoteInfo + '\n' + exception, 'error');
+            sendConsoleLog(socket.remoteInfo + ' ' + exception, 'error');
             socket.end();
         });
 
         //客户端关闭事件
         socket.on('close', function () {
             sendConsoleLog(socket.remoteInfo, 'close');
+            socketUtil.removeSocket(socket);
+        });
+
+        //客户端关闭事件
+        socket.on('end', function () {
+            sendConsoleLog(socket.remoteInfo, 'end');
             socketUtil.removeSocket(socket);
         });
 
