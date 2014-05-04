@@ -29,6 +29,7 @@ exports.socketServer = function (app) {
                 if (data.to === 'device') {
                     //设备
                     socket.deviceId = data.from;
+                    socket.remoteInfo = 'device: ' + socket.deviceId + ',' + socket.remoteInfo;
                     socketUtil.addDeviceSocket(socket);
                     console.log('device connect : ' + socket.deviceId);
                     //timeout
@@ -36,6 +37,7 @@ exports.socketServer = function (app) {
                 } else if (data.to === 'client') {
                     //用户
                     socket.userId = data.from;
+                    socket.remoteInfo = 'client: ' + socket.userId + ',' + socket.remoteInfo;
                     socketUtil.addClientSocket(socket);
                     console.log('client connect : ' + socket.userId + ' , ' + socket.socketId);
                 } else {
