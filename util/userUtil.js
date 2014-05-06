@@ -27,7 +27,7 @@ exports.typeOfUserId = function (userId) {
 exports.getUserIdByUserName = function (username) {
     var deferred = Q.defer();
     var type = typeOfUserId(username);
-    var s = sql.userSQL.getUserIdByUserName(username,type);
+    var s = sql.userSQL.getUserIdByUserName(username, type);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -49,7 +49,7 @@ exports.validUser = function (username, password) {
     var deferred = Q.defer();
     var type = typeOfUserId(username);
     if (username && password) {
-        var s = sql.userSQL.validUser(username,type);
+        var s = sql.userSQL.validUser(username, type);
         sql.execute(s, function (err, rows) {
             if (err) {
                 console.log(err);
@@ -103,7 +103,7 @@ exports.setLoginTime = function (userObj) {
 exports.userIsExist = function (username) {
     var deferred = Q.defer();
     var type = typeOfUserId(username);
-    var s = sql.userSQL.getUserIdByUserName(username,type);
+    var s = sql.userSQL.getUserIdByUserName(username, type);
     sql.execute(s, function (err, rows) {
         if (err) {
             console.log(err);
@@ -230,18 +230,14 @@ exports.modifyPassword = function (userObj) {
             console.log(err);
             deferred.reject({status: 'error', code: 501, msg: err});
         } else {
-            if (rows.changedRows >= 1) {
-                deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
-                var socketUtil = require('./socketUtil');
-                var protobuf = require('./protobuf');
-                var msg = {};
-                msg.from = 'server';
-                msg.to = userId;
-                msg.cmd = 10;
-                protobuf.sendMessageToClientsByUserId(userId, msg);
-            } else {
-                deferred.reject({status: 'error', code: 601, msg: '修改密码失败...'});
-            }
+            deferred.resolve({status: 'success', code: 1, msg: '修改密码成功...'});
+            var socketUtil = require('./socketUtil');
+            var protobuf = require('./protobuf');
+            var msg = {};
+            msg.from = 'server';
+            msg.to = userId;
+            msg.cmd = 10;
+            protobuf.sendMessageToClientsByUserId(userId, msg);
         }
     });
     return deferred.promise;

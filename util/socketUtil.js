@@ -120,7 +120,7 @@ exports.addWebSocket = function (ws) {
 };
 
 exports.removeWebSocket = function (ws) {
-    arrayRemove(webSockets, ws);
+    webSockets.splice(webSockets.indexOf(ws), 1);
 };
 
 exports.getWebSocket = function () {
