@@ -45,7 +45,8 @@ exports.addAlarm = function (deviceId, picId) {
 
         for (i=0 ; i < data.length ; i++) {
             userId = data[i].id_user;
-            if (data[i].isalarmopen == 1) {
+            console.log(parseInt(data[i].isalarmopen) === 1);
+            if (parseInt(data[i].isalarmopen) === 1) {
                 aRASM(userId,content);
             }
         }
