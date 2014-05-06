@@ -115,7 +115,7 @@ var deviceSQL = {
 
 var alarmSQL = {
     getRelationUsers : function (deviceId) {
-        var s = 'SELECT id_user from user_device where id_device = ?';
+        var s = 'SELECT id_user,isalarmopen from user_device where id_device = ?';
         return mysql.format(s,[deviceId]);
     },
     addRecordsAndSendMessages : function (userId,deviceId,picId,time) {
